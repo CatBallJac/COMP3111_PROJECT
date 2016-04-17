@@ -7,8 +7,8 @@
 
     <h2>Place Order</h2>
 
+    <asp:Label ID="labelSecurityType" runat="server"></asp:Label>
     <div>
-        <asp:Label ID="labelSecurityType" runat="server"></asp:Label>
         <asp:DropDownList ID="ddlSecurityType" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlSecurityType_SelectedIndexChanged">
             <asp:ListItem>-- choose security type --</asp:ListItem>
             <asp:ListItem>bond</asp:ListItem>
@@ -17,8 +17,8 @@
         </asp:DropDownList>
     </div>
 
-    <div ID ="divOrder" runat ="server" visible="false">
-        <asp:Label ID="labelIsBuyOrSell" runat="server"></asp:Label>
+    <asp:Label ID="labelIsBuyOrSell" runat="server"></asp:Label>
+    <div>
         <asp:DropDownList ID="ddlIsBuyOrSell" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlIsBuyOrSell_SelectedIndexChanged">
             <asp:ListItem>-- choose buy or sell order --</asp:ListItem>
             <asp:ListItem>Buy Order</asp:ListItem>
@@ -26,78 +26,97 @@
         </asp:DropDownList>
     </div>
 
-    <div ID ="divCode" runat ="server" visible ="false" >
+    <div ID ="divCodeAndName" runat ="server">
+        <h5>security infomation</h5>
         <asp:Label ID="labelCode" runat="server" Text="code"> </asp:Label>
         <div>
-        <asp:DropDownList ID="ddlCode" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlCode_SelectedIndexChanged" >
-            <asp:ListItem>-- choose code of available security --</asp:ListItem>
-        </asp:DropDownList>
+            <asp:DropDownList ID="ddlCode" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlCode_SelectedIndexChanged" >
+                <asp:ListItem>-- choose code of available security --</asp:ListItem>
+           </asp:DropDownList>
         </div>
 
         <asp:Label ID="labelSecurityName" runat="server" Text="name"></asp:Label>
         <div>
-            <asp:TextBox ID="TextSecurityName" runat="server" Enabled="False"></asp:TextBox>
+            <asp:Label ID="LabelSecurityNametxt" runat="server" ></asp:Label>
         </div>
     </div>
 
-<div>
-    <asp:PlaceHolder ID="buyStockOrderPlaceHolder" runat="server" Visible="False">
-        <h6>security order: buy stock</h6>
-        <asp:Label ID="LabelOrderType" runat="server" Text="Label"></asp:Label>
+
+    <div id="divStockOrderDetail" runat="server" Visible="false">
+        <h5>security order: stock</h5>
+        <asp:Label ID="LabelOrderType" runat="server" Text="order type"></asp:Label>
         <div>
-        <asp:DropDownList ID="ddlOrderType" runat="server" AutoPostBack="True">
-            <asp:ListItem>-- choose Order type --</asp:ListItem>
-            <asp:ListItem>market Order</asp:ListItem>
-            <asp:ListItem>limit Order</asp:ListItem>
-            <asp:ListItem>stop limit Order</asp:ListItem>
-            <asp:ListItem>stop Order</asp:ListItem>
-        </asp:DropDownList>
+           <asp:DropDownList ID="ddlOrderType" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlOrderType_SelectedIndexChanged">
+                <asp:ListItem>-- choose order type --</asp:ListItem>
+                <asp:ListItem>market order</asp:ListItem>
+                <asp:ListItem>limit order</asp:ListItem>
+                <asp:ListItem>stop limit order</asp:ListItem>
+                <asp:ListItem>stop order</asp:ListItem>
+            </asp:DropDownList>
         </div>
 
-
-        <asp:Label ID="LabelShares" runat="server" Text="Label"></asp:Label>
+        <asp:Label ID="LabelExpiryDay" runat="server" Text="expiry day [1 - 7]"></asp:Label>
         <div>
-             <asp:TextBox ID="TextShares" runat="server"></asp:TextBox>
+            <asp:DropDownList ID="ddlExpiryDay" runat="server" AutoPostBack="True">
+                <asp:ListItem>-- choose expiry day --</asp:ListItem>
+                <asp:ListItem>1</asp:ListItem>
+                <asp:ListItem>2</asp:ListItem>
+                <asp:ListItem>3</asp:ListItem>
+                <asp:ListItem>4</asp:ListItem>
+                <asp:ListItem>5</asp:ListItem>
+                <asp:ListItem>6</asp:ListItem>
+                <asp:ListItem>7</asp:ListItem>
+            </asp:DropDownList> 
         </div>
 
-        <asp:Label ID="LabelExpiryDay" runat="server" Text="Label"></asp:Label>
+        <asp:Label ID="LabelAllOrNone" runat="server" Text="order property"></asp:Label>
         <div>
-        <asp:DropDownList ID="ddlExpiryDay" runat="server" AutoPostBack="True">
-            <asp:ListItem>-- choose expiry day --</asp:ListItem>
-            <asp:ListItem>1</asp:ListItem>
-            <asp:ListItem>2</asp:ListItem>
-            <asp:ListItem>3</asp:ListItem>
-            <asp:ListItem>4</asp:ListItem>
-            <asp:ListItem>5</asp:ListItem>
-            <asp:ListItem>6</asp:ListItem>
-            <asp:ListItem>7</asp:ListItem>
-        </asp:DropDownList> 
-                  
+            <asp:DropDownList ID="ddlAllOrNone" runat="server" AutoPostBack="True">
+                <asp:ListItem>-- choose if all or none --</asp:ListItem>
+                <asp:ListItem>is allornone order</asp:ListItem>
+                <asp:ListItem>not allornone order</asp:ListItem>
+            </asp:DropDownList> 
         </div>
-        <asp:Label ID="LabelAllOrNone" runat="server" Text="Label"></asp:Label>
-        <asp:DropDownList ID="ddlAllOrNone" runat="server" AutoPostBack="True">
-            <asp:ListItem>-- choose if all or none --</asp:ListItem>
-            <asp:ListItem>is allornone order</asp:ListItem>
-            <asp:ListItem>not allornone order</asp:ListItem>
-        </asp:DropDownList> 
-        <div>
 
-        <asp:Label ID="LabelHighPrice" runat="server" Text="Label"></asp:Label>
+        <div id="divStopPrice" runat="server" visible="false">
+            <asp:Label ID="LabelStopPrice" runat="server" Text="stop price"></asp:Label>
+            <div>
+                  <asp:TextBox ID="TextStopPrice" runat="server"></asp:TextBox>
+           </div>
         </div>
-              <asp:TextBox ID="TextHighPrice" runat="server"></asp:TextBox>
-        <div>
 
-        <asp:Label ID="LabelStopPrice" runat="server" Text="Label"></asp:Label>
+        <div id="divMarketPrice" runat="server" visible="false">
+            <asp:Label ID="LabelMarketPrice" runat="server" Text="martket price"></asp:Label>
+            <div>
+                  <asp:TextBox ID="TextMarketPrice" runat="server"></asp:TextBox>
+           </div>
         </div>
-              <asp:TextBox ID="TextStopPrice" runat="server"></asp:TextBox>
-        <div>
 
+        <div id ="divLimitPirce" runat="server" visible="false">
+            <asp:Label ID="LabelLimitPrice" runat="server" Text="limit price" Visible ="false"></asp:Label>
+            <div>
+                  <asp:TextBox ID="TextLimitPrice" runat="server"></asp:TextBox>
+            </div>
         </div>
-    </asp:PlaceHolder>
-</div>
 
-<div>
-    <asp:PlaceHolder ID="buyBondOrderPlaceHolder" runat="server" Visible ="false">
+        <div id ="divBuyStockOrder" runat="server" visible ="false">
+            <asp:Label ID="LabelBuyShares" runat="server" Text="shares to buy (x100)" ></asp:Label>
+            <div>
+                 <asp:TextBox ID="TextBuyShares" runat="server"></asp:TextBox>
+            </div>
+        </div>
+
+        <div id ="divSellStockOrder" runat="server" visible ="false">
+            <asp:Label ID="LabelSellShares" runat="server" Text="amount of shares to sell" ></asp:Label>
+            <div>
+                 <asp:TextBox ID="TextLabelSellShares" runat="server"></asp:TextBox>
+            </div>
+        </div>
+
+    </div>
+
+
+<div id ="divBondOrderDetail" runat="server" visible="false"> 
         <h6>security order: buy bond or unit trust</h6>
 
         <div>
@@ -105,7 +124,6 @@
             <asp:TextBox ID="TextAmount" runat="server"></asp:TextBox>
         </div>
 
-    </asp:PlaceHolder>
 </div>
 
 

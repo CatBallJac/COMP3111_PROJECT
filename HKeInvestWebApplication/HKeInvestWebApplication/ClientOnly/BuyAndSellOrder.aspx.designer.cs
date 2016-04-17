@@ -40,15 +40,6 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.DropDownList ddlSecurityType;
         
         /// <summary>
-        /// divOrder control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divOrder;
-        
-        /// <summary>
         /// labelIsBuyOrSell control.
         /// </summary>
         /// <remarks>
@@ -67,13 +58,13 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.DropDownList ddlIsBuyOrSell;
         
         /// <summary>
-        /// divCode control.
+        /// divCodeAndName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divCode;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divCodeAndName;
         
         /// <summary>
         /// labelCode control.
@@ -103,22 +94,22 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.Label labelSecurityName;
         
         /// <summary>
-        /// TextSecurityName control.
+        /// LabelSecurityNametxt control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextSecurityName;
+        protected global::System.Web.UI.WebControls.Label LabelSecurityNametxt;
         
         /// <summary>
-        /// buyStockOrderPlaceHolder control.
+        /// divStockOrderDetail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder buyStockOrderPlaceHolder;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divStockOrderDetail;
         
         /// <summary>
         /// LabelOrderType control.
@@ -137,24 +128,6 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlOrderType;
-        
-        /// <summary>
-        /// LabelShares control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LabelShares;
-        
-        /// <summary>
-        /// TextShares control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextShares;
         
         /// <summary>
         /// LabelExpiryDay control.
@@ -193,22 +166,13 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.DropDownList ddlAllOrNone;
         
         /// <summary>
-        /// LabelHighPrice control.
+        /// divStopPrice control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LabelHighPrice;
-        
-        /// <summary>
-        /// TextHighPrice control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextHighPrice;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divStopPrice;
         
         /// <summary>
         /// LabelStopPrice control.
@@ -229,13 +193,121 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.TextBox TextStopPrice;
         
         /// <summary>
-        /// buyBondOrderPlaceHolder control.
+        /// divMarketPrice control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder buyBondOrderPlaceHolder;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divMarketPrice;
+        
+        /// <summary>
+        /// LabelMarketPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LabelMarketPrice;
+        
+        /// <summary>
+        /// TextMarketPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextMarketPrice;
+        
+        /// <summary>
+        /// divLimitPirce control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divLimitPirce;
+        
+        /// <summary>
+        /// LabelLimitPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LabelLimitPrice;
+        
+        /// <summary>
+        /// TextLimitPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextLimitPrice;
+        
+        /// <summary>
+        /// divBuyStockOrder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divBuyStockOrder;
+        
+        /// <summary>
+        /// LabelBuyShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LabelBuyShares;
+        
+        /// <summary>
+        /// TextBuyShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextBuyShares;
+        
+        /// <summary>
+        /// divSellStockOrder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divSellStockOrder;
+        
+        /// <summary>
+        /// LabelSellShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LabelSellShares;
+        
+        /// <summary>
+        /// TextLabelSellShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextLabelSellShares;
+        
+        /// <summary>
+        /// divBondOrderDetail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divBondOrderDetail;
         
         /// <summary>
         /// labelAmount control.
