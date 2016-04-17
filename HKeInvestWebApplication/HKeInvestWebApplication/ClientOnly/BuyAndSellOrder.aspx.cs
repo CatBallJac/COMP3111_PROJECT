@@ -54,11 +54,11 @@ namespace HKeInvestWebApplication.ClientOnly
 
             else if (securityType == "bond" || securityType == "unit trust")
                 divBondOrderDetail.Visible = true;
-            else if (securityType == "stock" && IsBuyorSell == "Buy Order")
+            else if (securityType == "stock" && IsBuyorSell == "buy order")
             {
                 divStockOrderDetail.Visible = true;
                 divBuyStockOrder.Visible = true;
-            }else if (securityType == "stock" && IsBuyorSell == "Sell Order")
+            }else if (securityType == "stock" && IsBuyorSell == "sell order")
             {
                 divStockOrderDetail.Visible = true;
                 divSellStockOrder.Visible = true;
@@ -77,9 +77,9 @@ namespace HKeInvestWebApplication.ClientOnly
             string securityType = ddlSecurityType.SelectedValue.Trim();
             ddlCode.Items.Add("-- select security code to buy/sell --");
             if (IsBuyorSell == null || securityType == null) return;
-            if (IsBuyorSell == "Buy Order")
+            if (IsBuyorSell == "buy order")
                 updateBuyCodeData(securityType);
-            else if(IsBuyorSell == "Sell Order")
+            else if(IsBuyorSell == "sell order")
                 updateSellCodeData(securityType);
         }
         protected void updateBuyCodeData(string securityType)
@@ -122,21 +122,21 @@ namespace HKeInvestWebApplication.ClientOnly
             divMarketPrice.Visible = false;
             divStopPrice.Visible = false;
 
-            if (orderType == "market Order")
+            if (orderType == "market order")
             {
                 divMarketPrice.Visible = true;
             }
-            else if (orderType == "limit Order")
+            else if (orderType == "limit order")
             {
                 divLimitPirce.Visible = true;
                 divMarketPrice.Visible = true;
             }
-            else if (orderType == "stop limit Order")
+            else if (orderType == "stop limit order")
             {
                 divStopPrice.Visible = true;
                 divLimitPirce.Visible = true;
             }
-            else if(orderType == "stop Order")
+            else if(orderType == "stop order")
             {
                 divStopPrice.Visible = true;
             }
