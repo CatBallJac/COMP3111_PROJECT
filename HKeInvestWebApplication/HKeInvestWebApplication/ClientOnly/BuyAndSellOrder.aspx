@@ -21,8 +21,8 @@
     <div>
         <asp:DropDownList ID="ddlIsBuyOrSell" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlIsBuyOrSell_SelectedIndexChanged">
             <asp:ListItem>-- choose buy or sell order --</asp:ListItem>
-            <asp:ListItem>Buy Order</asp:ListItem>
-            <asp:ListItem>Sell Order</asp:ListItem>
+            <asp:ListItem>buy order</asp:ListItem>
+            <asp:ListItem>sell order</asp:ListItem>
         </asp:DropDownList>
     </div>
 
@@ -39,6 +39,8 @@
         <div>
             <asp:Label ID="LabelSecurityNametxt" runat="server" ></asp:Label>
         </div>
+        <asp:Label ID="LabelSellLimit" runat="server" Visiable ="false"></asp:Label>
+
     </div>
 
 
@@ -92,8 +94,8 @@
            </div>
         </div>
 
-        <div id ="divLimitPirce" runat="server" visible="false">
-            <asp:Label ID="LabelLimitPrice" runat="server" Text="limit price" Visible ="false"></asp:Label>
+        <div id ="divLimitPirce" runat="server">
+            <asp:Label ID="LabelLimitPrice" runat="server" Text="limit price" ></asp:Label>
             <div>
                   <asp:TextBox ID="TextLimitPrice" runat="server"></asp:TextBox>
             </div>
@@ -116,7 +118,7 @@
     </div>
 
 
-<div id ="divBondOrderDetail" runat="server" visible="false"> 
+    <div id ="divBondOrderDetail" runat="server" visible="false"> 
         <h6>security order: buy bond or unit trust</h6>
 
         <div>
