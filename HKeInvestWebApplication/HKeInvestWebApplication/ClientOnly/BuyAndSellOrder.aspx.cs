@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+//using Microsoft.AspNet.Identity;
+//using Microsoft.AspNet.Identity.Owin;
 using System.Data;
 using HKeInvestWebApplication.Code_File;
 using HKeInvestWebApplication.ExternalSystems.Code_File;
@@ -81,16 +83,19 @@ namespace HKeInvestWebApplication.ClientOnly
                 updateBuyCodeData(securityType);
             else if(IsBuyorSell == "sell order")
                 updateSellCodeData(securityType);
+
+            LabelSellLimit.Visible = false;
         }
+
         protected void updateBuyCodeData(string securityType)
         {
 
             // updateBuyCodeData(securityType);
-            DataTable dtIsBuyorSell = myExternalFunctions.getSecuritiesData(securityType);
-            msg.Text = "there are " + dtIsBuyorSell.Rows.Count.ToString() + " securities available";
-            if (updated == false && dtIsBuyorSell != null && dtIsBuyorSell.Rows.Count != 0)
+            DataTable dtToBuy = myExternalFunctions.getSecuritiesData(securityType);
+            msg.Text = "there are " + dtToBuy.Rows.Count.ToString() + " securities available";
+            if (updated == false && dtToBuy != null && dtToBuy.Rows.Count != 0)
             {
-                foreach (DataRow row in dtIsBuyorSell.Rows)
+                foreach (DataRow row in dtToBuy.Rows)
                 {
                     ddlCode.Items.Add(row["code"].ToString().Trim());
                 }
@@ -100,20 +105,50 @@ namespace HKeInvestWebApplication.ClientOnly
 
         protected void updateSellCodeData(string securityType)
         {
+            string accountNumber = getAccountNumber();
+            string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}'", accountNumber, securityType);
+            DataTable dtToSell = myHKeInvestData.getData(sql);
+            msg.Text = "there are " + dtToSell.Rows.Count.ToString() + " securities available";
             // TODO: UPDATE THE CODE DATE BASED ON THE DATEBASE
+            // msg.Text = "there are " + dtToSell.Rows.Count.ToString() + " securities available";
+            if (updated == false && dtToSell != null && dtToSell.Rows.Count != 0)
+            {
+                foreach (DataRow row in dtToSell.Rows)
+                {
+                    ddlCode.Items.Add(row["code"].ToString().Trim());
+                }
+            }
             updated = true; // after update
+
         }
 
         protected void ddlCode_SelectedIndexChanged(object sender, EventArgs e)
         {
             string securityType = ddlSecurityType.SelectedValue;
             string securityCode = ddlCode.SelectedValue;
+            // 
             if (securityType == "unit trust") securityType = "UnitTrust"; // table name no space
+            msg.Text = securityType + securityCode;
             string sql = string.Format("select name from [{0}] where [code] = '{1}' ", securityType, securityCode);
             string securityName = myExternalData.getData(sql).Rows[0].Field<string>("name");
             LabelSecurityNametxt.Text = securityName;
             updated = true;
+
+            if (ddlIsBuyOrSell.SelectedValue.Trim() == "sell order") showSecuritySharesOwn(securityCode, securityType);
         }
+
+        protected void showSecuritySharesOwn(string securityCode, string securityType)
+        {
+            string accountNumber = getAccountNumber();
+            string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'", accountNumber, securityType, securityCode);
+            // shares
+            DataTable dtShareOwn = myHKeInvestData.getData(sql);
+            decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
+            msg.Text = "have shared " + shares.ToString();
+            LabelSellLimit.Visible = true;
+            LabelSellLimit.Text = "total amount to sell should be less than " + shares.ToString();
+        }
+
 
         protected void ddlOrderType_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -143,5 +178,16 @@ namespace HKeInvestWebApplication.ClientOnly
 
 
         }
+
+        protected string getAccountNumber()
+        {
+            string userName = Context.User.Identity.Name;
+            msg.Text = "welcome " + userName;
+            string sql = string.Format("select accountNumber from [AccountTemp] where [userName] = '{0}' ", userName);
+            string accountNumber = myHKeInvestData.getData(sql).Rows[0].Field<string>("accountNumber");
+           return accountNumber;
+        }
+
+
     }
 }
