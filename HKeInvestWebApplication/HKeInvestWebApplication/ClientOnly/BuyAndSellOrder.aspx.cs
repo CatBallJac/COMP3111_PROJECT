@@ -50,6 +50,8 @@ namespace HKeInvestWebApplication.ClientOnly
             divBondOrderDetail.Visible = false;
             divSellStockOrder.Visible = false;
             divBuyStockOrder.Visible = false;
+            divBondOrderDetail_sell.Visible = false;
+            divBondOrderDetail_buy.Visible = false;
             string IsBuyorSell = rbIsBuyOrSell.SelectedValue.Trim();
             string securityType = rbSecurityType.SelectedValue.Trim();
 
@@ -57,22 +59,35 @@ namespace HKeInvestWebApplication.ClientOnly
             if (securityType == null || IsBuyorSell == null) return;
 
             else if (securityType == "bond" || securityType == "unit trust")
+            {
                 divBondOrderDetail.Visible = true;
+                if (IsBuyorSell == "buy order")
+                {
+                    divBondOrderDetail_buy.Visible = true;
+                }else
+                {
+                    divBondOrderDetail_sell.Visible = true;
+                }
+               
+            }
             else if (securityType == "stock" && IsBuyorSell == "buy order")
             {
                 divStockOrderDetail.Visible = true;
                 divBuyStockOrder.Visible = true;
-            }else if (securityType == "stock" && IsBuyorSell == "sell order")
+            } else if (securityType == "stock" && IsBuyorSell == "sell order")
             {
                 divStockOrderDetail.Visible = true;
                 divSellStockOrder.Visible = true;
             }
+
 
         }
 
         protected void updateCodeData()
         {
             // init
+
+
             LabelSecurityNametxt.Text = "";
             updated = false;
             ddlCode.Items.Clear();
@@ -159,21 +174,21 @@ namespace HKeInvestWebApplication.ClientOnly
             divMarketPrice.Visible = false;
             divStopPrice.Visible = false;
 
-            if (orderType == "market order")
+            if (orderType == "market")
             {
                 divMarketPrice.Visible = true;
             }
-            else if (orderType == "limit order")
+            else if (orderType == "limit")
             {
                 divLimitPirce.Visible = true;
                 divMarketPrice.Visible = true;
             }
-            else if (orderType == "stop limit order")
+            else if (orderType == "stop limit")
             {
                 divStopPrice.Visible = true;
                 divLimitPirce.Visible = true;
             }
-            else if(orderType == "stop order")
+            else if(orderType == "stop")
             {
                 divStopPrice.Visible = true;
             }
@@ -205,7 +220,7 @@ namespace HKeInvestWebApplication.ClientOnly
             // for stock order
             string orderType = rbOrderType.Text.Trim();
             string expiryDay = ddlExpiryDay.Text.Trim();
-            string allOrNone = ddlAllOrNone.Text.Trim();
+            string allOrNone = rbAllOrNone.Text.Trim();
 
             string stopPrice = TextStopPrice.Text.Trim();
             string marketPrice = TextMarketPrice.Text.Trim();

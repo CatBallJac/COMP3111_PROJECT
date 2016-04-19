@@ -166,13 +166,13 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.Label LabelAllOrNone;
         
         /// <summary>
-        /// ddlAllOrNone control.
+        /// rbAllOrNone control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlAllOrNone;
+        protected global::System.Web.UI.WebControls.RadioButtonList rbAllOrNone;
         
         /// <summary>
         /// divStopPrice control.

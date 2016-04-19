@@ -58,7 +58,7 @@
 
         <asp:Label ID="LabelExpiryDay" runat="server" Text="expiry day [1 - 7]"></asp:Label>
         <div>
-            <asp:DropDownList ID="ddlExpiryDay" runat="server" AutoPostBack="True">
+            <asp:DropDownList ID="ddlExpiryDay" runat="server" AutoPostBack="False">
                 <asp:ListItem>-- choose expiry day --</asp:ListItem>
                 <asp:ListItem Selected="True">1</asp:ListItem>
                 <asp:ListItem>2</asp:ListItem>
@@ -72,11 +72,10 @@
 
         <asp:Label ID="LabelAllOrNone" runat="server" Text="order property"></asp:Label>
         <div>
-            <asp:DropDownList ID="ddlAllOrNone" runat="server" AutoPostBack="True">
-                <asp:ListItem>-- choose if all or none --</asp:ListItem>
+            <asp:RadioButtonList ID="rbAllOrNone" runat="server">
                 <asp:ListItem Selected="True">y</asp:ListItem>
                 <asp:ListItem>n</asp:ListItem>
-            </asp:DropDownList> 
+            </asp:RadioButtonList>
         </div>
 
         <div id="divStopPrice" runat="server" visible="false">
