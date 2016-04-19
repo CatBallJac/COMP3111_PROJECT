@@ -30,7 +30,11 @@ namespace HKeInvestWebApplication.ClientOnly
 
         protected void rbSecurityType_SelectedIndexChanged(object sender, EventArgs e)
         {
+<<<<<<< HEAD
             string securityType = rbSecurityType.SelectedValue.Trim();
+=======
+            string securityType = ddlSecurityType.SelectedValue.Trim();
+>>>>>>> 2b5bffd2a434b0ad9121ad168d4992bdf9a9fa98
             if(securityType != null)
             labelIsBuyOrSell.Text = "buy/sell " + securityType + ":";
             updateCodeData();
@@ -189,6 +193,7 @@ namespace HKeInvestWebApplication.ClientOnly
            return accountNumber;
         }
 
+<<<<<<< HEAD
         protected void submitBuyStockOrder(string i)
         {
             // test:
@@ -260,5 +265,11 @@ namespace HKeInvestWebApplication.ClientOnly
 
         }
 
+=======
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            myExternalFunctions.submitStockBuyOrder("22", "3000", "limit", "4", "N", "0.30", null);
+        }
+>>>>>>> 2b5bffd2a434b0ad9121ad168d4992bdf9a9fa98
     }
 }

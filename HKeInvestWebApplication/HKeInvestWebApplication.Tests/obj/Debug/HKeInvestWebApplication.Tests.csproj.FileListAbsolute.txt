@@ -324,3 +324,121 @@ C:\Users\jwengab\Downloads\HKeInvestWebApplication\HKeInvestWebApplication.Tests
 C:\Users\jwengab\Downloads\HKeInvestWebApplication\HKeInvestWebApplication.Tests\obj\Debug\HKeInvestWebApplication.Tests.pdb
 C:\Users\jwengab\Downloads\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\nunit.framework.dll
 C:\Users\jwengab\Downloads\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\nunit.framework.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._csc.exe
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.CodeAnalysis.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.CSharp.Core.targets
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.VisualBasic.Core.targets
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._System.Collections.Immutable.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._System.Reflection.Metadata.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._vbc.exe
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._VBCSCompiler.exe
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._VBCSCompiler.exe.config
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\csc.exe
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\System.Collections.Immutable.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\System.Reflection.Metadata.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\vbc.exe
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\VBCSCompiler.exe
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\VBCSCompiler.exe.config
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\HKeInvestWebApplication.Tests.dll.config
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\HKeInvestWebApplication.Tests.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\HKeInvestWebApplication.Tests.pdb
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\HKeInvestWebApplication.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\System.Web.Optimization.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.Owin.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Security.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.FriendlyUrls.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Owin.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Security.Cookies.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\IdentityManager.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\IdentityManager.AspNetIdentity.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Host.SystemWeb.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\EntityFramework.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Web.Infrastructure.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\HKeInvestWebApplication.pdb
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\nunit.framework.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\System.Web.Optimization.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.Owin.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Security.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.FriendlyUrls.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Security.Cookies.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\IdentityManager.pdb
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\IdentityManager.AspNetIdentity.pdb
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Host.SystemWeb.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\EntityFramework.xml
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\obj\Debug\HKeInvestWebApplication.Tests.csprojResolveAssemblyReference.cache
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\obj\Debug\HKeInvestWebApplication.Tests.dll
+C:\Users\Jacqueline\Desktop\activity\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\obj\Debug\HKeInvestWebApplication.Tests.pdb
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._csc.exe
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.CodeAnalysis.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.CSharp.Core.targets
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._Microsoft.VisualBasic.Core.targets
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._System.Collections.Immutable.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._System.Reflection.Metadata.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._vbc.exe
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._VBCSCompiler.exe
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\._VBCSCompiler.exe.config
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\csc.exe
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\System.Collections.Immutable.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\System.Reflection.Metadata.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\vbc.exe
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\VBCSCompiler.exe
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\roslyn\VBCSCompiler.exe.config
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\HKeInvestWebApplication.Tests.dll.config
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\HKeInvestWebApplication.Tests.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\HKeInvestWebApplication.Tests.pdb
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\HKeInvestWebApplication.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\System.Web.Optimization.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.Owin.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Security.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.FriendlyUrls.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Owin.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Security.Cookies.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\IdentityManager.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\IdentityManager.AspNetIdentity.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Host.SystemWeb.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\EntityFramework.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Web.Infrastructure.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\HKeInvestWebApplication.pdb
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\nunit.framework.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\System.Web.Optimization.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.Owin.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Security.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.FriendlyUrls.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Security.Cookies.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\IdentityManager.pdb
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\IdentityManager.AspNetIdentity.pdb
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\Microsoft.Owin.Host.SystemWeb.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\bin\Debug\EntityFramework.xml
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\obj\Debug\HKeInvestWebApplication.Tests.csprojResolveAssemblyReference.cache
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\obj\Debug\HKeInvestWebApplication.Tests.dll
+C:\Users\Tang Yiyang\Documents\GitHub\Comp3111\COMP3111_PROJECT\HKeInvestWebApplication\HKeInvestWebApplication.Tests\obj\Debug\HKeInvestWebApplication.Tests.pdb
