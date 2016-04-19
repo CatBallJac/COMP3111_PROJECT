@@ -53,7 +53,7 @@
                                 <li><a runat="server" href="ManageUnitTrust.aspx">Unit Trust</a></li>
                             </ul>
                         </li>
-                        <li><a runat="server" href="ManageCurrencyConversion.aspx">Manage Currency Conversion</a></li>
+                        <li><a runat="server" href="ManageCurrencies.aspx">Manage Currencies</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Execute Order<b class="caret"></b></a>
                             <ul class="dropdown-menu">

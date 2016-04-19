@@ -139,5 +139,23 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             }
         }
 
+        public string getOrderReferenceNumber(string sql, SqlTransaction trans)
+        {
+            try
+            {
+                object aggregateValue;
+                SqlCommand SQLCmd = new SqlCommand(sql, ExternalDBConnection);
+                SQLCmd.CommandType = CommandType.Text;
+                SQLCmd.Transaction = trans;
+                aggregateValue = SQLCmd.ExecuteScalar();
+                return (DBNull.Value == aggregateValue ? 0 : Convert.ToInt32(aggregateValue)).ToString("00000000");
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+
     }
 }

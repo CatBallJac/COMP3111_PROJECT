@@ -44,9 +44,9 @@
                             <HeaderStyle HorizontalAlign="Center" VerticalAlign="Middle" Wrap="False" />
                             <ItemStyle HorizontalAlign="Center" Height="30px" VerticalAlign="Middle" Width="40px" Wrap="False" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="$Amount">
+                        <asp:TemplateField HeaderText="#Shares">
                             <ItemTemplate>
-                                <asp:TextBox ID="txtExecuteAmount" runat="server" CssClass="form-control input-sm" Style="text-align: right" 
+                                <asp:TextBox ID="txtExecuteShares" runat="server" CssClass="form-control input-sm" Style="text-align: right" 
                                     Height="25px" MaxLength="13" Width="115px" Wrap="False"></asp:TextBox>
                             </ItemTemplate>
                             <HeaderStyle HorizontalAlign="Center" VerticalAlign="Middle" Wrap="False" />
@@ -68,7 +68,7 @@
                             <HeaderStyle HorizontalAlign="Center" VerticalAlign="Middle" Wrap="False" />
                             <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Wrap="False" />
                         </asp:BoundField>
-                        <asp:BoundField DataField="amount" HeaderText="Amount" DataFormatString="{0:n2}">
+                        <asp:BoundField DataField="shares" HeaderText="Shares" DataFormatString="{0:n}">
                             <HeaderStyle HorizontalAlign="Center" VerticalAlign="Middle" Wrap="False" />
                             <ItemStyle HorizontalAlign="Right" VerticalAlign="Middle" Wrap="False" />
                         </asp:BoundField>
