@@ -26,9 +26,10 @@
              <div class="col-md-4">
                 <asp:CheckBox ID="CheckBoxCode" runat="server" OnCheckedChanged="CheckBoxCode_CheckedChanged" AutoPostBack="true"/>
                 <asp:Label ID="LabelCode" runat="server" Text="Code"></asp:Label>
-                <asp:TextBox ID="TextBoxCode" runat="server" CssClass="form-control" MaxLength="4"></asp:TextBox>
+                <asp:TextBox ID="TextBoxCode" runat="server" CssClass="form-control"></asp:TextBox>
                  <asp:RequiredFieldValidator ID="RequiredCode" ControlToValidate="TextBoxCode" runat="server" ErrorMessage="Code of security is required." Display="Dynamic" CssClass="text-danger" EnableClientScript="false" Enabled="false"></asp:RequiredFieldValidator>
-                <asp:RegularExpressionValidator runat="server"  CssClass="text-danger" Display="Dynamic" ControlToValidate="TextBoxCode" ValidationExpression="^[0-9]$" EnableClientScript="false" ErrorMessage="Must be digital"></asp:RegularExpressionValidator>
+                <asp:RegularExpressionValidator runat="server"  CssClass="text-danger" Display="Dynamic" ControlToValidate="TextBoxCode" ValidationExpression="^[0-9]{0,}$" EnableClientScript="false" ErrorMessage="Must be digital"></asp:RegularExpressionValidator>
+                 <asp:CustomValidator ID="CustomCode" ControlToValidate="TextBoxCode" CssClass="text-danger" Display="Dynamic" EnableClientScript="false" runat="server" ErrorMessage="The security code must contain 1-4 effective digits." OnServerValidate="CustomCode_ServerValidate"></asp:CustomValidator>
             </div>
         </div>
         <div>
