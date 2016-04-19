@@ -67,7 +67,63 @@ namespace HKeInvestWebApplication.ClientOnly
                 updated = true;
             }
 
+            string sql = "select * from [SecurityHolding] where [SecurityHolding].[accountNumber] = '" + accountNumber + "' ";
+            DataTable dtSecurities = myHKeInvestData.getData(sql);
+            decimal totalValue = 0;
+            decimal stockValue = 0;
+            decimal bondValue  = 0;
+            decimal unitTrustValue = 0;
+            decimal freeBalance = 0;
+            string fbSql = "select [initialAccountDepositAmount] from [AccountTemp] where [accountNumber] = '" + accountNumber + "'";
+            DataTable dtDeposit = myHKeInvestData.getData(fbSql);
+            if (dtDeposit == null || dtDeposit.Rows.Count == 0) { }
+            else
+            {
+                foreach (DataRow row in dtDeposit.Rows)
+                {
+                    freeBalance = Convert.ToDecimal(row["initialAccountDepositAmount"]);
+                }
+
+            }
+            foreach (DataRow row in dtSecurities.Rows)
+            {
+                string securityType = row["type"].ToString().Trim();
+                decimal price = myExternalFunctions.getSecuritiesPrice(securityType, row["code"].ToString());
+                totalValue += price * Convert.ToDecimal(row["shares"]);
+                switch (securityType)
+                {
+                    case "stock": 
+                        stockValue += price * Convert.ToDecimal(row["shares"]);
+                        break;
+                    case "bond":
+                        bondValue += price * Convert.ToDecimal(row["shares"]);
+                        break;
+                    case "unit trust":
+                        unitTrustValue += price * Convert.ToDecimal(row["shares"]);
+                        break;
+                    default:
+                        break;
+                }
+                totalValue += freeBalance;
+            }
+            DataTable dtSummary = new DataTable();
+            dtSummary.Columns.Add("totalValue", typeof(decimal));
+            dtSummary.Columns.Add("freeBalance", typeof(decimal));
+            dtSummary.Columns.Add("stockValue", typeof(decimal));
+            dtSummary.Columns.Add("bondValue", typeof(decimal));
+            dtSummary.Columns.Add("unitTrustValue", typeof(decimal));
+            dtSummary.Columns.Add("lastOrderDate", typeof(string));
+            dtSummary.Columns.Add("lastOrderValue", typeof(string));
+
+            dtSummary.Rows.Add(totalValue, freeBalance, stockValue, bondValue, unitTrustValue, "0", "0");
+
+            gvSummary.DataSource = dtSummary;
+            gvSummary.DataBind();
+            //lack of order information and load information to gridview
         }
+
+        
+
         string accountNumber = "";
 
 
