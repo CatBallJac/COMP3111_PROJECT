@@ -188,6 +188,9 @@ namespace HKeInvestWebApplication.ClientOnly
            return accountNumber;
         }
 
-
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            myExternalFunctions.submitStockBuyOrder("22", "3000", "limit", "4", "N", "0.30", null);
+        }
     }
 }

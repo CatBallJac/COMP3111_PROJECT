@@ -6,6 +6,7 @@
     </div>
 
     <h2>Place Order</h2>
+    <asp:Button ID="Button1" runat="server" Text="Button" OnClick="Button1_Click" />
 
     <asp:Label ID="labelSecurityType" runat="server"></asp:Label>
     <div>
