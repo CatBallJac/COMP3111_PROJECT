@@ -210,6 +210,7 @@
     </Content>
     <Content Include="App_Themes\ExternalSystemsTheme\bootstrap.min.css" />
     <Content Include="App_Themes\Theme1\bootstrap.min.css" />
+    <Content Include="ClientOnly\ClientReport.aspx" />
     <Content Include="ClientOnly\ClientSecurityHoldingsDetails.aspx" />
     <Content Include="CoClient.aspx" />
     <Content Include="Contact.aspx" />
@@ -409,6 +410,13 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="ClientOnly\ClientReport.aspx.cs">
+      <DependentUpon>ClientReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\ClientReport.aspx.designer.cs">
+      <DependentUpon>ClientReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ClientOnly\ClientSecurityHoldingsDetails.aspx.cs">
       <DependentUpon>ClientSecurityHoldingsDetails.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
