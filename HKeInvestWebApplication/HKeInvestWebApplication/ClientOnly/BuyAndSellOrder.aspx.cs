@@ -20,6 +20,7 @@ namespace HKeInvestWebApplication.ClientOnly
         HKeInvestCode myHKeInvestCode = new HKeInvestCode();
         ExternalData myExternalData = new ExternalData();
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
+        HKeInvestFunctions myHkeInvestFunctions = new HKeInvestFunctions();
         private static Boolean updated = false;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -27,15 +28,16 @@ namespace HKeInvestWebApplication.ClientOnly
 
         }
 
-        protected void ddlSecurityType_SelectedIndexChanged(object sender, EventArgs e)
+        protected void rbSecurityType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string securityType = ddlSecurityType.SelectedValue.Trim();
+            string securityType = rbSecurityType.SelectedValue.Trim();
             if(securityType != null)
             labelIsBuyOrSell.Text = "buy/sell " + securityType + ":";
             updateCodeData();
             updateOrderDetail();
         }
-        protected void ddlIsBuyOrSell_SelectedIndexChanged(object sender, EventArgs e)
+
+        protected void rbIsBuyOrSell_SelectedIndexChanged(object sender, EventArgs e)
         {
             // update the code data
             updateCodeData();
@@ -48,8 +50,8 @@ namespace HKeInvestWebApplication.ClientOnly
             divBondOrderDetail.Visible = false;
             divSellStockOrder.Visible = false;
             divBuyStockOrder.Visible = false;
-            string IsBuyorSell = ddlIsBuyOrSell.SelectedValue.Trim();
-            string securityType = ddlSecurityType.SelectedValue.Trim();
+            string IsBuyorSell = rbIsBuyOrSell.SelectedValue.Trim();
+            string securityType = rbSecurityType.SelectedValue.Trim();
 
             // visual different part based on oeder type
             if (securityType == null || IsBuyorSell == null) return;
@@ -75,8 +77,8 @@ namespace HKeInvestWebApplication.ClientOnly
             updated = false;
             ddlCode.Items.Clear();
             // load
-            string IsBuyorSell = ddlIsBuyOrSell.SelectedValue.Trim();
-            string securityType = ddlSecurityType.SelectedValue.Trim();
+            string IsBuyorSell = rbIsBuyOrSell.SelectedValue.Trim();
+            string securityType = rbSecurityType.SelectedValue.Trim();
             ddlCode.Items.Add("-- select security code to buy/sell --");
             if (IsBuyorSell == null || securityType == null) return;
             if (IsBuyorSell == "buy order")
@@ -124,7 +126,7 @@ namespace HKeInvestWebApplication.ClientOnly
 
         protected void ddlCode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string securityType = ddlSecurityType.SelectedValue;
+            string securityType = rbSecurityType.SelectedValue;
             string securityCode = ddlCode.SelectedValue;
             // 
             if (securityType == "unit trust") securityType = "UnitTrust"; // table name no space
@@ -134,7 +136,7 @@ namespace HKeInvestWebApplication.ClientOnly
             LabelSecurityNametxt.Text = securityName;
             updated = true;
 
-            if (ddlIsBuyOrSell.SelectedValue.Trim() == "sell order") showSecuritySharesOwn(securityCode, securityType);
+            if (rbIsBuyOrSell.SelectedValue.Trim() == "sell order") showSecuritySharesOwn(securityCode, securityType);
         }
 
         protected void showSecuritySharesOwn(string securityCode, string securityType)
@@ -149,10 +151,9 @@ namespace HKeInvestWebApplication.ClientOnly
             LabelSellLimit.Text = "total amount to sell should be less than " + shares.ToString();
         }
 
-
-        protected void ddlOrderType_SelectedIndexChanged(object sender, EventArgs e)
+        protected void rbOrderType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string orderType = ddlOrderType.SelectedValue.ToString().Trim();
+            string orderType = rbOrderType.SelectedValue.ToString().Trim();
             divLimitPirce.Visible = false;
             divMarketPrice.Visible = false;
             divStopPrice.Visible = false;
@@ -188,6 +189,76 @@ namespace HKeInvestWebApplication.ClientOnly
            return accountNumber;
         }
 
+        protected void submitBuyStockOrder(string i)
+        {
+            // test:
+
+
+        }
+
+        protected void submit_Click(object sender, EventArgs e)
+        {
+            if(!IsValid)
+            {
+                return;
+            }
+            // get all text data:
+            string code = ddlCode.Text.Trim();
+            string shares_buyStock = TextBuyShares.Text.Trim(); // need to * 100
+            string shares_sellStock = TextSellShares.Text.Trim();
+            // for stock order
+            string orderType = rbOrderType.Text.Trim();
+            string expiryDay = ddlExpiryDay.Text.Trim();
+            string allOrNone = ddlAllOrNone.Text.Trim();
+
+            string stopPrice = TextStopPrice.Text.Trim();
+            string marketPrice = TextMarketPrice.Text.Trim();
+            string limitPrice = TextLimitPrice.Text.Trim();
+
+            // for stock high price / low price
+            // if buy order & stock order & allornone & stop limit || limit 
+            string highPrice = limitPrice;
+            // if sell order & stock order & allornone & stop limie || limit
+            string lowPirce = limitPrice;
+
+            // for bonds:
+            string amount_buyBond = TextAmount.Text.Trim();
+            string shares_sellBond = TextShares.Text.Trim();
+            string isBuyOrSell = rbIsBuyOrSell.Text.Trim(); // buy order; sell order
+            string securityType = rbSecurityType.Text.Trim();
+
+
+            if (securityType == "stock" && isBuyOrSell == "buy order")
+            {
+                string shares = shares_buyStock;
+                myHkeInvestFunctions.submitStockBuyOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice);
+            }
+            else if(securityType == "stock" && isBuyOrSell == "sell order")
+            {
+                string shares = shares_sellStock;
+                myHkeInvestFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice);
+            }else if(securityType == "bonds"  && isBuyOrSell == "buy order")
+            {
+                string amount = amount_buyBond;
+                myHkeInvestFunctions.submitBondBuyOrder(code, amount);
+            }else if (securityType == "unit trust" && isBuyOrSell == "buy order")
+            {
+                string amount = amount_buyBond;
+                myHkeInvestFunctions.submitUnitTrustBuyOrder(code, amount);
+            }
+            else if (securityType == "bonds" && isBuyOrSell == "sell order")
+            {
+                string shares = shares_sellBond;
+                myHkeInvestFunctions.submitBondSellOrder(code, shares);
+            }
+            else if (securityType == "unit trust" && isBuyOrSell == "sell order")
+            {
+                string shares = shares_sellBond;
+                myHkeInvestFunctions.submitUnitTrustSellOrder(code, shares);
+            }
+
+
+        }
 
     }
 }

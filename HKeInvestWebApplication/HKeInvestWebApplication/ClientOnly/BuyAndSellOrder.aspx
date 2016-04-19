@@ -9,21 +9,21 @@
 
     <asp:Label ID="labelSecurityType" runat="server"></asp:Label>
     <div>
-        <asp:DropDownList ID="ddlSecurityType" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlSecurityType_SelectedIndexChanged">
-            <asp:ListItem>-- choose security type --</asp:ListItem>
+
+        <asp:RadioButtonList ID="rbSecurityType" runat="server" OnSelectedIndexChanged="rbSecurityType_SelectedIndexChanged" AutoPostBack="True">
             <asp:ListItem>bond</asp:ListItem>
             <asp:ListItem>unit trust</asp:ListItem>
             <asp:ListItem>stock</asp:ListItem>
-        </asp:DropDownList>
+        </asp:RadioButtonList>
     </div>
 
     <asp:Label ID="labelIsBuyOrSell" runat="server"></asp:Label>
     <div>
-        <asp:DropDownList ID="ddlIsBuyOrSell" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlIsBuyOrSell_SelectedIndexChanged">
-            <asp:ListItem>-- choose buy or sell order --</asp:ListItem>
+
+        <asp:RadioButtonList ID="rbIsBuyOrSell" runat="server" OnSelectedIndexChanged="rbIsBuyOrSell_SelectedIndexChanged" AutoPostBack="True">
             <asp:ListItem>buy order</asp:ListItem>
             <asp:ListItem>sell order</asp:ListItem>
-        </asp:DropDownList>
+        </asp:RadioButtonList>
     </div>
 
     <div ID ="divCodeAndName" runat ="server">
@@ -48,13 +48,12 @@
         <h5>security order: stock</h5>
         <asp:Label ID="LabelOrderType" runat="server" Text="order type"></asp:Label>
         <div>
-           <asp:DropDownList ID="ddlOrderType" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlOrderType_SelectedIndexChanged">
-                <asp:ListItem>-- choose order type --</asp:ListItem>
+           <asp:RadioButtonList ID="rbOrderType" runat="server" AutoPostBack="True" OnSelectedIndexChanged="rbOrderType_SelectedIndexChanged">
                 <asp:ListItem>market order</asp:ListItem>
                 <asp:ListItem>limit order</asp:ListItem>
                 <asp:ListItem>stop limit order</asp:ListItem>
                 <asp:ListItem>stop order</asp:ListItem>
-            </asp:DropDownList>
+            </asp:RadioButtonList>
         </div>
 
         <asp:Label ID="LabelExpiryDay" runat="server" Text="expiry day [1 - 7]"></asp:Label>
@@ -75,8 +74,8 @@
         <div>
             <asp:DropDownList ID="ddlAllOrNone" runat="server" AutoPostBack="True">
                 <asp:ListItem>-- choose if all or none --</asp:ListItem>
-                <asp:ListItem>is allornone order</asp:ListItem>
-                <asp:ListItem>not allornone order</asp:ListItem>
+                <asp:ListItem>y</asp:ListItem>
+                <asp:ListItem>nr</asp:ListItem>
             </asp:DropDownList> 
         </div>
 
@@ -94,7 +93,7 @@
            </div>
         </div>
 
-        <div id ="divLimitPirce" runat="server">
+        <div id ="divLimitPirce" runat="server" visible ="false">
             <asp:Label ID="LabelLimitPrice" runat="server" Text="limit price" ></asp:Label>
             <div>
                   <asp:TextBox ID="TextLimitPrice" runat="server"></asp:TextBox>
@@ -111,7 +110,7 @@
         <div id ="divSellStockOrder" runat="server" visible ="false">
             <asp:Label ID="LabelSellShares" runat="server" Text="amount of shares to sell" ></asp:Label>
             <div>
-                 <asp:TextBox ID="TextLabelSellShares" runat="server"></asp:TextBox>
+                 <asp:TextBox ID="TextSellShares" runat="server"></asp:TextBox>
             </div>
         </div>
 
@@ -121,15 +120,22 @@
     <div id ="divBondOrderDetail" runat="server" visible="false"> 
         <h6>security order: buy bond or unit trust</h6>
 
-        <div>
+        <div id ="divBondOrderDetail_buy" runat="server" visible="false"> 
         <asp:Label ID="labelAmount" runat="server" Text="dollar amount to buy (in HKD)"></asp:Label>
             <asp:TextBox ID="TextAmount" runat="server"></asp:TextBox>
         </div>
+        <div id ="divBondOrderDetail_sell" runat="server" visible="false"> 
+        <asp:Label ID="labelShares" runat="server" Text="# shares to sell"></asp:Label>
+            <asp:TextBox ID="TextShares" runat="server"></asp:TextBox>
+        </div>
 
-</div>
+    </div>
+        <div>
+                <asp:Button ID="submit" runat="server" OnClick="submit_Click" Text="submit" />
+        </div>
+
 
 
 
 </asp:Content>
-
 
