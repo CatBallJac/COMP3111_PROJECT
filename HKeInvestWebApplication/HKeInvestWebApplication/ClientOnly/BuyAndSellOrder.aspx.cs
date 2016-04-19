@@ -30,11 +30,7 @@ namespace HKeInvestWebApplication.ClientOnly
 
         protected void rbSecurityType_SelectedIndexChanged(object sender, EventArgs e)
         {
-<<<<<<< HEAD
             string securityType = rbSecurityType.SelectedValue.Trim();
-=======
-            string securityType = ddlSecurityType.SelectedValue.Trim();
->>>>>>> 2b5bffd2a434b0ad9121ad168d4992bdf9a9fa98
             if(securityType != null)
             labelIsBuyOrSell.Text = "buy/sell " + securityType + ":";
             updateCodeData();
@@ -149,6 +145,7 @@ namespace HKeInvestWebApplication.ClientOnly
             string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'", accountNumber, securityType, securityCode);
             // shares
             DataTable dtShareOwn = myHKeInvestData.getData(sql);
+            if (myHKeInvestData.getData(sql).Rows == null) return;
             decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
             msg.Text = "have shared " + shares.ToString();
             LabelSellLimit.Visible = true;
@@ -193,13 +190,6 @@ namespace HKeInvestWebApplication.ClientOnly
            return accountNumber;
         }
 
-<<<<<<< HEAD
-        protected void submitBuyStockOrder(string i)
-        {
-            // test:
-
-
-        }
 
         protected void submit_Click(object sender, EventArgs e)
         {
@@ -207,6 +197,7 @@ namespace HKeInvestWebApplication.ClientOnly
             {
                 return;
             }
+
             // get all text data:
             string code = ddlCode.Text.Trim();
             string shares_buyStock = TextBuyShares.Text.Trim(); // need to * 100
@@ -231,10 +222,15 @@ namespace HKeInvestWebApplication.ClientOnly
             string shares_sellBond = TextShares.Text.Trim();
             string isBuyOrSell = rbIsBuyOrSell.Text.Trim(); // buy order; sell order
             string securityType = rbSecurityType.Text.Trim();
-
-
+            string allmsg = string.Format("0{0}, 1{1},2{2},3{3},4{4},5{5},6{6},7{7},8{8}",
+                                             code, shares_buyStock, shares_sellStock, orderType,
+                                             expiryDay, allOrNone, stopPrice, marketPrice, limitPrice);
+            //System.Diagnostics.Debug.WriteLine(allmsg);
+            Response.Write(allmsg);
+            msg.Text = securityType + isBuyOrSell + " button click ";
             if (securityType == "stock" && isBuyOrSell == "buy order")
             {
+                
                 string shares = shares_buyStock;
                 myHkeInvestFunctions.submitStockBuyOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice);
             }
@@ -265,11 +261,5 @@ namespace HKeInvestWebApplication.ClientOnly
 
         }
 
-=======
-        protected void Button1_Click(object sender, EventArgs e)
-        {
-            myExternalFunctions.submitStockBuyOrder("22", "3000", "limit", "4", "N", "0.30", null);
-        }
->>>>>>> 2b5bffd2a434b0ad9121ad168d4992bdf9a9fa98
     }
 }
