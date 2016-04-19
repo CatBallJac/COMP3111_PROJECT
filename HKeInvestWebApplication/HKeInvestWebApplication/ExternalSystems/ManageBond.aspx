@@ -62,8 +62,8 @@
                                 </EditItemTemplate>
                                 <InsertItemTemplate>
                                     <asp:TextBox ID="txtInsertCode" runat="server" CssClass="form-control input-sm" Height="25px" MaxLength="4" Text='<%# Bind("code") %>' ValidationGroup="InsertBondValidationGroup" Width="55px" Wrap="False" TextMode="Number"></asp:TextBox>
-                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtInsertCode" Display="Dynamic" EnableClientScript="False" ErrorMessage="A value for Code is required." ForeColor="Red" ValidationGroup="InsertBondValidationGroup" CssClass="text-danger"></asp:RequiredFieldValidator>
-                                    <asp:CompareValidator runat="server" ControlToValidate="txtInsertCode" Display="Dynamic" ErrorMessage="The value of Code must be a number." ValidationGroup="InsertBondValidationGroup" CssClass="text-danger" EnableClientScript="False" ForeColor="Red" Operator="DataTypeCheck" Type="Integer"></asp:CompareValidator>
+                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtInsertCode" Display="Dynamic" EnableClientScript="False" ErrorMessage="A value for Code is required." ValidationGroup="InsertBondValidationGroup" CssClass="text-danger"></asp:RequiredFieldValidator>
+                                    <asp:CompareValidator runat="server" ControlToValidate="txtInsertCode" Display="Dynamic" ErrorMessage="The value of Code must be a number." ValidationGroup="InsertBondValidationGroup" CssClass="text-danger" EnableClientScript="False" Operator="DataTypeCheck" Type="Integer"></asp:CompareValidator>
                                 </InsertItemTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label1" runat="server" Text='<%# Bind("code") %>'></asp:Label>
@@ -75,7 +75,7 @@
                                 </EditItemTemplate>
                                 <InsertItemTemplate>
                                     <asp:TextBox ID="txtInsertName" runat="server" Text='<%# Bind("name") %>' CssClass="form-control input-sm" Height="25px" MaxLength="80" ValidationGroup="InsertBondValidationGroup" Width="200px" Wrap="False"></asp:TextBox>
-                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtInsertName" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="A value for Name is required." ForeColor="Red" ValidationGroup="InsertBondValidationGroup"></asp:RequiredFieldValidator>
+                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtInsertName" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="A value for Name is required." ValidationGroup="InsertBondValidationGroup"></asp:RequiredFieldValidator>
                                 </InsertItemTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label2" runat="server" Text='<%# Bind("name") %>'></asp:Label>
@@ -87,7 +87,7 @@
                                 </EditItemTemplate>
                                 <InsertItemTemplate>
                                     <asp:TextBox ID="txtInsertLaunchDate" runat="server" Text='<%# Bind("launchDate") %>' CssClass="form-control input-sm" Height="25px" MaxLength="8" ValidationGroup="InsertBondValidationGroup" Width="90px" Wrap="False"></asp:TextBox>
-                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtInsertLaunchDate" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="A value for Launch Date is required." ForeColor="Red" ValidationGroup="InsertBondValidationGroup"></asp:RequiredFieldValidator>
+                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtInsertLaunchDate" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="A value for Launch Date is required." ValidationGroup="InsertBondValidationGroup"></asp:RequiredFieldValidator>
                                 </InsertItemTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label3" runat="server" Text='<%# Bind("launchDate") %>'></asp:Label>
@@ -101,7 +101,7 @@
                                     <asp:DropDownList ID="ddlInsertBase" runat="server" CssClass="form-control input-sm" Height="25px" ValidationGroup="InsertBondValidationGroup" Width="100px" OnLoad="ddlInsertBase_Load" SelectedValue='<%# Bind("base") %>'>
                                         <asp:ListItem Value="0">-- Select --</asp:ListItem>
                                     </asp:DropDownList>
-                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="ddlInsertBase" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="Please select a base currency." ForeColor="Red" InitialValue="0" ValidationGroup="InsertBondValidationGroup"></asp:RequiredFieldValidator>
+                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="ddlInsertBase" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="Please select a base currency." InitialValue="0" ValidationGroup="InsertBondValidationGroup"></asp:RequiredFieldValidator>
                                 </InsertItemTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label4" runat="server" Text='<%# Bind("base") %>'></asp:Label>
@@ -113,9 +113,9 @@
                                 </EditItemTemplate>
                                 <InsertItemTemplate>
                                     <asp:TextBox ID="txtInsertSize" runat="server" Text='<%# Bind("size") %>' CssClass="form-control input-sm" Height="25px" MaxLength="10" ValidationGroup="InsertBondValidationGroup" Width="110px" Wrap="False" TextMode="Number"></asp:TextBox>
-                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtInsertSize" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="A value for Size is required." ForeColor="Red" ValidationGroup="InsertBondValidationGroup"></asp:RequiredFieldValidator>
-                                    <asp:CompareValidator runat="server" ControlToValidate="txtInsertSize" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of Size must be greater than 0." ForeColor="Red" Operator="GreaterThan" ValidationGroup="InsertBondValidationGroup" ValueToCompare="0" CssClass="text-danger"></asp:CompareValidator>
-                                    <asp:CompareValidator runat="server" ControlToValidate="txtInsertSize" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="Size must be a number." ForeColor="Red" ValidationGroup="InsertBondValidationGroup" Operator="DataTypeCheck" Type="Integer"></asp:CompareValidator>
+                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtInsertSize" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="A value for Size is required." ValidationGroup="InsertBondValidationGroup"></asp:RequiredFieldValidator>
+                                    <asp:CompareValidator runat="server" ControlToValidate="txtInsertSize" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of Size must be greater than 0." Operator="GreaterThan" ValidationGroup="InsertBondValidationGroup" ValueToCompare="0" CssClass="text-danger"></asp:CompareValidator>
+                                    <asp:CompareValidator runat="server" ControlToValidate="txtInsertSize" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="Size must be a number." ValidationGroup="InsertBondValidationGroup" Operator="DataTypeCheck" Type="Integer"></asp:CompareValidator>
                                 </InsertItemTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label5" runat="server" Text='<%# Bind("size") %>'></asp:Label>
@@ -127,9 +127,9 @@
                                 </EditItemTemplate>
                                 <InsertItemTemplate>
                                     <asp:TextBox ID="txtInsertPrice" runat="server" Text='<%# Bind("price") %>' CssClass="form-control input-sm" Height="25px" MaxLength="6" ValidationGroup="InsertBondValidationGroup" Width="70px" Wrap="False" TextMode="Number"></asp:TextBox>
-                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtInsertPrice" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="A value for Price is required." ForeColor="Red" ValidationGroup="InsertBondValidationGroup"></asp:RequiredFieldValidator>
-                                    <asp:CompareValidator runat="server" ControlToValidate="txtInsertPrice" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of Price must be greater than 0." ForeColor="Red" Operator="GreaterThan" ValidationGroup="InsertBondValidationGroup" ValueToCompare="0"></asp:CompareValidator>
-                                    <asp:RegularExpressionValidator runat="server" ControlToValidate="txtInsertPrice" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="Price must be a decimal number less than 999.99." ForeColor="Red" ValidationExpression="^(?!\.?$)\d{0,3}(\.\d{0,2})?$" ValidationGroup="InsertBondValidationGroup"></asp:RegularExpressionValidator>
+                                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtInsertPrice" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="A value for Price is required." ValidationGroup="InsertBondValidationGroup"></asp:RequiredFieldValidator>
+                                    <asp:CompareValidator runat="server" ControlToValidate="txtInsertPrice" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of Price must be greater than 0." Operator="GreaterThan" ValidationGroup="InsertBondValidationGroup" ValueToCompare="0"></asp:CompareValidator>
+                                    <asp:RegularExpressionValidator runat="server" ControlToValidate="txtInsertPrice" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="Price must be a decimal number less than 999.99." ValidationExpression="^(?!\.?$)\d{0,3}(\.\d{0,2})?$" ValidationGroup="InsertBondValidationGroup"></asp:RegularExpressionValidator>
                                 </InsertItemTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label6" runat="server" Text='<%# Bind("price") %>'></asp:Label>
@@ -141,7 +141,7 @@
                                 </EditItemTemplate>
                                 <InsertItemTemplate>
                                     <asp:TextBox ID="txtInsert6Months" runat="server" Text='<%# Bind("sixMonths") %>' CssClass="form-control input-sm" Height="25px" MaxLength="6" ValidationGroup="InsertBondValidationGroup" Width="70px" TextMode="Number" Wrap="False"></asp:TextBox>
-                                    <asp:RegularExpressionValidator runat="server" ControlToValidate="txtInsert6Months" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of 6 Months must be a decimal number less than 999.99." ForeColor="Red" ValidationExpression="^(?!\.?$)\d{0,3}(\.\d{0,2})?$" ValidationGroup="InsertBondValidationGroup"></asp:RegularExpressionValidator>
+                                    <asp:RegularExpressionValidator runat="server" ControlToValidate="txtInsert6Months" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of 6 Months must be a decimal number less than 999.99." ValidationExpression="^(?!\.?$)\d{0,3}(\.\d{0,2})?$" ValidationGroup="InsertBondValidationGroup"></asp:RegularExpressionValidator>
                                 </InsertItemTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label7" runat="server" Text='<%# Bind("sixMonths") %>'></asp:Label>
@@ -153,7 +153,7 @@
                                 </EditItemTemplate>
                                 <InsertItemTemplate>
                                     <asp:TextBox ID="txtInsert1Year" runat="server" Text='<%# Bind("oneYear") %>' CssClass="form-control input-sm" Height="25px" MaxLength="6" TextMode="Number" ValidationGroup="InsertBondValidationGroup" Width="70px" Wrap="False"></asp:TextBox>
-                                    <asp:RegularExpressionValidator runat="server" ControlToValidate="txtInsert1Year" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of 1 Year must be a number less than 999.99." ForeColor="Red" ValidationExpression="^(?!\.?$)\d{0,3}(\.\d{0,2})?$" ValidationGroup="InsertBondValidationGroup"></asp:RegularExpressionValidator>
+                                    <asp:RegularExpressionValidator runat="server" ControlToValidate="txtInsert1Year" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of 1 Year must be a number less than 999.99." ValidationExpression="^(?!\.?$)\d{0,3}(\.\d{0,2})?$" ValidationGroup="InsertBondValidationGroup"></asp:RegularExpressionValidator>
                                 </InsertItemTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label8" runat="server" Text='<%# Bind("oneYear") %>'></asp:Label>
@@ -165,7 +165,7 @@
                                 </EditItemTemplate>
                                 <InsertItemTemplate>
                                     <asp:TextBox ID="txtInsert3Years" runat="server" Text='<%# Bind("threeYears") %>' CssClass="form-control input-sm" Height="25px" TextMode="Number" ValidationGroup="InsertBondValidationGroup" Width="70px" Wrap="False" MaxLength="6"></asp:TextBox>
-                                    <asp:RegularExpressionValidator runat="server" ControlToValidate="txtInsert3Years" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of 3 Years must be a decimal number less than 999.99." ForeColor="Red" ValidationExpression="^(?!\.?$)\d{0,3}(\.\d{0,2})?$" ValidationGroup="InsertBondValidationGroup"></asp:RegularExpressionValidator>
+                                    <asp:RegularExpressionValidator runat="server" ControlToValidate="txtInsert3Years" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of 3 Years must be a decimal number less than 999.99." ValidationExpression="^(?!\.?$)\d{0,3}(\.\d{0,2})?$" ValidationGroup="InsertBondValidationGroup"></asp:RegularExpressionValidator>
                                 </InsertItemTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label9" runat="server" Text='<%# Bind("threeYears") %>'></asp:Label>
@@ -177,7 +177,7 @@
                                 </EditItemTemplate>
                                 <InsertItemTemplate>
                                     <asp:TextBox ID="txtInsertSinceLaunch" runat="server" Text='<%# Bind("sinceLaunch") %>' CssClass="form-control input-sm" Height="25px" MaxLength="6" TextMode="Number" ValidationGroup="InsertBondValidationGroup" Width="70px" Wrap="False"></asp:TextBox>
-                                    <asp:RegularExpressionValidator runat="server" ControlToValidate="txtInsertSinceLaunch" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of Since Launch must be a decimal number less than 999.99." ForeColor="Red" ValidationExpression="^(?!\.?$)\d{0,3}(\.\d{0,2})?$" ValidationGroup="InsertBondValidationGroup"></asp:RegularExpressionValidator>
+                                    <asp:RegularExpressionValidator runat="server" ControlToValidate="txtInsertSinceLaunch" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The value of Since Launch must be a decimal number less than 999.99." ValidationExpression="^(?!\.?$)\d{0,3}(\.\d{0,2})?$" ValidationGroup="InsertBondValidationGroup"></asp:RegularExpressionValidator>
                                 </InsertItemTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="Label10" runat="server" Text='<%# Bind("sinceLaunch") %>'></asp:Label>

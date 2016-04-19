@@ -82,7 +82,7 @@ namespace HKeInvestWebApplication.ExternalSystems
                     return;
                 }
                 decimal buyAmount = Convert.ToDecimal(row.Cells[7].Text);
-                decimal buyShares = buyAmount / buyPrice;
+                decimal buyShares = convertAmountToBase(bondCode, buyAmount) / buyPrice;
 
                 // Create a transaction for the buy order, change the buy order status to completed, update the security price and refresh the buy orders.
                 SqlTransaction trans = myExternalData.beginTransaction();
@@ -152,6 +152,13 @@ namespace HKeInvestWebApplication.ExternalSystems
                 lblSellMessage.CssClass = "label label-" + messageType;
                 lblSellMessage.Visible = true;
             }
+        }
+
+        private decimal convertAmountToBase(string securityCode, decimal amount)
+        {
+            string securityBase = myExternalData.getData("select [base] from [Bond] where [code]='" + securityCode + "'").Rows[0].Field<string>("base");
+            decimal exchangeRate = myExternalFunctions.getCurrencyRate(securityBase);
+            return amount / exchangeRate;
         }
     }
 }
