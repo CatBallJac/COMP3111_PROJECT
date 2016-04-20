@@ -35,7 +35,7 @@ namespace HKeInvestWebApplication
         {
             do
             {
-                string sql = "select [referenceNumber] from [Order] where [status]='pending'";
+                string sql = "select * from [Order] where ([status]='pending' or [status]='partial'";
 
                 DataTable dTpendingOrder = myHKeInvestData.getData(sql);
 
@@ -50,11 +50,19 @@ namespace HKeInvestWebApplication
                 foreach (DataRow row in dTpendingOrder.Rows)
                 {
                     string referenceNumber = row["referenceNumber"].ToString().Trim();
+                    string status = row["status"].ToString().Trim();
+                    string allOrNone = row["allOrNone"].ToString().Trim();
 
-                    string status = myExternalFunctions.getOrderStatus(referenceNumber);
+                    string currentstatus = myExternalFunctions.getOrderStatus(referenceNumber);
 
-                    if (status == null) return;
-                    else if (status == "cancelled")
+                    if (currentstatus == null || status == null) return;
+
+                    if (status == "pending")
+                    {
+                        if (currentstatus == "completed") ;
+                    }
+
+                    else if (currentstatus == "currentstatus")
                     {
                         //hahahah
                         return;
