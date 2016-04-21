@@ -115,7 +115,24 @@ namespace HKeInvestWebApplication.ClientOnly
             dtSummary.Columns.Add("lastOrderDate", typeof(string));
             dtSummary.Columns.Add("lastOrderValue", typeof(string));
 
-            dtSummary.Rows.Add(totalValue, freeBalance, stockValue, bondValue, unitTrustValue, "0", "0");
+            //for last order information
+            
+            sql = "select * from [Order]";
+            DataTable dtOrderDate = myHKeInvestData.getData(sql);
+            DateTime orderTime = new DateTime(1900, 12, 1);
+            
+            foreach (DataRow rows in dtOrderDate.Rows)
+            {
+                DateTime temp = (DateTime)rows["dateSubmitted"];
+                if (DateTime.Compare(temp, orderTime) > 0)
+                {
+                    orderTime = temp;
+                }
+            }
+
+            
+
+            dtSummary.Rows.Add(totalValue, freeBalance, stockValue, bondValue, unitTrustValue, orderTime.ToString(), "0");
 
             gvSummary.DataSource = dtSummary;
             gvSummary.DataBind();
