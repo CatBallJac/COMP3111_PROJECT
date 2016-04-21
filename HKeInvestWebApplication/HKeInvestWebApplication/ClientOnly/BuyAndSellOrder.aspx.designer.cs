@@ -274,6 +274,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator StopPrice;
         
         /// <summary>
+        /// rvStopPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator rvStopPrice;
+        
+        /// <summary>
         /// divMarketPrice control.
         /// </summary>
         /// <remarks>
@@ -308,6 +317,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfMarketPrice;
+        
+        /// <summary>
+        /// rvMarketPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator rvMarketPrice;
         
         /// <summary>
         /// divLimitPirce control.
@@ -346,6 +364,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfLimitPrice;
         
         /// <summary>
+        /// rvLimitPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator rvLimitPrice;
+        
+        /// <summary>
         /// divBuyStockOrder control.
         /// </summary>
         /// <remarks>
@@ -382,6 +409,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfBuyShares;
         
         /// <summary>
+        /// rvBuyShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator rvBuyShares;
+        
+        /// <summary>
         /// divSellStockOrder control.
         /// </summary>
         /// <remarks>
@@ -416,6 +452,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfSellShares;
+        
+        /// <summary>
+        /// rvSellShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator rvSellShares;
         
         /// <summary>
         /// divBondOrderDetail control.
@@ -463,6 +508,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfAmount;
         
         /// <summary>
+        /// rvAmount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator rvAmount;
+        
+        /// <summary>
         /// divBondOrderDetail_sell control.
         /// </summary>
         /// <remarks>
@@ -497,6 +551,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfShares;
+        
+        /// <summary>
+        /// rvShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator rvShares;
         
         /// <summary>
         /// submit control.
