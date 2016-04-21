@@ -210,6 +210,7 @@
     </Content>
     <Content Include="App_Themes\ExternalSystemsTheme\bootstrap.min.css" />
     <Content Include="App_Themes\Theme1\bootstrap.min.css" />
+    <Content Include="ClientOnly\BuyAndSellOrder.aspx" />
     <Content Include="ClientOnly\ClientReport.aspx" />
     <Content Include="ClientOnly\ClientSecurityHoldingsDetails.aspx" />
     <Content Include="CoClient.aspx" />
@@ -410,6 +411,13 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="ClientOnly\BuyAndSellOrder.aspx.cs">
+      <DependentUpon>BuyAndSellOrder.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\BuyAndSellOrder.aspx.designer.cs">
+      <DependentUpon>BuyAndSellOrder.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ClientOnly\ClientReport.aspx.cs">
       <DependentUpon>ClientReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -433,6 +441,7 @@
     </Compile>
     <Compile Include="Code_File\HKeInvestCode.cs" />
     <Compile Include="Code_File\HKeInvestData.cs" />
+    <Compile Include="Code_File\HKeInvestFunctions.cs" />
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

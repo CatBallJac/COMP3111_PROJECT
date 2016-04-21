@@ -56,5 +56,67 @@
                 <RowStyle HorizontalAlign="Left" />
             </asp:GridView>
         </div>
+        <div>
+            <asp:gridview ID="gvOrder" runat="server" Visible="True" AutoGenerateColumns="False">
+        <Columns>
+            <asp:BoundField DataField="referenceNumber" HeaderText="Reference Number"  ReadOnly="True" SortExpression="referenceNumber" />
+            <asp:BoundField DataField="buyOrSell" HeaderText="Buy or Sell" ReadOnly="True" SortExpression="buyOrSell" />
+            <asp:BoundField DataField="securityType" HeaderText="Security Type" ReadOnly="True" SortExpression="securityType" />
+            <asp:BoundField DataField="securityCode" HeaderText="Security Code" ReadOnly="True" SortExpression="bondValue" />
+            <asp:BoundField DataField="securityName" HeaderText="Security Name" ReadOnly="True" SortExpression="securityName" />
+            <asp:BoundField DataField="dateSubmitted" HeaderText="Submitted Date" ReadOnly="True" SortExpression="dateSubmitted" />
+            <asp:BoundField DataField="status" HeaderText="Current Status" ReadOnly="True" SortExpression="status" />
+            <asp:BoundField DataField="amount" HeaderText="Amount" ReadOnly="True"  DataFormatString="{0:n2}" SortExpression="amount" />
+            <asp:BoundField DataField="shares" HeaderText="Quantity of shares" ReadOnly="True" SortExpression="shares" />
+            <asp:BoundField DataField="limitPrice" HeaderText="Limit Price" ReadOnly="True"  DataFormatString="{0:n2}" SortExpression="limitPrice" />
+            <asp:BoundField DataField="stopPrice" HeaderText="Stop Price" ReadOnly="True"  DataFormatString="{0:n2}" SortExpression="stopPrice" />
+            <asp:BoundField DataField="expiryDay" HeaderText="Expiry Date" ReadOnly="True" SortExpression="expiryDay" />
+        </Columns>
+    </asp:gridview>
+        </div>
+    
+        <div>
+            <asp:Label runat="server" Text="Start date"></asp:Label>
+            <asp:Calendar ID="startDate" runat="server"></asp:Calendar>
+        </div>
+        <div>
+            <asp:Label runat="server" Text="End date"></asp:Label>
+            <asp:Calendar ID="endDate" runat="server"></asp:Calendar>
+            <asp:CustomValidator ID="cvDate" runat="server" Display="Dynamic" CssClass="text-danger" EnableClientScript="false"  ControlToValidate="endDate" OnServerValidate="cvDate_ServerValidate"></asp:CustomValidator>
+        </div>
+        <asp:Button ID="searchHistory" runat="server" Text="search" OnClick="searchHistory_Click" />
+        <div>
+        <asp:gridview ID="gvHistory" runat="server" Visible="True" AutoGenerateColumns="False">
+            <Columns>
+                <asp:BoundField DataField="referenceNumber" HeaderText="Reference Number"  ReadOnly="True" SortExpression="referenceNumber" />
+                <asp:BoundField DataField="buyOrSell" HeaderText="Buy or Sell" ReadOnly="True" SortExpression="buyOrSell" />
+                <asp:BoundField DataField="securityType" HeaderText="Security Type" ReadOnly="True" SortExpression="securityType" />
+                <asp:BoundField DataField="securityCode" HeaderText="Security Code" ReadOnly="True" SortExpression="bondValue" />
+                <asp:BoundField DataField="securityName" HeaderText="Security Name" ReadOnly="True" SortExpression="securityName" />
+                <asp:BoundField DataField="dateSubmitted" HeaderText="Submitted Date" ReadOnly="True" SortExpression="dateSubmitted" />
+                <asp:BoundField DataField="status" HeaderText="Current Status" ReadOnly="True" SortExpression="status" />
+                <asp:BoundField DataField="amount" HeaderText="Amount" ReadOnly="True"  DataFormatString="{0:n2}" SortExpression="amount" />
+                <asp:BoundField DataField="shares" HeaderText="Quantity of shares" ReadOnly="True" SortExpression="shares" />
+                <asp:BoundField DataField="executedAmount" HeaderText="Executed amount" ReadOnly="True" SortExpression="executedAmount" />
+                <asp:BoundField DataField="fee" HeaderText="Fee charged" ReadOnly="True" SortExpression="fee" />
+
+            </Columns>
+        </asp:gridview>
+        
+    </div>
+        <asp:Label runat="server" Text="Transaction"></asp:Label>
+        <div>
+        <asp:gridview ID="gvTransaction" runat="server" Visible="True" AutoGenerateColumns="False">
+            <Columns>
+                <asp:BoundField DataField="transactionNumber" HeaderText="Transaction number"  ReadOnly="True" SortExpression="transactionNumber" />
+                <asp:BoundField DataField="executedDate" HeaderText="Executed date" ReadOnly="True" SortExpression="executedDate" />
+                <asp:BoundField DataField="executedShares" HeaderText="Executed shares" ReadOnly="True" SortExpression="executedShares" />
+                <asp:BoundField DataField="price" HeaderText="Price" DataFormatString="{0:n2}" ReadOnly="True" SortExpression="price" />
+            </Columns>
+        </asp:gridview>
+        
+    </div>
+
+        
     </div>
 </asp:Content>

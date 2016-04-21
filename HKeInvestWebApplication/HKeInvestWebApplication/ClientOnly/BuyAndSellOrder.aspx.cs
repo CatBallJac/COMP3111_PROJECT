@@ -18,8 +18,8 @@ namespace HKeInvestWebApplication.ClientOnly
     {
         HKeInvestData myHKeInvestData = new HKeInvestData();
         HKeInvestCode myHKeInvestCode = new HKeInvestCode();
-        ExternalData myExternalData = new ExternalData();
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
+        HKeInvestFunctions myHkeInvestFunctions = new HKeInvestFunctions();
         private static Boolean updated = false;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -27,15 +27,16 @@ namespace HKeInvestWebApplication.ClientOnly
 
         }
 
-        protected void ddlSecurityType_SelectedIndexChanged(object sender, EventArgs e)
+        protected void rbSecurityType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string securityType = ddlSecurityType.SelectedValue.Trim();
-            if(securityType != null)
-            labelIsBuyOrSell.Text = "buy/sell " + securityType + ":";
-            updateCodeData();
+            string securityType = rbSecurityType.SelectedValue.Trim();
+            if (securityType != null)
+                //labelIsBuyOrSell.Text = "buy/sell " + securityType + ":";
+                updateCodeData();
             updateOrderDetail();
         }
-        protected void ddlIsBuyOrSell_SelectedIndexChanged(object sender, EventArgs e)
+
+        protected void rbIsBuyOrSell_SelectedIndexChanged(object sender, EventArgs e)
         {
             // update the code data
             updateCodeData();
@@ -48,40 +49,57 @@ namespace HKeInvestWebApplication.ClientOnly
             divBondOrderDetail.Visible = false;
             divSellStockOrder.Visible = false;
             divBuyStockOrder.Visible = false;
-            string IsBuyorSell = ddlIsBuyOrSell.SelectedValue.Trim();
-            string securityType = ddlSecurityType.SelectedValue.Trim();
+            divBondOrderDetail_sell.Visible = false;
+            divBondOrderDetail_buy.Visible = false;
+            string IsBuyorSell = rbIsBuyOrSell.SelectedValue.Trim();
+            string securityType = rbSecurityType.SelectedValue.Trim();
 
             // visual different part based on oeder type
             if (securityType == null || IsBuyorSell == null) return;
 
             else if (securityType == "bond" || securityType == "unit trust")
+            {
                 divBondOrderDetail.Visible = true;
+                if (IsBuyorSell == "buy order")
+                {
+                    divBondOrderDetail_buy.Visible = true;
+                }
+                else
+                {
+                    divBondOrderDetail_sell.Visible = true;
+                }
+
+            }
             else if (securityType == "stock" && IsBuyorSell == "buy order")
             {
                 divStockOrderDetail.Visible = true;
                 divBuyStockOrder.Visible = true;
-            }else if (securityType == "stock" && IsBuyorSell == "sell order")
+            }
+            else if (securityType == "stock" && IsBuyorSell == "sell order")
             {
                 divStockOrderDetail.Visible = true;
                 divSellStockOrder.Visible = true;
             }
+
 
         }
 
         protected void updateCodeData()
         {
             // init
+
+
             LabelSecurityNametxt.Text = "";
             updated = false;
             ddlCode.Items.Clear();
             // load
-            string IsBuyorSell = ddlIsBuyOrSell.SelectedValue.Trim();
-            string securityType = ddlSecurityType.SelectedValue.Trim();
+            string IsBuyorSell = rbIsBuyOrSell.SelectedValue.Trim();
+            string securityType = rbSecurityType.SelectedValue.Trim();
             ddlCode.Items.Add("-- select security code to buy/sell --");
             if (IsBuyorSell == null || securityType == null) return;
             if (IsBuyorSell == "buy order")
                 updateBuyCodeData(securityType);
-            else if(IsBuyorSell == "sell order")
+            else if (IsBuyorSell == "sell order")
                 updateSellCodeData(securityType);
 
             LabelSellLimit.Visible = false;
@@ -124,17 +142,29 @@ namespace HKeInvestWebApplication.ClientOnly
 
         protected void ddlCode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string securityType = ddlSecurityType.SelectedValue;
+            string securityType = rbSecurityType.SelectedValue;
             string securityCode = ddlCode.SelectedValue;
             // 
-            if (securityType == "unit trust") securityType = "UnitTrust"; // table name no space
+            // if (securityType == "unit trust") securityType = "UnitTrust"; // table name no space
             msg.Text = securityType + securityCode;
-            string sql = string.Format("select name from [{0}] where [code] = '{1}' ", securityType, securityCode);
-            string securityName = myExternalData.getData(sql).Rows[0].Field<string>("name");
+            // string sql = string.Format("select name from [{0}] where [code] = '{1}' ", securityType, securityCode);
+            // string securityName = myExternalData.getData(sql).Rows[0].Field<string>("name");
+            DataTable dtSecurities = myExternalFunctions.getSecuritiesByCode(securityType, securityCode);
+            string securityName = "";
+            if (dtSecurities != null)
+            {
+                securityName = dtSecurities.Rows[0].Field<string>("name");
+            }
+            else
+            {
+                securityName = "no security found";
+            }
+
+
             LabelSecurityNametxt.Text = securityName;
             updated = true;
 
-            if (ddlIsBuyOrSell.SelectedValue.Trim() == "sell order") showSecuritySharesOwn(securityCode, securityType);
+            if (rbIsBuyOrSell.SelectedValue.Trim() == "sell order") showSecuritySharesOwn(securityCode, securityType);
         }
 
         protected void showSecuritySharesOwn(string securityCode, string securityType)
@@ -143,37 +173,41 @@ namespace HKeInvestWebApplication.ClientOnly
             string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'", accountNumber, securityType, securityCode);
             // shares
             DataTable dtShareOwn = myHKeInvestData.getData(sql);
+            if (myHKeInvestData.getData(sql).Rows == null) return;
             decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
             msg.Text = "have shared " + shares.ToString();
             LabelSellLimit.Visible = true;
             LabelSellLimit.Text = "total amount to sell should be less than " + shares.ToString();
         }
 
-
-        protected void ddlOrderType_SelectedIndexChanged(object sender, EventArgs e)
+        protected void rbOrderType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string orderType = ddlOrderType.SelectedValue.ToString().Trim();
+            string orderType = rbOrderType.SelectedValue.ToString().Trim();
             divLimitPirce.Visible = false;
             divMarketPrice.Visible = false;
+            // divStopPrice.Visible = false;
             divStopPrice.Visible = false;
 
-            if (orderType == "market order")
+            if (orderType == "market")
             {
                 divMarketPrice.Visible = true;
             }
-            else if (orderType == "limit order")
+            else if (orderType == "limit")
             {
                 divLimitPirce.Visible = true;
                 divMarketPrice.Visible = true;
             }
-            else if (orderType == "stop limit order")
+            else if (orderType == "stop limit")
             {
                 divStopPrice.Visible = true;
+                // PanelStopPrice.Enabled = true;
+
                 divLimitPirce.Visible = true;
             }
-            else if(orderType == "stop order")
+            else if (orderType == "stop")
             {
                 divStopPrice.Visible = true;
+                // PanelStopPrice.Enabled = true;
             }
 
 
@@ -185,12 +219,90 @@ namespace HKeInvestWebApplication.ClientOnly
             msg.Text = "welcome " + userName;
             string sql = string.Format("select accountNumber from [AccountTemp] where [userName] = '{0}' ", userName);
             string accountNumber = myHKeInvestData.getData(sql).Rows[0].Field<string>("accountNumber");
-           return accountNumber;
+            return accountNumber;
         }
 
-        protected void Button1_Click(object sender, EventArgs e)
+
+        protected void submit_Click(object sender, EventArgs e)
         {
-            myExternalFunctions.submitStockBuyOrder("22", "3000", "limit", "4", "N", "0.30", null);
+            if (!IsValid)
+            {
+                return;
+            }
+
+            // get all text data:
+            string code = ddlCode.Text.Trim();
+            string shares_buyStock = TextBuyShares.Text.Trim(); // need to * 100
+            string shares_sellStock = TextSellShares.Text.Trim();
+            // for stock order
+            string orderType = rbOrderType.Text.Trim();
+            string expiryDay = ddlExpiryDay.Text.Trim();
+            string allOrNone = rbAllOrNone.Text.Trim();
+
+            string stopPrice = TextStopPrice.Text.Trim();
+            string marketPrice = TextMarketPrice.Text.Trim();
+            string limitPrice = TextLimitPrice.Text.Trim();
+
+            // for stock high price / low price
+            // if buy order & stock order & allornone & stop limit || limit 
+            string highPrice = limitPrice;
+            // if sell order & stock order & allornone & stop limie || limit
+            string lowPirce = limitPrice;
+
+            // for bonds:
+            string amount_buyBond = TextAmount.Text.Trim();
+            string shares_sellBond = TextShares.Text.Trim();
+            string isBuyOrSell = rbIsBuyOrSell.Text.Trim(); // buy order; sell order
+            string securityType = rbSecurityType.Text.Trim();
+            string allmsg = string.Format("0{0}, 1{1},2{2},3{3},4{4},5{5},6{6},7{7},8{8}",
+                                             code, shares_buyStock, shares_sellStock, orderType,
+                                             expiryDay, allOrNone, stopPrice, marketPrice, limitPrice);
+            //System.Diagnostics.Debug.WriteLine(allmsg);
+            Response.Write(allmsg);
+            msg.Text = securityType + isBuyOrSell + " button click ";
+            string referenceNumber = "";
+            if (securityType == "stock" && isBuyOrSell == "buy order")
+            {
+
+                string shares = shares_buyStock;
+                referenceNumber = myHkeInvestFunctions.submitStockBuyOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice);
+            }
+            else if (securityType == "stock" && isBuyOrSell == "sell order")
+            {
+                string shares = shares_sellStock;
+                referenceNumber = myHkeInvestFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice);
+            }
+            else if (securityType == "bonds" && isBuyOrSell == "buy order")
+            {
+                string amount = amount_buyBond;
+                referenceNumber = myHkeInvestFunctions.submitBondBuyOrder(code, amount);
+            }
+            else if (securityType == "unit trust" && isBuyOrSell == "buy order")
+            {
+                string amount = amount_buyBond;
+                referenceNumber = myHkeInvestFunctions.submitUnitTrustBuyOrder(code, amount);
+            }
+            else if (securityType == "bonds" && isBuyOrSell == "sell order")
+            {
+                string shares = shares_sellBond;
+                referenceNumber = myHkeInvestFunctions.submitBondSellOrder(code, shares);
+            }
+            else if (securityType == "unit trust" && isBuyOrSell == "sell order")
+            {
+                string shares = shares_sellBond;
+                referenceNumber = myHkeInvestFunctions.submitUnitTrustSellOrder(code, shares);
+            }
+            if (referenceNumber != "" || referenceNumber != null)
+            {
+                LabelResult.Text = "order submitted, reference number: " + referenceNumber;
+            }
+            else
+            {
+                LabelResult.Text = "order submitted failed";
+
+            }
+
         }
+
     }
 }

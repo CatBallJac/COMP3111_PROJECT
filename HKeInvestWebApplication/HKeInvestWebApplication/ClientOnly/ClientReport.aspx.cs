@@ -16,6 +16,7 @@ namespace HKeInvestWebApplication.ClientOnly
         HKeInvestData myHKeInvestData = new HKeInvestData();
         HKeInvestCode myHKeInvestCode = new HKeInvestCode();
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
+        ExternalData myExternalData = new ExternalData();
         private static Boolean updated = false;
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -118,25 +119,147 @@ namespace HKeInvestWebApplication.ClientOnly
             //for last order information
             
             sql = "select * from [Order]";
-            DataTable dtOrderDate = myHKeInvestData.getData(sql);
+            DataTable dtOrder = myHKeInvestData.getData(sql);
             DateTime orderTime = new DateTime(1900, 12, 1);
+            decimal orderValue = 0;
+            string stockOrderType = null;
+            string orderSecurityType = null;
+            string amount = null;
+            decimal shares = 0;
+            decimal limitPrice = 0;
+            decimal stopPrice = 0;
             
-            foreach (DataRow rows in dtOrderDate.Rows)
+            foreach (DataRow rows in dtOrder.Rows)
             {
                 DateTime temp = (DateTime)rows["dateSubmitted"];
-                if (DateTime.Compare(temp, orderTime) > 0)
+                if (rows["status"].ToString().Trim() != "pending")
                 {
-                    orderTime = temp;
+                    if (DateTime.Compare(temp, orderTime) > 0)
+                    {
+                        orderTime = temp;
+                        stockOrderType = rows["stockOrderType"].ToString().Trim();
+                        orderSecurityType = rows["securityType"].ToString().Trim();
+                        if (rows["amount"] != null) amount = rows["amount"].ToString().Trim();
+                        else
+                        {
+                            shares = Convert.ToDecimal(rows["shares"]);
+                            limitPrice = Convert.ToDecimal(rows["limitPrice"]);
+                            stopPrice = Convert.ToDecimal(rows["stopPrice"]);
+                        }
+                    }
+                }              
+            }
+
+            if (orderSecurityType == "bond" || orderSecurityType == "unit trust")
+            {
+                orderValue = Convert.ToDecimal(amount);
+            }
+            else
+            {
+                if (stockOrderType == "limit" || stockOrderType == "stop limit")
+                {
+                    orderValue = shares * limitPrice;
                 }
+                if (stockOrderType == "stop")
+                {
+                    orderValue = shares * stopPrice;
+                }
+
+
+                
             }
 
             
 
-            dtSummary.Rows.Add(totalValue, freeBalance, stockValue, bondValue, unitTrustValue, orderTime.ToString(), "0");
+
+
+            dtSummary.Rows.Add(totalValue, freeBalance, stockValue, bondValue, unitTrustValue, orderTime.ToString(), orderValue.ToString());
 
             gvSummary.DataSource = dtSummary;
             gvSummary.DataBind();
-            //lack of order information and load information to gridview
+
+            //List of orders
+            DataTable dtOrderList=new DataTable();
+            dtOrderList.Columns.Add("referenceNumber", typeof(string));
+            dtOrderList.Columns.Add("buyOrSell", typeof(string));
+            dtOrderList.Columns.Add("securityType", typeof(string));
+            dtOrderList.Columns.Add("securityCode", typeof(string));
+            dtOrderList.Columns.Add("securityName", typeof(string));
+            dtOrderList.Columns.Add("dateSubmitted", typeof(string));
+            dtOrderList.Columns.Add("status", typeof(string));
+            dtOrderList.Columns.Add("amount", typeof(decimal));
+            dtOrderList.Columns.Add("shares", typeof(decimal));
+            dtOrderList.Columns.Add("limitPrice", typeof(decimal));
+            dtOrderList.Columns.Add("stopPrice", typeof(decimal));
+            dtOrderList.Columns.Add("expiryDay", typeof(string));
+
+            sql = "select * from [Order] ";
+            string securityName = null;
+            DataTable dtOrderTable = myHKeInvestData.getData(sql);
+            foreach(DataRow row in dtOrderTable.Rows)
+            {
+                DataTable name = myExternalFunctions.getSecuritiesByName(row["securityType"].ToString().Trim(), row["securityCode"].ToString().Trim());
+                
+                if (name == null || name.Rows.Count == 0)
+                {
+
+                }
+                else
+                {
+                    
+                    foreach(DataRow rows in name.Rows)
+                    {
+                        securityName = rows["name"].ToString().Trim();
+                    }
+
+                }
+                string referenceNumber = row["referenceNumber"].ToString().Trim();
+                string buyOrSell = row["buyOrSell"].ToString().Trim();
+                string securityType = row["securityType"].ToString().Trim();
+                string securityCode = row["securityCode"].ToString().Trim();
+                string dateSubmitted = row["dateSubmitted"].ToString().Trim();
+                string status = row["status"].ToString().Trim();
+                decimal Shares = 0;
+                decimal StopPrice = 0;
+                decimal LimitPrice = 0;
+                decimal Amount = 0;
+                if (securityType == "stock")
+                {
+                    Shares = Convert.ToDecimal(row["shares"]);
+                    if (row["stockOrderType"].ToString().Trim() == "stop")
+                    {
+                        StopPrice = Convert.ToDecimal(row["stopPrice"]);
+                    }
+                    else
+                    {
+                        LimitPrice = Convert.ToDecimal(row["limitPrice"]);
+                    }
+                    
+                }
+                if (securityType == "bond" || securityType == "unit trust")
+                {
+                    if (buyOrSell == "buy")
+                    {
+                        Amount = Convert.ToDecimal(row["amount"]);
+                    }
+                    else
+                    {
+                        shares = Convert.ToDecimal(row["shares"]);
+                    }
+                    
+
+                }
+                
+                string expiryDay = row["expiryDay"].ToString().Trim();
+                
+
+                dtOrderList.Rows.Add(referenceNumber, buyOrSell, securityType, securityCode, securityName, dateSubmitted, status, Amount, Shares, LimitPrice, StopPrice, expiryDay);
+
+
+            }
+            gvOrder.DataSource = dtOrderList;
+            gvOrder.DataBind();
+
         }
 
         
@@ -327,5 +450,103 @@ namespace HKeInvestWebApplication.ClientOnly
 
         }
 
+        protected void cvDate_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            DateTime StartDate = startDate.SelectedDate;
+            DateTime EndDate = endDate.SelectedDate;
+            if (DateTime.Compare(StartDate, DateTime.Now) > 0)
+            {
+                args.IsValid = false;
+                cvDate.ErrorMessage = "Start date must be earlier than current date";
+            }
+            if (DateTime.Compare(StartDate, EndDate) > 0)
+            {
+                args.IsValid = false;
+                cvDate.ErrorMessage = "Start date must be earlier than end date";
+            }
+        }
+
+        protected void searchHistory_Click(object sender, EventArgs e)
+        {
+            if (IsValid == false)
+            {
+                return;
+            }
+
+            DateTime StartDate = startDate.SelectedDate;
+            DateTime EndDate = endDate.SelectedDate;
+            DataTable dtOrderList = new DataTable();
+            dtOrderList.Columns.Add("referenceNumber", typeof(string));
+            dtOrderList.Columns.Add("buyOrSell", typeof(string));
+            dtOrderList.Columns.Add("securityType", typeof(string));
+            dtOrderList.Columns.Add("securityCode", typeof(string));
+            dtOrderList.Columns.Add("securityName", typeof(string));
+            dtOrderList.Columns.Add("dateSubmitted", typeof(string));
+            dtOrderList.Columns.Add("status", typeof(string));
+            dtOrderList.Columns.Add("amount", typeof(decimal));
+            dtOrderList.Columns.Add("shares", typeof(decimal));
+            dtOrderList.Columns.Add("executedAmount", typeof(decimal));
+            dtOrderList.Columns.Add("fee", typeof(decimal));
+            
+
+            string sql = "select * from [Order] ";
+            string securityName = null;
+            DataTable dtOrders = myHKeInvestData.getData(sql);
+            if (dtOrders == null || dtOrders.Rows.Count == 0)
+            {
+
+            }
+            else
+            {
+                foreach(DataRow row in dtOrders.Rows)
+                {
+                    DateTime thisStartDate = Convert.ToDateTime(row["dateSubmitted"]);
+                    if (DateTime.Compare(StartDate, thisStartDate) < 0 && DateTime.Compare(EndDate, thisStartDate)>0)
+                    {
+                        DataTable name = myExternalFunctions.getSecuritiesByName(row["securityType"].ToString().Trim(), row["securityCode"].ToString().Trim());
+
+                        if (name == null || name.Rows.Count == 0)
+                        {
+
+                        }
+                        else
+                        {
+
+                            foreach (DataRow rows in name.Rows)
+                            {
+                                securityName = rows["name"].ToString().Trim();
+                            }
+
+                        }
+
+
+                        string referenceNumber = row["referenceNumber"].ToString().Trim();
+                        string buyOrSell = row["buyOrSell"].ToString().Trim();
+                        string securityType = row["securityType"].ToString().Trim();
+                        string securityCode = row["securityCode"].ToString().Trim();
+                        string dateSubmitted = row["dateSubmitted"].ToString().Trim();
+                        string status = row["status"].ToString().Trim();
+                        decimal eAmount = 0;
+                        decimal Shares = 0;
+                        decimal fee = 0;/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        string sqlTransaction = "selected * from [Transaction] ";
+                        DataTable dtTransaction = myHKeInvestData.getData(sqlTransaction);
+                        if(dtTransaction==null || dtTransaction.Rows.Count == 0)
+                        {
+
+                        }
+                        else
+                        {
+                            foreach(DataRow rows in dtTransaction.Rows)
+                            {
+                                eAmount += Convert.ToDecimal(rows["executeShares"]) * Convert.ToDecimal(rows["executePrice"]);
+                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
