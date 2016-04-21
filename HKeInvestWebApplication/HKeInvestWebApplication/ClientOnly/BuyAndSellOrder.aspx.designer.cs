@@ -40,6 +40,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.RadioButtonList rbSecurityType;
         
         /// <summary>
+        /// rfSecurityType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfSecurityType;
+        
+        /// <summary>
         /// labelIsBuyOrSell control.
         /// </summary>
         /// <remarks>
@@ -56,6 +65,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RadioButtonList rbIsBuyOrSell;
+        
+        /// <summary>
+        /// rfIsBuyOrSell control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfIsBuyOrSell;
         
         /// <summary>
         /// divCodeAndName control.
@@ -83,6 +101,24 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlCode;
+        
+        /// <summary>
+        /// cvCode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvCode;
+        
+        /// <summary>
+        /// rfCode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfCode;
         
         /// <summary>
         /// labelSecurityName control.
@@ -139,6 +175,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.RadioButtonList rbOrderType;
         
         /// <summary>
+        /// rfOrderType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfOrderType;
+        
+        /// <summary>
         /// LabelExpiryDay control.
         /// </summary>
         /// <remarks>
@@ -157,6 +202,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.DropDownList ddlExpiryDay;
         
         /// <summary>
+        /// rfExpiryDay control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfExpiryDay;
+        
+        /// <summary>
         /// LabelAllOrNone control.
         /// </summary>
         /// <remarks>
@@ -173,6 +227,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RadioButtonList rbAllOrNone;
+        
+        /// <summary>
+        /// rfAllOrNone control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfAllOrNone;
         
         /// <summary>
         /// divStopPrice control.
@@ -202,6 +265,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.TextBox TextStopPrice;
         
         /// <summary>
+        /// StopPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator StopPrice;
+        
+        /// <summary>
         /// divMarketPrice control.
         /// </summary>
         /// <remarks>
@@ -227,6 +299,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox TextMarketPrice;
+        
+        /// <summary>
+        /// rfMarketPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfMarketPrice;
         
         /// <summary>
         /// divLimitPirce control.
@@ -256,6 +337,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.TextBox TextLimitPrice;
         
         /// <summary>
+        /// rfLimitPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfLimitPrice;
+        
+        /// <summary>
         /// divBuyStockOrder control.
         /// </summary>
         /// <remarks>
@@ -283,6 +373,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.TextBox TextBuyShares;
         
         /// <summary>
+        /// rfBuyShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfBuyShares;
+        
+        /// <summary>
         /// divSellStockOrder control.
         /// </summary>
         /// <remarks>
@@ -308,6 +407,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox TextSellShares;
+        
+        /// <summary>
+        /// rfSellShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfSellShares;
         
         /// <summary>
         /// divBondOrderDetail control.
@@ -346,6 +454,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.TextBox TextAmount;
         
         /// <summary>
+        /// rfAmount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfAmount;
+        
+        /// <summary>
         /// divBondOrderDetail_sell control.
         /// </summary>
         /// <remarks>
@@ -373,6 +490,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.TextBox TextShares;
         
         /// <summary>
+        /// rfShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfShares;
+        
+        /// <summary>
         /// submit control.
         /// </summary>
         /// <remarks>
@@ -380,5 +506,14 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button submit;
+        
+        /// <summary>
+        /// LabelResult control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LabelResult;
     }
 }

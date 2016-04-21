@@ -134,7 +134,7 @@ namespace HKeInvestWebApplication.Code_File
             + "', 'pending', " + "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL)");
             submitOrder("insert into [Order] values (" + referenceNumber + ",'sell', 'bond', '" + code + "', '" + dateNow
                 + "', 'pending', " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL)");
-            return null;
+            return referenceNumber;
         }
 
         public string submitBondSellOrder(string code, string shares)
@@ -151,7 +151,7 @@ namespace HKeInvestWebApplication.Code_File
 
             submitOrder("insert into [Order] values (" + referenceNumber + ",'sell', 'bond', '" + code + "', '" + dateNow
                 + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL)");
-            return null;
+            return referenceNumber;
         }
 
         public string submitStockBuyOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string highPrice, string stopPrice)
@@ -194,10 +194,11 @@ namespace HKeInvestWebApplication.Code_File
                  sql = sql + "NULL, " + stopPrice.Trim() + ") ";
                  // highPrice = "NULL";
             }
-            else // Order type is stop limit.
+            else if (orderType == "stop limit")// Order type is stop limit.
             {
                   sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ")";
             }
+
             // Submit the order.
 
             //string sql = string.Format("INSERT INTO [Order] (referenceNumber, buyOrSell, securityType, securityCode, dateSubmitted, status, shares, amount, stockOrderType, expiryDay, allOrNone, limitPrice, stopPrice) VALUES ('{0}', '{1}', '{2}','{3}','{4}','{5}', '{6}', '{7}','{8}','{9}','{10}', '{11}', '{12}')",
@@ -217,7 +218,7 @@ namespace HKeInvestWebApplication.Code_File
                                                             stopPrice);
         */
             submitOrder(sql);
-            return null;
+            return referenceNumber;
         }
 
         public string submitStockSellOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string lowPrice, string stopPrice)
@@ -229,9 +230,14 @@ namespace HKeInvestWebApplication.Code_File
             if (!sharesIsValid("stock", shares)) { return null; }
             if (!orderTypeIsValid("sell", orderType, expiryDay.Trim(), allOrNone.Trim(), lowPrice.Trim(), stopPrice.Trim())) { return null; }
             string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
+            string referenceNumber = myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
+            // Construct the basic SQL statement.
+            int referenceNumber_int;
+
+            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
 
             // Construct the basic SQL statement.
-            string sql = "insert into [Order] values ('sell', 'stock', '" + code + "', '" + dateNow + "', 'pending', " +
+            string sql = "insert into [Order] values ("+ referenceNumber + ", 'sell', 'stock', '" + code + "', '" + dateNow + "', 'pending', " +
                 shares.Trim() + ", NULL, '" + orderType.Trim() + "', " + expiryDay.Trim() + ", '" + allOrNone.Trim().ToUpper() + "', ";
 
             // Check for order type and set SQL statement accordingly.
@@ -254,7 +260,8 @@ namespace HKeInvestWebApplication.Code_File
             // Submit the order.
             
                 submitOrder(sql);
-            return myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
+            return referenceNumber;
+                // myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
         }
 
         public string submitUnitTrustBuyOrder(string code, string amount)
@@ -271,7 +278,7 @@ namespace HKeInvestWebApplication.Code_File
             if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
             submitOrder("insert into [Order] values (" + referenceNumber + ", 'buy', 'unit trust', '" + code + "', '" + dateNow
                 + "', 'pending', " + "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL)");
-            return null;
+            return referenceNumber;
 
         }
 
@@ -289,7 +296,7 @@ namespace HKeInvestWebApplication.Code_File
 
             submitOrder("insert into [Order] values (" + referenceNumber + ", 'sell', 'unit trust', '" + code + "', '" + dateNow
                 + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL)");
-            return null;
+            return referenceNumber;
         }
 
         public string getOrderStatus(string referenceNumber)
@@ -343,6 +350,7 @@ namespace HKeInvestWebApplication.Code_File
             DataTable dtSecurities = myExternalFunctions.getSecuritiesByCode(securityType, securityCode);
             if(dtSecurities == null || dtSecurities.Rows.Count == 0)
             {
+                // showError();
                 return false;
             }
             return true;

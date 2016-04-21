@@ -18,7 +18,6 @@ namespace HKeInvestWebApplication.ClientOnly
     {
         HKeInvestData myHKeInvestData = new HKeInvestData();
         HKeInvestCode myHKeInvestCode = new HKeInvestCode();
-        ExternalData myExternalData = new ExternalData();
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
         HKeInvestFunctions myHkeInvestFunctions = new HKeInvestFunctions();
         private static Boolean updated = false;
@@ -32,7 +31,7 @@ namespace HKeInvestWebApplication.ClientOnly
         {
             string securityType = rbSecurityType.SelectedValue.Trim();
             if(securityType != null)
-            labelIsBuyOrSell.Text = "buy/sell " + securityType + ":";
+            //labelIsBuyOrSell.Text = "buy/sell " + securityType + ":";
             updateCodeData();
             updateOrderDetail();
         }
@@ -144,10 +143,21 @@ namespace HKeInvestWebApplication.ClientOnly
             string securityType = rbSecurityType.SelectedValue;
             string securityCode = ddlCode.SelectedValue;
             // 
-            if (securityType == "unit trust") securityType = "UnitTrust"; // table name no space
+            // if (securityType == "unit trust") securityType = "UnitTrust"; // table name no space
             msg.Text = securityType + securityCode;
-            string sql = string.Format("select name from [{0}] where [code] = '{1}' ", securityType, securityCode);
-            string securityName = myExternalData.getData(sql).Rows[0].Field<string>("name");
+            // string sql = string.Format("select name from [{0}] where [code] = '{1}' ", securityType, securityCode);
+            // string securityName = myExternalData.getData(sql).Rows[0].Field<string>("name");
+            DataTable dtSecurities = myExternalFunctions.getSecuritiesByCode(securityType, securityCode);
+            string securityName = "";
+            if (dtSecurities != null)
+            {
+               securityName = dtSecurities.Rows[0].Field<string>("name");
+            }else
+            {
+                securityName = "no security found";
+            }
+
+
             LabelSecurityNametxt.Text = securityName;
             updated = true;
 
@@ -172,6 +182,7 @@ namespace HKeInvestWebApplication.ClientOnly
             string orderType = rbOrderType.SelectedValue.ToString().Trim();
             divLimitPirce.Visible = false;
             divMarketPrice.Visible = false;
+            // divStopPrice.Visible = false;
             divStopPrice.Visible = false;
 
             if (orderType == "market")
@@ -186,11 +197,14 @@ namespace HKeInvestWebApplication.ClientOnly
             else if (orderType == "stop limit")
             {
                 divStopPrice.Visible = true;
+                // PanelStopPrice.Enabled = true;
+
                 divLimitPirce.Visible = true;
             }
             else if(orderType == "stop")
             {
                 divStopPrice.Visible = true;
+                // PanelStopPrice.Enabled = true;
             }
 
 
@@ -243,36 +257,44 @@ namespace HKeInvestWebApplication.ClientOnly
             //System.Diagnostics.Debug.WriteLine(allmsg);
             Response.Write(allmsg);
             msg.Text = securityType + isBuyOrSell + " button click ";
+            string referenceNumber = "";
             if (securityType == "stock" && isBuyOrSell == "buy order")
             {
                 
                 string shares = shares_buyStock;
-                myHkeInvestFunctions.submitStockBuyOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice);
+                referenceNumber = myHkeInvestFunctions.submitStockBuyOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice);
             }
             else if(securityType == "stock" && isBuyOrSell == "sell order")
             {
                 string shares = shares_sellStock;
-                myHkeInvestFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice);
+                referenceNumber = myHkeInvestFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice);
             }else if(securityType == "bonds"  && isBuyOrSell == "buy order")
             {
                 string amount = amount_buyBond;
-                myHkeInvestFunctions.submitBondBuyOrder(code, amount);
+                referenceNumber = myHkeInvestFunctions.submitBondBuyOrder(code, amount);
             }else if (securityType == "unit trust" && isBuyOrSell == "buy order")
             {
                 string amount = amount_buyBond;
-                myHkeInvestFunctions.submitUnitTrustBuyOrder(code, amount);
+                referenceNumber = myHkeInvestFunctions.submitUnitTrustBuyOrder(code, amount);
             }
             else if (securityType == "bonds" && isBuyOrSell == "sell order")
             {
                 string shares = shares_sellBond;
-                myHkeInvestFunctions.submitBondSellOrder(code, shares);
+                referenceNumber = myHkeInvestFunctions.submitBondSellOrder(code, shares);
             }
             else if (securityType == "unit trust" && isBuyOrSell == "sell order")
             {
                 string shares = shares_sellBond;
-                myHkeInvestFunctions.submitUnitTrustSellOrder(code, shares);
+                referenceNumber = myHkeInvestFunctions.submitUnitTrustSellOrder(code, shares);
             }
+            if (referenceNumber != "" || referenceNumber != null)
+            {
+                LabelResult.Text = "order submitted, reference number: " + referenceNumber;
+            }else
+            {
+                LabelResult.Text = "order submitted failed";
 
+            }
 
         }
 
