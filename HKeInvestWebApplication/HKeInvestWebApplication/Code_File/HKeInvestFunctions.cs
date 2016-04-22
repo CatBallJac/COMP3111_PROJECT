@@ -11,10 +11,6 @@ using System.Web;
 
 namespace HKeInvestWebApplication.Code_File
 {
-    //**********************************************************
-    //* THE CODE IN THIS CLASS CANNOT BE MODIFIED OR ADDED TO. *
-    //*        Report problems to 3111rep@cse.ust.hk.          *
-    //**********************************************************
 
     public class HKeInvestFunctions
     {
@@ -165,13 +161,11 @@ namespace HKeInvestWebApplication.Code_File
             int referenceNumber_int;
             if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
             submitOrder("insert into [Order] values (" + referenceNumber + ", 'buy', 'bond', '" + code + "', '" + dateNow
-            + "', 'pending', " + "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL)");
-            submitOrder("insert into [Order] values (" + referenceNumber + ",'sell', 'bond', '" + code + "', '" + dateNow
-                + "', 'pending', " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL)");
+            + "', 'pending', " + "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL, '" + accountNumber +"', 0)");
             return referenceNumber;
         }
 
-        public string submitBondSellOrder(string code, string shares)
+        public string submitBondSellOrder(string code, string shares, string accountNumber)
         {
             // Inserts a bond sell order into the Order table.
             // Check if input is valid.
@@ -184,11 +178,11 @@ namespace HKeInvestWebApplication.Code_File
             if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
 
             submitOrder("insert into [Order] values (" + referenceNumber + ",'sell', 'bond', '" + code + "', '" + dateNow
-                + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL)");
+                + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL, '"+ accountNumber + "', 0)");
             return referenceNumber;
         }
 
-        public string submitStockBuyOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string highPrice, string stopPrice)
+        public string submitStockBuyOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string highPrice, string stopPrice, string accountNumber)
         {
             // Inserts a stock buy order into the Order table.
             // Check if input is valid.
@@ -214,48 +208,39 @@ namespace HKeInvestWebApplication.Code_File
             // Check for order type and set SQL statement accordingly.
             if (orderType == "market")
             {
-                sql = sql + "NULL, NULL)";
+                sql = sql + "NULL, NULL,";
                 // highPrice = "NULL";
                 // stopPrice = "NULL";
             }
             else if (orderType == "limit")
             {
-                sql = sql + highPrice.Trim() + ", NULL)";
+                sql = sql + highPrice.Trim() + ", NULL,";
                 // stopPrice = "NULL";
             }
             else if (orderType == "stop")
             {
+<<<<<<< HEAD
+                 sql = sql + "NULL, " + stopPrice.Trim() + ", ";
+                 // highPrice = "NULL";
+            }
+            else if (orderType == "stop limit")// Order type is stop limit.
+            {
+                  sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ",";
+=======
                 sql = sql + "NULL, " + stopPrice.Trim() + ") ";
                 // highPrice = "NULL";
             }
             else if (orderType == "stop limit")// Order type is stop limit.
             {
                 sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ")";
+>>>>>>> franches
             }
-
-            // Submit the order.
-
-            //string sql = string.Format("INSERT INTO [Order] (referenceNumber, buyOrSell, securityType, securityCode, dateSubmitted, status, shares, amount, stockOrderType, expiryDay, allOrNone, limitPrice, stopPrice) VALUES ('{0}', '{1}', '{2}','{3}','{4}','{5}', '{6}', '{7}','{8}','{9}','{10}', '{11}', '{12}')",
-            /** string sql = string.Format("INSERT INTO [Order]  VALUES ({0}, '{1}', '{2}','{3}','{4}','{5}', {6}, {7},'{8}',{9},'{10}', {11}, {12})",
-                                                            referenceNumber_int,
-                                                            isBuyOrSell,
-                                                            securityType,
-                                                            code,
-                                                            dateNow,
-                                                            status,
-                                                            shares,
-                                                            amount,
-                                                            orderType,
-                                                            expiryDay,
-                                                            allOrNone,
-                                                            highPrice,
-                                                            stopPrice);
-        */
+            sql = sql + "'" +accountNumber + ", 0)";
             submitOrder(sql);
             return referenceNumber;
         }
 
-        public string submitStockSellOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string lowPrice, string stopPrice)
+        public string submitStockSellOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string lowPrice, string stopPrice, string accountNumber)
         {
             // Inserts a stock sell order into the Order table.
             // Check if input is valid.
@@ -277,28 +262,33 @@ namespace HKeInvestWebApplication.Code_File
             // Check for order type and set SQL statement accordingly.
             if (orderType == "market")
             {
-                sql = sql + "NULL, NULL)";
+                sql = sql + "NULL, NULL, ";
             }
             else if (orderType == "limit")
             {
-                sql = sql + lowPrice.Trim() + ", NULL)";
+                sql = sql + lowPrice.Trim() + ", NULL,";
             }
             else if (orderType == "stop")
             {
-                sql = sql + "NULL, " + stopPrice.Trim() + ") ";
+                sql = sql + "NULL, " + stopPrice.Trim() + ", ";
             }
             else // Order type is stop limit.
             {
-                sql = sql + lowPrice.Trim() + ", " + stopPrice.Trim() + ")";
+                sql = sql + lowPrice.Trim() + ", " + stopPrice.Trim() + ",";
             }
             // Submit the order.
+<<<<<<< HEAD
+            sql = sql + "'" + accountNumber + "', 0)";
+                submitOrder(sql);
+=======
 
             submitOrder(sql);
+>>>>>>> franches
             return referenceNumber;
             // myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
         }
 
-        public string submitUnitTrustBuyOrder(string code, string amount)
+        public string submitUnitTrustBuyOrder(string code, string amount, string accountNumber)
         {
             // Inserts a unit trust buy order into the Order table.
             // Check if input is valid.
@@ -311,12 +301,12 @@ namespace HKeInvestWebApplication.Code_File
             int referenceNumber_int;
             if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
             submitOrder("insert into [Order] values (" + referenceNumber + ", 'buy', 'unit trust', '" + code + "', '" + dateNow
-                + "', 'pending', " + "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL)");
+                + "', 'pending', " + "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL, '" + accountNumber + "', 0)");
             return referenceNumber;
 
         }
 
-        public string submitUnitTrustSellOrder(string code, string shares)
+        public string submitUnitTrustSellOrder(string code, string shares, string accountNumber)
         {
             // Inserts a unit trust sell order into the Order table.
             // Check if input is valid.
@@ -329,7 +319,7 @@ namespace HKeInvestWebApplication.Code_File
             if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
 
             submitOrder("insert into [Order] values (" + referenceNumber + ", 'sell', 'unit trust', '" + code + "', '" + dateNow
-                + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL)");
+                + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL, '"+ accountNumber + "', 0)");
             return referenceNumber;
         }
 
@@ -420,7 +410,7 @@ namespace HKeInvestWebApplication.Code_File
 
         private void submitOrder(string sql)
         {
-            System.Web.HttpContext.Current.Response.Write(sql);
+            // System.Web.HttpContext.Current.Response.Write(sql);
             // System.Diagnostics.Debug.WriteLine(sql);
             SqlTransaction trans = myHKeInvestData.beginTransaction();
             myHKeInvestData.setData(sql, trans);
