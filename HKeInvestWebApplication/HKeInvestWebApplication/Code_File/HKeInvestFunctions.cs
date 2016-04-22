@@ -274,8 +274,6 @@ namespace HKeInvestWebApplication.Code_File
                 submitOrder(sql);
 
 
-            submitOrder(sql);
-
             return referenceNumber;
             // myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
         }
