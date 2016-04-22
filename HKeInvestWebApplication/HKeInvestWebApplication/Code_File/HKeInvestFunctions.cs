@@ -135,7 +135,7 @@ namespace HKeInvestWebApplication.Code_File
             return dTpendingOrder;
         }
 
-        public void completeUnitTrustOrder(string referenceNumber, string amount)
+        public void completeSellUnitTrustOrder(string referenceNumber, string amount, string securityCode, string buyOrSell, string accountNumber)
         {
             DataTable dTtransaction = getOrderTransaction(referenceNumber);
             if (dTtransaction == null || dTtransaction.Rows.Count == 0)
@@ -147,7 +147,7 @@ namespace HKeInvestWebApplication.Code_File
             string executeShares = dTtransaction.Rows[0]["executeShares"].ToString().Trim();
             string executePrice = dTtransaction.Rows[0]["executePrice"].ToString().Trim();
 
-            insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares, executePrice);
+            insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares, executePrice, accountNumber);
 
             decimal dAmount;
             decimal.TryParse(amount, out dAmount);
@@ -365,6 +365,46 @@ namespace HKeInvestWebApplication.Code_File
             return null;
         }
 
+        public decimal getBalance(string accountNumber)
+        {
+            // Returns the balance of account number.
+            int number;
+            if (int.TryParse(accountNumber, out number))
+            {
+                DataTable dtBalance = myExternalData.getData("select [balance] from [Account] where [referenceNumber]='" + accountNumber.Trim() + "'");
+                // Return null if no result is returned.
+                if (!(dtBalance == null || dtBalance.Rows.Count == 0))
+                {
+                    return Convert.ToDecimal(dtBalance.Rows[0].Field<string>("balance"));
+                }
+            }
+            return 0;
+        }
+
+        public decimal getCurrentValueOfSecuries(string accountNumber)
+        {
+            int number;
+            decimal value = 0;
+            if (int.TryParse(accountNumber, out number))
+            {
+                DataTable dtSecurities = myExternalData.getData("select * from [SecurityHolding] where [SecurityHolding].[accountNumber] = '" + accountNumber.Trim() + "' ");
+                // Return 0 if no result is returned.
+                if (dtSecurities == null || dtSecurities.Rows.Count == 0)
+                {
+                    return value;
+                }
+                foreach (DataRow row in dtSecurities.Rows)
+                {
+                    string securityType = row["type"].ToString().Trim();
+                    decimal price = myExternalFunctions.getSecuritiesPrice(securityType, row["code"].ToString());
+                    value += price * Convert.ToDecimal(row["shares"]);
+                }
+            }
+            return value;
+        }
+
+        //private 
+
         private void submitOrder(string sql)
         {
             System.Web.HttpContext.Current.Response.Write(sql);
@@ -494,12 +534,13 @@ namespace HKeInvestWebApplication.Code_File
             return true;
         }
 
-        private void insertTransaction(string tansactionNumber, string referenceNumber, string executeDate, string executeShares, string executePrice)
+        private void insertTransaction(string tansactionNumber, string referenceNumber, string executeDate, string executeShares, string executePrice, string accountNumber)
         {
             SqlTransaction trans = myHKeInvestData.beginTransaction();
-            myHKeInvestData.setData("insert into [Transaction]([transactionNumber], [referenceNumber], [executeDate], [executeShares], [executePrice]) values (" +
-                tansactionNumber + ", '" + referenceNumber + "', " + executeDate + ", '" + executeShares + executePrice + "')", trans);
+            myHKeInvestData.setData("insert into [Transaction]([transactionNumber], [referenceNumber], [executeDate], [executeShares], [executePrice], [[accountNumber]]) values (" +
+                tansactionNumber + ", '" + referenceNumber + "', " + executeDate + ", '" + executeShares + ", '" + executePrice + ", '" + accountNumber + "')", trans);
             myHKeInvestData.commitTransaction(trans);
         }
+
     }
 }

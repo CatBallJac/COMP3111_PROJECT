@@ -47,9 +47,10 @@ namespace HKeInvestWebApplication
                     string status = row["status"].ToString().Trim();
                     string securityType = row["securityType"].ToString().Trim();
                     string currentstatus = myExternalFunctions.getOrderStatus(referenceNumber);
+                    string buyOrSell = row["buyOrSell"].ToString().Trim();
+                    string securityCode = row["securityCode"].ToString().Trim();
 
                     string allOrNone = row["allOrNone"].ToString().Trim();
-
 
                     if (currentstatus == null || status == null) return;
 
