@@ -10,6 +10,7 @@ using System.Threading;
 using HKeInvestWebApplication.Code_File;
 using HKeInvestWebApplication.ExternalSystems.Code_File;
 using System.Data;
+using System.Windows.Forms;
 
 namespace HKeInvestWebApplication
 {
@@ -26,10 +27,49 @@ namespace HKeInvestWebApplication
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            //Thread mythread = new Thread(CheckOrder);
-           // mythread.IsBackground = true;
-            //mythread.Start();
+            Thread mythread = new Thread(testThread);
+            mythread.IsBackground = true;
+            mythread.Start();
 
+        }
+
+        private void testThread()
+        {
+            do
+            {
+                //MessageBox.Show("point1");
+                /*
+                DataTable dTpendingOrder = myHKeInvestFunction.getPendingorPartialOrder();
+                if (dTpendingOrder != null)
+                {
+                    foreach (DataRow row in dTpendingOrder.Rows)
+                    {
+                        string referenceNumber = row["referenceNumber"].ToString().Trim();
+                        string status = row["status"].ToString().Trim();
+                        string securityType = row["securityType"].ToString().Trim();
+                        string currentstatus = myExternalFunctions.getOrderStatus(referenceNumber);
+                        string buyOrSell = row["buyOrSell"].ToString().Trim();
+                        string securityCode = row["securityCode"].ToString().Trim();
+                        string accountNumber = row["accountNumber"].ToString().Trim();
+                        string allOrNone = row["allOrNone"].ToString().Trim();
+
+                        if (securityType == "unit trust")
+                        {
+                            string amount = row["amount"].ToString().Trim();
+                            if (currentstatus == "completed")
+                            {
+                                if (buyOrSell == "buy")
+                                {
+                                    myHKeInvestFunction.completeBuyUnitTrustOrder(referenceNumber, amount, securityCode, buyOrSell, accountNumber);
+                                }
+                            }
+                        }
+                        
+                    }
+                    
+                }*/
+                Thread.Sleep(10000);
+            } while (true);
         }
 
         private void CheckOrder()
@@ -38,42 +78,36 @@ namespace HKeInvestWebApplication
             {
                 DataTable dTpendingOrder = myHKeInvestFunction.getPendingorPartialOrder();
 
-                if (dTpendingOrder == null) { return; }
-
-                int j = 1;
-                foreach (DataRow row in dTpendingOrder.Rows)
+                if (dTpendingOrder != null)
                 {
-                    string referenceNumber = row["referenceNumber"].ToString().Trim();
-                    string status = row["status"].ToString().Trim();
-                    string securityType = row["securityType"].ToString().Trim();
-                    string currentstatus = myExternalFunctions.getOrderStatus(referenceNumber);
-                    string buyOrSell = row["buyOrSell"].ToString().Trim();
-                    string securityCode = row["securityCode"].ToString().Trim();
-
-                    string allOrNone = row["allOrNone"].ToString().Trim();
-
-                    if (currentstatus == null || status == null) return;
-
-                    if (securityType == "unit trust")
+                    foreach (DataRow row in dTpendingOrder.Rows)
                     {
-                        string amount = row["amount"].ToString().Trim();
-                        if (currentstatus == "completed") ;
-                    }
+                        string referenceNumber = row["referenceNumber"].ToString().Trim();
+                        string status = row["status"].ToString().Trim();
+                        string securityType = row["securityType"].ToString().Trim();
+                        string currentstatus = myExternalFunctions.getOrderStatus(referenceNumber);
+                        string buyOrSell = row["buyOrSell"].ToString().Trim();
+                        string securityCode = row["securityCode"].ToString().Trim();
+                        string accountNumber = row["accountNumber"].ToString().Trim();
+                        string allOrNone = row["allOrNone"].ToString().Trim();
 
-                    else if (currentstatus == "currentstatus")
-                    {
-                        //hahahah
-                        return;
-                        //string sql3 = "update [Order] set [status]='" + userName + "' where [accountNumber]='" + accountNumber + "'";
-                        //SqlTransaction trans = myInvestData.beginTransaction();
-                        //myInvestData.setData(sql, trans);
-                        //myInvestData.commitTransaction(trans);
-                    }
+                        if (currentstatus == null || status == null) return;
 
-                    j = j + 1;
+                        if (securityType == "unit trust")
+                        {
+                            string amount = row["amount"].ToString().Trim();
+                            if (currentstatus == "completed")
+                            {
+                                if (buyOrSell == "buy")
+                                {
+                                    myHKeInvestFunction.completeBuyUnitTrustOrder(referenceNumber, amount, securityCode, buyOrSell, accountNumber);
+                                }
+                            }
+                        }
+                    }
                 }
 
-                Thread.Sleep(500000);
+                Thread.Sleep(60000);
             } while (true);
 
         }
