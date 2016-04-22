@@ -17,6 +17,7 @@ namespace HKeInvestWebApplication
     {
         HKeInvestData myHKeInvestData = new HKeInvestData();
         HKeInvestCode myHKeInvestCode = new HKeInvestCode();
+        HKeInvestFunctions myHKeInvestFunction = new HKeInvestFunctions();
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
 
         void Application_Start(object sender, EventArgs e)
@@ -35,26 +36,31 @@ namespace HKeInvestWebApplication
         {
             do
             {
-                string sql = "select [referenceNumber] from [Order] where [status]='pending'";
-
-                DataTable dTpendingOrder = myHKeInvestData.getData(sql);
+                DataTable dTpendingOrder = myHKeInvestFunction.getPendingorPartialOrder();
 
                 if (dTpendingOrder == null) { return; }
-
-                if (dTpendingOrder.Rows.Count == 0)              //If no order is pending
-                {
-                    return;
-                }
 
                 int j = 1;
                 foreach (DataRow row in dTpendingOrder.Rows)
                 {
                     string referenceNumber = row["referenceNumber"].ToString().Trim();
+                    string status = row["status"].ToString().Trim();
+                    string securityType = row["securityType"].ToString().Trim();
+                    string currentstatus = myExternalFunctions.getOrderStatus(referenceNumber);
+                    string buyOrSell = row["buyOrSell"].ToString().Trim();
+                    string securityCode = row["securityCode"].ToString().Trim();
 
-                    string status = myExternalFunctions.getOrderStatus(referenceNumber);
+                    string allOrNone = row["allOrNone"].ToString().Trim();
 
-                    if (status == null) return;
-                    else if (status == "cancelled")
+                    if (currentstatus == null || status == null) return;
+
+                    if (securityType == "unit trust")
+                    {
+                        string amount = row["amount"].ToString().Trim();
+                        if (currentstatus == "completed") ;
+                    }
+
+                    else if (currentstatus == "currentstatus")
                     {
                         //hahahah
                         return;

@@ -115,7 +115,41 @@ namespace HKeInvestWebApplication.Code_File
             }
         }
 
-        public string submitBondBuyOrder(string code, string amount, string accountNumber)
+        public DataTable getPendingorPartialOrder()
+        {
+            // Returns all pending or partial orders
+            DataTable dTpendingOrder = new DataTable();
+            string sql = "select * from [Order] where ([status]='pending' or [status]='partial'";
+
+            dTpendingOrder = myHKeInvestData.getData(sql);
+
+            // Return null if no result is returned.
+            if (dTpendingOrder == null || dTpendingOrder.Rows.Count == 0)
+            {
+                return null;
+            }
+            return dTpendingOrder;
+        }
+
+        public void completeSellUnitTrustOrder(string referenceNumber, string amount, string securityCode, string buyOrSell, string accountNumber)
+        {
+            DataTable dTtransaction = getOrderTransaction(referenceNumber);
+            if (dTtransaction == null || dTtransaction.Rows.Count == 0)
+            {
+                return;
+            }
+            string tansactionNumber = dTtransaction.Rows[0]["tansactionNumber"].ToString().Trim();
+            string executeDate = dTtransaction.Rows[0]["executeDate"].ToString().Trim();
+            string executeShares = dTtransaction.Rows[0]["executeShares"].ToString().Trim();
+            string executePrice = dTtransaction.Rows[0]["executePrice"].ToString().Trim();
+
+            insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares, executePrice, accountNumber);
+
+            decimal dAmount;
+            decimal.TryParse(amount, out dAmount);
+        }
+
+        public string submitBondBuyOrder(string code, string amount)
         {
             // Inserts a bond buy order into the Order table.
             // Check if input is valid.
@@ -168,7 +202,7 @@ namespace HKeInvestWebApplication.Code_File
             int referenceNumber_int;
 
             if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
-            string sql = "insert into [Order] values ('"+referenceNumber+"','buy', 'stock', '" + code + "', '" + dateNow + "', 'pending', " +
+            string sql = "insert into [Order] values ('" + referenceNumber + "','buy', 'stock', '" + code + "', '" + dateNow + "', 'pending', " +
                 shares.Trim() + ", NULL, '" + orderType.Trim() + "', " + expiryDay.Trim() + ", '" + allOrNone.Trim().ToUpper() + "', ";
 
             // Check for order type and set SQL statement accordingly.
@@ -185,12 +219,21 @@ namespace HKeInvestWebApplication.Code_File
             }
             else if (orderType == "stop")
             {
+<<<<<<< HEAD
                  sql = sql + "NULL, " + stopPrice.Trim() + ", ";
                  // highPrice = "NULL";
             }
             else if (orderType == "stop limit")// Order type is stop limit.
             {
                   sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ",";
+=======
+                sql = sql + "NULL, " + stopPrice.Trim() + ") ";
+                // highPrice = "NULL";
+            }
+            else if (orderType == "stop limit")// Order type is stop limit.
+            {
+                sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ")";
+>>>>>>> franches
             }
             sql = sql + "'" +accountNumber + ", 0)";
             submitOrder(sql);
@@ -213,7 +256,7 @@ namespace HKeInvestWebApplication.Code_File
             if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
 
             // Construct the basic SQL statement.
-            string sql = "insert into [Order] values ("+ referenceNumber + ", 'sell', 'stock', '" + code + "', '" + dateNow + "', 'pending', " +
+            string sql = "insert into [Order] values (" + referenceNumber + ", 'sell', 'stock', '" + code + "', '" + dateNow + "', 'pending', " +
                 shares.Trim() + ", NULL, '" + orderType.Trim() + "', " + expiryDay.Trim() + ", '" + allOrNone.Trim().ToUpper() + "', ";
 
             // Check for order type and set SQL statement accordingly.
@@ -234,10 +277,15 @@ namespace HKeInvestWebApplication.Code_File
                 sql = sql + lowPrice.Trim() + ", " + stopPrice.Trim() + ",";
             }
             // Submit the order.
+<<<<<<< HEAD
             sql = sql + "'" + accountNumber + "', 0)";
                 submitOrder(sql);
+=======
+
+            submitOrder(sql);
+>>>>>>> franches
             return referenceNumber;
-                // myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
+            // myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
         }
 
         public string submitUnitTrustBuyOrder(string code, string amount, string accountNumber)
@@ -307,14 +355,54 @@ namespace HKeInvestWebApplication.Code_File
             return null;
         }
 
+        public decimal getBalance(string accountNumber)
+        {
+            // Returns the balance of account number.
+            int number;
+            if (int.TryParse(accountNumber, out number))
+            {
+                DataTable dtBalance = myExternalData.getData("select [balance] from [Account] where [referenceNumber]='" + accountNumber.Trim() + "'");
+                // Return null if no result is returned.
+                if (!(dtBalance == null || dtBalance.Rows.Count == 0))
+                {
+                    return Convert.ToDecimal(dtBalance.Rows[0].Field<string>("balance"));
+                }
+            }
+            return 0;
+        }
+
+        public decimal getCurrentValueOfSecuries(string accountNumber)
+        {
+            int number;
+            decimal value = 0;
+            if (int.TryParse(accountNumber, out number))
+            {
+                DataTable dtSecurities = myExternalData.getData("select * from [SecurityHolding] where [SecurityHolding].[accountNumber] = '" + accountNumber.Trim() + "' ");
+                // Return 0 if no result is returned.
+                if (dtSecurities == null || dtSecurities.Rows.Count == 0)
+                {
+                    return value;
+                }
+                foreach (DataRow row in dtSecurities.Rows)
+                {
+                    string securityType = row["type"].ToString().Trim();
+                    decimal price = myExternalFunctions.getSecuritiesPrice(securityType, row["code"].ToString());
+                    value += price * Convert.ToDecimal(row["shares"]);
+                }
+            }
+            return value;
+        }
+
+        //private 
+
         private void submitOrder(string sql)
         {
             // System.Web.HttpContext.Current.Response.Write(sql);
             // System.Diagnostics.Debug.WriteLine(sql);
             SqlTransaction trans = myHKeInvestData.beginTransaction();
             myHKeInvestData.setData(sql, trans);
-//            string referenceNumber = myExternalFunctions.submitOrder(sql);
-                //myExternalData.getOrderReferenceNumber("select max([referenceNumber]) from [Order]", trans);
+            //            string referenceNumber = myExternalFunctions.submitOrder(sql);
+            //myExternalData.getOrderReferenceNumber("select max([referenceNumber]) from [Order]", trans);
             myHKeInvestData.commitTransaction(trans);
             //            return referenceNumber;
             //            return sql;
@@ -324,7 +412,7 @@ namespace HKeInvestWebApplication.Code_File
         private bool securityCodeIsValid(string securityType, string securityCode)
         {
             DataTable dtSecurities = myExternalFunctions.getSecuritiesByCode(securityType, securityCode);
-            if(dtSecurities == null || dtSecurities.Rows.Count == 0)
+            if (dtSecurities == null || dtSecurities.Rows.Count == 0)
             {
                 // showError();
                 return false;
@@ -435,5 +523,14 @@ namespace HKeInvestWebApplication.Code_File
             }
             return true;
         }
+
+        private void insertTransaction(string tansactionNumber, string referenceNumber, string executeDate, string executeShares, string executePrice, string accountNumber)
+        {
+            SqlTransaction trans = myHKeInvestData.beginTransaction();
+            myHKeInvestData.setData("insert into [Transaction]([transactionNumber], [referenceNumber], [executeDate], [executeShares], [executePrice], [[accountNumber]]) values (" +
+                tansactionNumber + ", '" + referenceNumber + "', " + executeDate + ", '" + executeShares + ", '" + executePrice + ", '" + accountNumber + "')", trans);
+            myHKeInvestData.commitTransaction(trans);
+        }
+
     }
 }
