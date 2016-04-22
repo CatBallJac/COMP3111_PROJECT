@@ -149,7 +149,7 @@ namespace HKeInvestWebApplication.Code_File
             decimal.TryParse(amount, out dAmount);
         }
 
-        public string submitBondBuyOrder(string code, string amount)
+        public string submitBondBuyOrder(string code, string amount, string accountNumber)
         {
             // Inserts a bond buy order into the Order table.
             // Check if input is valid.
@@ -219,21 +219,13 @@ namespace HKeInvestWebApplication.Code_File
             }
             else if (orderType == "stop")
             {
-<<<<<<< HEAD
+
                  sql = sql + "NULL, " + stopPrice.Trim() + ", ";
                  // highPrice = "NULL";
             }
             else if (orderType == "stop limit")// Order type is stop limit.
             {
                   sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ",";
-=======
-                sql = sql + "NULL, " + stopPrice.Trim() + ") ";
-                // highPrice = "NULL";
-            }
-            else if (orderType == "stop limit")// Order type is stop limit.
-            {
-                sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ")";
->>>>>>> franches
             }
             sql = sql + "'" +accountNumber + ", 0)";
             submitOrder(sql);
@@ -277,13 +269,11 @@ namespace HKeInvestWebApplication.Code_File
                 sql = sql + lowPrice.Trim() + ", " + stopPrice.Trim() + ",";
             }
             // Submit the order.
-<<<<<<< HEAD
+
             sql = sql + "'" + accountNumber + "', 0)";
                 submitOrder(sql);
-=======
 
-            submitOrder(sql);
->>>>>>> franches
+
             return referenceNumber;
             // myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
         }
