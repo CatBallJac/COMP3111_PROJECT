@@ -101,6 +101,7 @@ namespace HKeInvestWebApplication.ClientOnly
                 updateSellCodeData(securityType);
 
             LabelSellLimit.Visible = false;
+            TextMaxiShares.Visible = false;
         }
 
         protected void updateBuyCodeData(string securityType)
@@ -164,17 +165,20 @@ namespace HKeInvestWebApplication.ClientOnly
                 showSecuritySharesOwn(securityCode, securityType);
         }
 
-        protected void showSecuritySharesOwn(string securityCode, string securityType)
+        protected string showSecuritySharesOwn(string securityCode, string securityType)
         {
             string accountNumber = getAccountNumber();
             string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'", accountNumber, securityType, securityCode);
             // shares
             DataTable dtShareOwn = myHKeInvestData.getData(sql);
-            if (myHKeInvestData.getData(sql).Rows == null) return;
+            if (myHKeInvestData.getData(sql).Rows == null) return null;
             decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
             msg.Text = "have shared " + shares.ToString();
             LabelSellLimit.Visible = true;
-            LabelSellLimit.Text = "total amount to sell should be less than " + shares.ToString();
+            TextMaxiShares.Visible = true;
+            LabelSellLimit.Text = "total amount to sell should be less than ";
+            TextMaxiShares.Text = shares.ToString().Trim();
+            return shares.ToString();
         }
 
         protected void rbOrderType_SelectedIndexChanged(object sender, EventArgs e)
@@ -273,7 +277,9 @@ namespace HKeInvestWebApplication.ClientOnly
             {
                 string shares = shares_sellStock;
                 referenceNumber = myHkeInvestFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice, accountNumber);
-            }else if(securityType == "bond"  && isBuyOrSell == "buy order")
+            }
+
+            else if(securityType == "bond"  && isBuyOrSell == "buy order")
             {
                 string amount = amount_buyBond;
                 referenceNumber = myHkeInvestFunctions.submitBondBuyOrder(code, amount, accountNumber);
@@ -282,6 +288,8 @@ namespace HKeInvestWebApplication.ClientOnly
                 string amount = amount_buyBond;
                 referenceNumber = myHkeInvestFunctions.submitUnitTrustBuyOrder(code, amount, accountNumber);
             }
+
+
             else if (securityType == "bond" && isBuyOrSell == "sell order")
             {
                 string shares = shares_sellBond;
@@ -292,6 +300,8 @@ namespace HKeInvestWebApplication.ClientOnly
                 string shares = shares_sellBond;
                 referenceNumber = myHkeInvestFunctions.submitUnitTrustSellOrder(code, shares, accountNumber);
             }
+
+
             if (referenceNumber != "" || referenceNumber != null)
             {
                 LabelResult.Text = "order submitted, reference number: " + referenceNumber;
@@ -312,6 +322,42 @@ namespace HKeInvestWebApplication.ClientOnly
                 args.IsValid = false;
             }
            
+        }
+
+        protected void cvSellShares_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            decimal number;
+            string shares = TextSellShares.Text.ToString().Trim();
+            decimal sharesOwn;
+            
+            decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn);
+            msg.Text = sharesOwn.ToString();
+            
+            if (decimal.TryParse(shares, out number) && number > sharesOwn)
+            {
+                cvSellShares.ErrorMessage = " amount exceed maximum";
+                args.IsValid = false;
+            }
+            msg.Text = number.ToString();
+
+
+
+        }
+
+        protected void cvShares_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            string shares_buyStock = TextBuyShares.Text.Trim() + "00";
+            decimal number;
+            string shares = TextSellShares.Text.ToString().Trim();
+            decimal sharesOwn;
+            decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn);
+            msg.Text = sharesOwn.ToString();
+            if (decimal.TryParse(shares_buyStock, out number) && number > sharesOwn)
+            {
+                cvSellShares.ErrorMessage = " amount exceed maximum";
+                args.IsValid = false;
+            }
+            msg.Text = number.ToString();
         }
     }
 }

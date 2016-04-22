@@ -45,6 +45,8 @@
         </div>
         <asp:Label ID="LabelSellLimit" runat="server" Visiable ="false"> </asp:Label>
 
+        <asp:TextBox ID="TextMaxiShares" runat="server" ReadOnly="True"></asp:TextBox>
+
     </div>
     
     <div id="divStockOrderDetail" runat="server" >
@@ -92,7 +94,7 @@
             <div>
                   <asp:TextBox ID="TextStopPrice" runat="server" MaxLength="9"></asp:TextBox>
                   <asp:RequiredFieldValidator ID="StopPrice" runat="server" ErrorMessage="Stop Price required" ControlToValidate="TextStopPrice" Display="Dynamic"></asp:RequiredFieldValidator>
-                  <asp:RegularExpressionValidator ID="rvStopPrice" runat="server" ErrorMessage="price has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,2}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,2}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextStopPrice" Display="Dynamic"></asp:RegularExpressionValidator>
+                  <asp:RegularExpressionValidator ID="rvStopPrice" runat="server" ErrorMessage="price has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,3}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,3}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextStopPrice" Display="Dynamic"></asp:RegularExpressionValidator>
            </div>
         </div>
     
@@ -103,7 +105,7 @@
             <div>
                   <asp:TextBox ID="TextMarketPrice" runat="server" MaxLength="9"></asp:TextBox>
                   <asp:RequiredFieldValidator ID="rfMarketPrice" runat="server" ErrorMessage="Market Price required" ControlToValidate="TextMarketPrice"></asp:RequiredFieldValidator>
-                  <asp:RegularExpressionValidator ID="rvMarketPrice" runat="server" ErrorMessage="price has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,2}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,2}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextMarketPrice" Display="Dynamic"></asp:RegularExpressionValidator>
+                  <asp:RegularExpressionValidator ID="rvMarketPrice" runat="server" ErrorMessage="price has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,3}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,3}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextMarketPrice" Display="Dynamic"></asp:RegularExpressionValidator>
            </div>
         </div>
         
@@ -114,7 +116,7 @@
             <div>
                   <asp:TextBox ID="TextLimitPrice" runat="server" MaxLength="9"></asp:TextBox>
                 <asp:RequiredFieldValidator ID="rfLimitPrice" runat="server" ErrorMessage="limit price are required" ControlToValidate="TextLimitPrice"></asp:RequiredFieldValidator>
-                <asp:RegularExpressionValidator ID="rvLimitPrice" runat="server" ErrorMessage="price has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,2}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,2}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextLimitPrice" Display="Dynamic"></asp:RegularExpressionValidator>
+                <asp:RegularExpressionValidator ID="rvLimitPrice" runat="server" ErrorMessage="price has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,3}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,3}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextLimitPrice" Display="Dynamic"></asp:RegularExpressionValidator>
             </div>
         </div>
       
@@ -126,7 +128,7 @@
                  <asp:TextBox ID="TextBuyShares" runat="server" MaxLength="13"></asp:TextBox>
                 &nbsp;X 100
                 <asp:RequiredFieldValidator ID="rfBuyShares" runat="server" ErrorMessage="buy shares are required" ControlToValidate="TextBuyShares" Display="Dynamic"></asp:RequiredFieldValidator>
-                <asp:RegularExpressionValidator ID="rvBuyShares" runat="server" ErrorMessage="share amount has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,10}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,10}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextBuyShares" Display="Dynamic"></asp:RegularExpressionValidator>
+                <asp:RegularExpressionValidator ID="rvBuyShares" runat="server" ErrorMessage="share amount has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,9}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,9}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextBuyShares" Display="Dynamic"></asp:RegularExpressionValidator>
             </div>
         </div>
     
@@ -136,8 +138,10 @@
             <asp:Label ID="LabelSellShares" runat="server" Text="amount of shares to sell" ></asp:Label>
             <div>
                  <asp:TextBox ID="TextSellShares" runat="server" MaxLength="13"></asp:TextBox>
-                <asp:RequiredFieldValidator ID="rfSellShares" runat="server" ErrorMessage="sell shares are required" ControlToValidate="TextSellShares"></asp:RequiredFieldValidator>
-                <asp:RegularExpressionValidator ID="rvSellShares" runat="server" ErrorMessage="share amount has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,10}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,10}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextSellShares"></asp:RegularExpressionValidator>
+                 <asp:CustomValidator ID="cvSellShares" runat="server" ControlToValidate="TextSellShares" OnServerValidate="cvSellShares_ServerValidate"></asp:CustomValidator>
+
+                 <asp:RequiredFieldValidator ID="rfSellShares" runat="server" ErrorMessage="sell shares are required" ControlToValidate="TextSellShares"></asp:RequiredFieldValidator>
+                 <asp:RegularExpressionValidator ID="rvSellShares" runat="server" ErrorMessage="share amount has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,9}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,9}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextSellShares"></asp:RegularExpressionValidator>
             </div>
 
         </div>
@@ -152,14 +156,15 @@
         <asp:Label ID="labelAmount" runat="server" Text="dollar amount to buy (in HKD)"></asp:Label>
             <asp:TextBox ID="TextAmount" runat="server" MaxLength="9"></asp:TextBox>
             <asp:RequiredFieldValidator ID="rfAmount" runat="server" ErrorMessage="dollar amount required" ControlToValidate="TextAmount"></asp:RequiredFieldValidator>
-            <asp:RegularExpressionValidator ID="rvAmount" runat="server" ErrorMessage="dollar has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,2}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,2}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextAmount" Display="Dynamic"></asp:RegularExpressionValidator>
+            <asp:RegularExpressionValidator ID="rvAmount" runat="server" ErrorMessage="dollar has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,9}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,9}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextAmount" Display="Dynamic"></asp:RegularExpressionValidator>
         </div>
 
         <div id ="divBondOrderDetail_sell" runat="server" visible="false"> 
         <asp:Label ID="labelShares" runat="server" Text="# shares to sell"></asp:Label>
             <asp:TextBox ID="TextShares" runat="server" MaxLength="13"></asp:TextBox>
+            <asp:CustomValidator ID="cvShares" runat="server"  ControlToValidate="TextShares" OnServerValidate="cvShares_ServerValidate"></asp:CustomValidator>
             <asp:RequiredFieldValidator ID="rfShares" runat="server" ErrorMessage="shares are required" ControlToValidate="TextShares"></asp:RequiredFieldValidator>
-            <asp:RegularExpressionValidator ID="rvShares" runat="server" ErrorMessage="share amount has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,10}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,10}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextShares" Display="Dynamic"></asp:RegularExpressionValidator>
+            <asp:RegularExpressionValidator ID="rvShares" runat="server" ErrorMessage="share amount has wrong format" ValidationExpression="^\$?([1-9]{1}[0-9]{0,9}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,9}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" ControlToValidate="TextShares" Display="Dynamic"></asp:RegularExpressionValidator>
         </div>
 
     </div>
