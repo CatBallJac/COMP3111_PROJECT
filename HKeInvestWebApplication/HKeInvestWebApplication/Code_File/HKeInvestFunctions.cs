@@ -219,21 +219,12 @@ namespace HKeInvestWebApplication.Code_File
             }
             else if (orderType == "stop")
             {
-<<<<<<< HEAD
-                 sql = sql + "NULL, " + stopPrice.Trim() + ", ";
-                 // highPrice = "NULL";
-            }
-            else if (orderType == "stop limit")// Order type is stop limit.
-            {
-                  sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ",";
-=======
                 sql = sql + "NULL, " + stopPrice.Trim() + ") ";
                 // highPrice = "NULL";
             }
             else if (orderType == "stop limit")// Order type is stop limit.
             {
                 sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ")";
->>>>>>> franches
             }
             sql = sql + "'" +accountNumber + ", 0)";
             submitOrder(sql);
