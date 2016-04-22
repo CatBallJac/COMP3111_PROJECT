@@ -403,7 +403,20 @@ namespace HKeInvestWebApplication.Code_File
             return value;
         }
 
-        //private 
+        public decimal getAssets(string accountNumber)
+        {
+            int number;
+            if (int.TryParse(accountNumber, out number))
+            {
+                return getBalance(accountNumber) + getCurrentValueOfSecuries(accountNumber);
+            }
+            return 0;
+        }
+
+        //private calculateBondFees(string buyOrSell, string accountNumber, string amount)
+        //{
+         //   if (buyOrSell == )
+        //}
 
         private void submitOrder(string sql)
         {
