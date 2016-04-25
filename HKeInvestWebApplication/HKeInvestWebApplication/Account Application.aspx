@@ -3,6 +3,7 @@
     <h2><strong>Account Application Form</strong></h2>
     <a href="Code_File/Application Form.pdf" target="_blank"><span class="auto-style2">Click here to get a pdf of the application form</span></a>
     <style>a:visited{color: gray}a:before{color: blue}</style>
+    <hr /><asp:Label ID="applyResult" runat="server" />
     <div class="form-horizontal">
         <hr />
         <h3>1. Account Type</h3>
@@ -147,7 +148,8 @@
 	        	<div class="col-md-4">
 	            	<asp:TextBox ID="HKID" runat="server" Wrap="False" CssClass="form-input" MaxLength="8"></asp:TextBox>
                 	<asp:RequiredFieldValidator ID="RequiredFieldValidator13" runat="server" ControlToValidate="HKID" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="HKID/passport number is required" ForeColor="Red"></asp:RequiredFieldValidator>
-	        	    <asp:RegularExpressionValidator ID="RegularExpressionValidator7" runat="server" ControlToValidate="HKID" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of HKID is invalid" ForeColor="Red" ValidationExpression="^[0-9a-zA-Z]{8}$"></asp:RegularExpressionValidator>
+	        	    <asp:RegularExpressionValidator ID="RegularExpressionValidator7" runat="server" ControlToValidate="HKID" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of HKID is invalid" ForeColor="Red" ValidationExpression="^[0-9A-Z]{8}$"></asp:RegularExpressionValidator>
+	        	    <asp:CustomValidator ID="HKIDValidate" runat="server" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ForeColor="Red" OnServerValidate="HKIDValidate_ServerValidate"></asp:CustomValidator>
 	        	</div>
 	
 		        <asp:Label ID="Label14" runat="server" AssociatedControlID="passportCountry" Text="Passport country of issue:" CssClass="control-label col-md-2"></asp:Label>
@@ -230,14 +232,14 @@
 	        <div class="form-group">
 	        	<asp:Label ID="Label26" runat="server" AssociatedControlID="homePhone2" Text="Home phone:" CssClass="control-label col-md-2"></asp:Label>
 	        	<div class="col-md-4">
-	        	<asp:TextBox ID="homePhone2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Number"></asp:TextBox>
+	        	<asp:TextBox ID="homePhone2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Phone"></asp:TextBox>
 	                <asp:CustomValidator ID="homePhoneValidate2" runat="server" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ForeColor="Red" OnServerValidate="phoneValidator2_ServerValidate"></asp:CustomValidator>
 	        	    <asp:RegularExpressionValidator ID="RegularExpressionValidator8" runat="server" ControlToValidate="homePhone2" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of home phone is invalid" ForeColor="Red" ValidationExpression="^[0-9]{8}$"></asp:RegularExpressionValidator>
 	        	</div>
 	
 	        	<asp:Label ID="Label27" runat="server" AssociatedControlID="homeFax2" Text="Home fax:" CssClass="control-label col-md-2"></asp:Label>
 	        	<div class="col-md-4">
-	        	<asp:TextBox ID="homeFax2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Number"></asp:TextBox>
+	        	<asp:TextBox ID="homeFax2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Phone"></asp:TextBox>
 	                <asp:RegularExpressionValidator ID="RegularExpressionValidator9" runat="server" ControlToValidate="homeFax2" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of home fax is invalid" ForeColor="Red" ValidationExpression="^[0-9]{8}$"></asp:RegularExpressionValidator>
 	        	</div>
 	        </div>
@@ -245,14 +247,14 @@
 	        <div class="form-group">
 	        	<asp:Label ID="Label28" runat="server" AssociatedControlID="businessPhone2" Text="Business phone:" CssClass="control-label col-md-2"></asp:Label>
 	        	<div class="col-md-4">
-	        	<asp:TextBox ID="businessPhone2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Number"></asp:TextBox>
+	        	<asp:TextBox ID="businessPhone2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Phone"></asp:TextBox>
                 	<asp:CustomValidator ID="businessPhoneValidate2" runat="server" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ForeColor="Red" OnServerValidate="phoneValidator2_ServerValidate"></asp:CustomValidator>
 	        	    <asp:RegularExpressionValidator ID="RegularExpressionValidator10" runat="server" ControlToValidate="businessPhone2" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of business phone is invalid" ForeColor="Red" ValidationExpression="^[0-9]{8}$"></asp:RegularExpressionValidator>
 	        	</div>
 	
 		        <asp:Label ID="Label29" runat="server" AssociatedControlID="mobilePhone2" Text="Mobile phone:" CssClass="control-label col-md-2"></asp:Label>
 	        	<div class="col-md-4">
-	        	<asp:TextBox ID="mobilePhone2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Number"></asp:TextBox>
+	        	<asp:TextBox ID="mobilePhone2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Phone"></asp:TextBox>
                 	<asp:CustomValidator ID="mobilePhoneValidate2" runat="server" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ForeColor="Red" OnServerValidate="phoneValidator2_ServerValidate"></asp:CustomValidator>
 	        	    <asp:RegularExpressionValidator ID="RegularExpressionValidator11" runat="server" ControlToValidate="mobilePhone2" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of mobile phone is invalid" ForeColor="Red" ValidationExpression="^[0-9]{8}$"></asp:RegularExpressionValidator>
 	        	</div>
@@ -281,6 +283,8 @@
 	        	<div class="col-md-4">
 	            	<asp:TextBox ID="HKID2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8"></asp:TextBox>
                 	<asp:RequiredFieldValidator ID="RequiredFieldValidator27" runat="server" ControlToValidate="HKID2" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="HKID/passport number is required" ForeColor="Red"></asp:RequiredFieldValidator>
+	        	    <asp:RegularExpressionValidator ID="RegularExpressionValidator20" runat="server" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of HKID is invalid" ForeColor="Red" ValidationExpression="^[0-9A-Z]{8}$"></asp:RegularExpressionValidator>
+                    <asp:CustomValidator ID="HKID2Validate" runat="server" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ForeColor="Red" OnServerValidate="HKID2Validate_ServerValidate"></asp:CustomValidator>
 	        	</div>
 	
 		        <asp:Label ID="Label33" runat="server" AssociatedControlID="passportCountry2" Text="Passport country of issue:" CssClass="control-label col-md-2"></asp:Label>
@@ -334,9 +338,9 @@
 	
 		            <asp:Label ID="Label37" runat="server" AssociatedControlID="employerPhone" Text="Employer phone:" CssClass="control-label col-md-2"></asp:Label>
 		            <div class="col-md-4">
-		                <asp:TextBox ID="employerPhone" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Number"></asp:TextBox>
+		                <asp:TextBox ID="employerPhone" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Phone"></asp:TextBox>
 	                    <asp:CustomValidator ID="employerPhoneValidator" runat="server" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="Employer phone is required" ForeColor="Red" OnServerValidate="employerPhoneValidator_ServerValidate"></asp:CustomValidator>
-		                <asp:RegularExpressionValidator ID="RegularExpressionValidator13" runat="server" ControlToValidate="employerPhone" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of the employer phone is invalid" ForeColor="Red" ValidationExpression="^[0-9]{1,2}$"></asp:RegularExpressionValidator>
+		                <asp:RegularExpressionValidator ID="RegularExpressionValidator13" runat="server" ControlToValidate="employerPhone" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of the employer phone is invalid" ForeColor="Red" ValidationExpression="^[0-9]{8}$"></asp:RegularExpressionValidator>
 		            </div>
                 </div>
 
@@ -390,7 +394,7 @@
 	
 		            <asp:Label ID="Label43" runat="server" AssociatedControlID="employerPhone2" Text="Employer phone:" CssClass="control-label col-md-2"></asp:Label>
 		            <div class="col-md-4">
-		                <asp:TextBox ID="employerPhone2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Number"></asp:TextBox>
+		                <asp:TextBox ID="employerPhone2" runat="server" Wrap="False" CssClass="form-input" MaxLength="8" TextMode="Phone"></asp:TextBox>
 	                    <asp:CustomValidator ID="employerPhoneValidator2" runat="server" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="Employer phone is required" ForeColor="Red" OnServerValidate="employerPhoneValidator2_ServerValidate"></asp:CustomValidator>
 		                <asp:RegularExpressionValidator ID="RegularExpressionValidator15" runat="server" ControlToValidate="employerPhone2" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of the employer phone is invalid" ForeColor="Red" ValidationExpression="^[0-9]{1,2}$"></asp:RegularExpressionValidator>
 		            </div>

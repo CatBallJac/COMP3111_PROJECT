@@ -8,6 +8,7 @@ using HKeInvestWebApplication.Models;
 using HKeInvestWebApplication.Code_File;
 using System.Data.SqlClient;
 using System.Data;
+using System.Globalization;
 
 namespace HKeInvestWebApplication
 {
@@ -16,194 +17,230 @@ namespace HKeInvestWebApplication
         HKeInvestData myHKeInvestData = new HKeInvestData();
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            applyResult.Text = "";
         }
 
         protected void Submit_Click(object sender, EventArgs e)
         {
+            applyResult.Text = "";
             if (!IsValid) return;
-
-            /*==============================================validation ends==============================================*/
-            // get data for [Account] Table
-            string AN = generateAccountNumber(lastName.Text.Trim());
-            string accountType = AccountType.SelectedValue;
-            decimal balance = decimal.Zero;
-            decimal money = decimal.Zero;
+            /*============get data for account and primary client==============*/
+            string account_type = AccountType.SelectedValue;
+            string p_title = title.SelectedValue;
+            string p_first_name = handleString( firstName.Text.Trim());
+            string p_last_name = handleString( lastName.Text.Trim());
+            string p_date_of_birth = dateOfBirth.Text.Trim();
+            string p_email = handleString( email.Text.Trim());
+            string p_street = handleString(street.Text.Trim());
+            string p_district = handleString( district.Text.Trim());
+            string p_country_of_citizenship = handleString( citizenship.Text.Trim());
+            string p_country_of_legal_residence = handleString( legalResidence.Text.Trim());
+            string p_hkid = handleString(HKID.Text.Trim()).ToUpper();
+            string p_employment_status = employmentStatus.SelectedValue;
+            string p_part4_q1 = part4PrimaryQ1.SelectedValue;
+            string p_part4_q2 = part4PrimaryQ2.SelectedValue;
+            string primary_source = primarySource.SelectedValue;
+            primary_source = primary_source == "Other" ? handleString(Part4Other.Text.Trim()) : primary_source;
+            string investment_objective = investmentObjective.SelectedValue;
+            string investment_knowledge = investmentKnowledge.SelectedValue;
+            string investment_experience = investmentExperience.SelectedValue;
+            string annual_income = annualIncome.SelectedValue;
+            string liquid_net_worth = liquidNetWorth.SelectedValue;
+            string account_feature = part6.Checked ? "Yes" : "No";
+            decimal deposit = decimal.Zero;decimal money = decimal.Zero;
             if (cheque.Checked)
             {
-                if (decimal.TryParse(chequeAmount.Text.Trim(), out money))
+                if(decimal.TryParse(chequeAmount.Text.Trim(), out money))
                 {
-                    balance += money;
+                    deposit += money;
                 }
-                else return;
             }
             if (transfer.Checked)
             {
-                if (decimal.TryParse(transferAmount.Text.Trim(), out money))
+                if(decimal.TryParse(transferAmount.Text.Trim(),out money))
                 {
-                    balance += money;
+                    deposit += money;
                 }
-                else return;
             }
-            balance = decimal.Round(balance, 2);
-            string pSource = primarySource.SelectedValue;
-            if (pSource == "Other") pSource = Part4Other.Text.Trim();
-            string investObject = investmentObjective.SelectedValue;
-            string investKnow = investmentKnowledge.SelectedValue;
-            string investExper = investmentExperience.SelectedValue;
-            string annual = annualIncome.SelectedValue;
-            string liquidNet = liquidNetWorth.SelectedValue;
-            string feature = "No";
-            if (part6.Checked) feature = "Yes";
-
-
-            // insert data into table [dbo].[Account]
-            string sql = "INSERT INTO Account " +
-"(accountNumber,accountType,balance,primarySource,investmentObjectives,investmentKnowledge,investmentExperience,annualIncome,approximateLiquidNetWorth,accountFeature)" +
-string.Format(" VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}')",
-  AN, accountType, balance.ToString(), pSource, investObject, investKnow, investExper, annual, liquidNet, feature);
-
+            string account_number = generateAccountNumber(p_last_name);
+            /*============insert primary client data and account data==========*/
             SqlTransaction trans = myHKeInvestData.beginTransaction();
+            string sql = string.Format(
+                "INSERT INTO Account "+
+                "(accountNumber, accountType, balance, primarySource, investmentObjectives,"+
+                " investmentKnowledge, investmentExperience, annualIncome, approximateLiquidNetWorth,"+
+                " accountFeature) "+
+                "VALUES "+
+                "('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}')",
+                account_number, account_type, deposit.ToString(), primary_source, investment_objective,
+                investment_knowledge, investment_experience, annual_income, liquid_net_worth,
+                account_feature
+                );
+            myHKeInvestData.setData(sql, trans);
+            
+            sql = string.Format(
+                "INSERT INTO Client "+
+                "(accountNumber,isPrimary,title,firstName,lastName,dateOfBirth,email,street,"+
+                "district,countryOfCitizenship,countryOfLegalResidence,HKIDPassportNumber," +
+                "employmentStatus," +
+                "employedByFinancialInstitution,isADirector) " +
+                "VALUES ('{0}','Yes','{1}','{2}','{3}',CONVERT(date,'{4}',103),'{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}'," +
+                "'{13}')",
+                account_number,p_title,p_first_name,p_last_name,p_date_of_birth,p_email,
+                p_street,p_district,
+                p_country_of_citizenship,p_country_of_legal_residence,p_hkid,
+                p_employment_status,
+                p_part4_q1,p_part4_q2
+                );
             myHKeInvestData.setData(sql, trans);
 
-            /*==============================Account ends===============================================*/
-            // get data [Client] Table primary client
-            string ctype = "Primary";
-            string tt = title.SelectedValue;
-            string fn = firstName.Text.Trim();
-            string ln = lastName.Text.Trim();
-            string db = dateOfBirth.Text.Trim();
-            string el = email.Text.Trim();
-            string hf = homeFax.Text.Trim();
-            string coc = citizenship.Text.Trim();
-            string col = legalResidence.Text.Trim();
-            string hk = HKID.Text.Trim();
-            string pport = passportCountry.Text.Trim();
-            if (pport == "" || !HKIDUsed.Checked) pport = "NULL";
-            string es = employmentStatus.Text.Trim();
-            string occu = occupation.Text.Trim();
-            if (occu == "") occu = "NULL";
-            string ename = employerName.Text.Trim();
-            if (ename == "") ename = "NULL";
-            string nobusiness = natureOfBusiness.Text.Trim();
-            if (nobusiness == "") nobusiness = "NULL";
-            string esq = part4PrimaryQ1.SelectedValue;
-            string csq = part4PrimaryQ2.SelectedValue;
-            string build = building.Text.Trim();
-            if (build == "") build = "NULL";
-            string stre = street.Text.Trim();
-            string distr = district.Text.Trim();
-
-            // insert data into table [dbo].[Client] primary client
-            sql = string.Format("INSERT INTO Client (accountNumber,clientType,title,firstName,lastName,dateOfBirth,email,homeFax,countryOfCitizenship,countryOfLegalResidence,HKIDPassportNumber,passportCountryOfIssue,employmentStatus,occupation,employerName,natureOfBusiness,employedByBank,clientIsDirector,Building,Street,District) " +
-                "VALUES('{0}','{1}','{2}','{3}','{4}',CONVERT(date,'{5}',103),'{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}')",
-                                                            AN, ctype, tt, fn, ln, db, el, hf, coc, col, hk, pport, es, occu, ename, nobusiness, esq, csq, build, stre, distr);
-            myHKeInvestData.setData(sql, trans);
-
-            string ephone = employerPhone.Text.Trim();
-            if (ephone != "")
+            if (!string.IsNullOrEmpty(building.Text.Trim()))
             {
-                sql = string.Format("UPDATE Client SET employerPhone = '{0}' WHERE accountNumber = '{1}' AND clientType = 'Primary'", ephone, AN);
+                sql = updateClientSql("building", handleString(building.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
-            string yea = years.Text.Trim();
-            if (yea != "")
+            if (!string.IsNullOrEmpty(homePhone.Text.Trim()))
             {
-                sql = string.Format("UPDATE Client SET yearsWithEmployer = '{0}' WHERE accountNumber = '{1}' AND clientType = 'Primary'", yea, AN);
+                sql = updateClientSql("homePhone", handleString(homePhone.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
-            string bphone = businessPhone.Text.Trim();
-            if (bphone != "")
+            if (!string.IsNullOrEmpty(homeFax.Text.Trim()))
             {
-                sql = string.Format("UPDATE Client SET businessPhone = '{0}' WHERE accountNumber = '{1}' AND clientType = 'Primary'", bphone, AN);
+                sql = updateClientSql("homeFax", handleString(homeFax.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
-            string mphone = mobilePhone.Text.Trim();
-            if (mphone != "")
+            if (!string.IsNullOrEmpty(businessPhone.Text.Trim()))
             {
-                sql = string.Format("UPDATE Client SET mobilePhone = '{0}' WHERE accountNumber = '{1}' AND clientType = 'Primary'", mphone, AN);
+                sql = updateClientSql("businessPhone", handleString(businessPhone.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
-            string hphone = homePhone.Text.Trim();
-            if (hphone != "")
+            if (!string.IsNullOrEmpty(mobilePhone.Text.Trim()))
             {
-                sql = string.Format("UPDATE Client SET homePhone = '{0}' WHERE accountNumber = '{1}' AND clientType = 'Primary'", hphone, AN);
+                sql = updateClientSql("mobilePhone", handleString(mobilePhone.Text.Trim()), true, account_number);
+                myHKeInvestData.setData(sql, trans);
+            }
+            if (!string.IsNullOrEmpty(passportCountry.Text.Trim()))
+            {
+                sql = updateClientSql("passportCountryOfIssue", handleString(passportCountry.Text.Trim()), true, account_number);
+                myHKeInvestData.setData(sql, trans);
+            }
+            if (!string.IsNullOrEmpty(occupation.Text.Trim()))
+            {
+                sql = updateClientSql("occupation", handleString(occupation.Text.Trim()), true, account_number);
+                myHKeInvestData.setData(sql, trans);
+            }
+            if (!string.IsNullOrEmpty(years.Text.Trim()))
+            {
+                sql = updateClientSql("yearsWithEmployer", handleString(years.Text.Trim()), true, account_number);
+                myHKeInvestData.setData(sql, trans);
+            }
+            if (!string.IsNullOrEmpty(employerName.Text.Trim()))
+            {
+                sql = updateClientSql("employerName", handleString(employerName.Text.Trim()), true, account_number);
+                myHKeInvestData.setData(sql, trans);
+            }
+            if (!string.IsNullOrEmpty(employerPhone.Text.Trim()))
+            {
+                sql = updateClientSql("employerPhone", handleString(employerPhone.Text.Trim()), true, account_number);
+                myHKeInvestData.setData(sql, trans);
+            }
+            if (!string.IsNullOrEmpty(natureOfBusiness.Text.Trim()))
+            {
+                sql = updateClientSql("natureOfBusiness", handleString(natureOfBusiness.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
 
-            /*=========================primary client ends======================================*/
-            // co holder client
-            if (accountType == "common" || accountType == "survivor")
+            /*======================get data from co-account holder and insert into Client======================*/
+            if (account_type != "individual")
             {
-                ctype = "Co";
-                tt = title2.SelectedValue;
-                fn = firstName2.Text.Trim();
-                ln = lastName2.Text.Trim();
-                db = dateOfBirth2.Text.Trim();
-                el = email2.Text.Trim();
-                hf = homeFax2.Text.Trim();
-                coc = citizenship2.Text.Trim();
-                col = legalResidence2.Text.Trim();
-                hk = HKID2.Text.Trim();
-                pport = passportCountry2.Text.Trim();
-                if (pport == "" || !HKIDUsed2.Checked) pport = "NULL";
-                es = employmentStatus2.Text.Trim();
-                occu = occupation2.Text.Trim();
-                if (occu == "") occu = "NULL";
-                ename = employerName2.Text.Trim();
-                if (ename == "") ename = "NULL";
-                nobusiness = natureOfBusiness2.Text.Trim();
-                if (nobusiness == "") nobusiness = "NULL";
-                esq = part4CoQ1.SelectedValue;
-                csq = part4CoQ2.SelectedValue;
-                build = building2.Text.Trim();
-                if (build == "") build = "NULL";
-                stre = street2.Text.Trim();
-                distr = district2.Text.Trim();
-
-                // insert data into table [dbo].[Client] primary client
-                sql = string.Format("INSERT INTO Client (accountNumber,clientType,title,firstName,lastName,dateOfBirth,email,homeFax,countryOfCitizenship,countryOfLegalResidence,HKIDPassportNumber,passportCountryOfIssue,employmentStatus,occupation,employerName,natureOfBusiness,employedByBank,clientIsDirector,Building,Street,District) " +
-                    "VALUES('{0}','{1}','{2}','{3}','{4}',CONVERT(date,'{5}',103),'{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}')",
-                                                                AN, ctype, tt, fn, ln, db, el, hf, coc, col, hk, pport, es, occu, ename, nobusiness, esq, csq, build, stre, distr);
+                string c_title = title2.SelectedValue;
+                string c_first_name = handleString(firstName2.Text.Trim());
+                string c_last_name = handleString(lastName2.Text.Trim());
+                string c_date_of_birth = dateOfBirth2.Text.Trim();
+                string c_email = handleString(email2.Text.Trim());
+                string c_street = handleString(street2.Text.Trim());
+                string c_district = handleString(district2.Text.Trim());
+                string c_country_of_citizenship = handleString(citizenship2.Text.Trim());
+                string c_country_of_legal_residence = handleString(legalResidence2.Text.Trim());
+                string c_hkid = handleString(HKID2.Text.Trim()).ToUpper();
+                string c_employment_status = employmentStatus2.SelectedValue;
+                string c_part4_q1 = part4CoQ1.SelectedValue;
+                string c_part4_q2 = part4CoQ2.SelectedValue;
+                sql = string.Format(
+                    "INSERT INTO Client " +
+                    "(accountNumber,isPrimary,title,firstName,lastName,dateOfBirth,email,street," +
+                    "district,countryOfCitizenship,countryOfLegalResidence,HKIDPassportNumber," +
+                    "employmentStatus," +
+                    "employedByFinancialInstitution,isADirector)" +
+                    "VALUES ('{0}','No','{1}','{2}','{3}',CONVERT(date,'{4}',103),'{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}'," +
+                    "'{13}')",
+                    account_number, c_title, c_first_name, c_last_name, c_date_of_birth, c_email,
+                    c_street, c_district,
+                    c_country_of_citizenship, c_country_of_legal_residence, c_hkid,
+                    c_employment_status,
+                    c_part4_q1, c_part4_q2
+                    );
                 myHKeInvestData.setData(sql, trans);
-
-                ephone = employerPhone2.Text.Trim();
-                if (ephone != "")
+                if (!string.IsNullOrEmpty(building2.Text.Trim()))
                 {
-                    sql = string.Format("UPDATE Client SET employerPhone = '{0}' WHERE accountNumber = '{1}' AND clientType = 'Co'", ephone, AN);
+                    sql = updateClientSql("building", handleString(building2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
-                yea = years2.Text.Trim();
-                if (yea != "")
+                if (!string.IsNullOrEmpty(homePhone2.Text.Trim()))
                 {
-                    sql = string.Format("UPDATE Client SET yearsWithEmployer = '{0}' WHERE accountNumber = '{1}' AND clientType = 'Co'", yea, AN);
+                    sql = updateClientSql("homePhone", handleString(homePhone2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
-                bphone = businessPhone2.Text.Trim();
-                if (bphone != "")
+                if (!string.IsNullOrEmpty(homeFax2.Text.Trim()))
                 {
-                    sql = string.Format("UPDATE Client SET businessPhone = '{0}' WHERE accountNumber = '{1}' AND clientType = 'Co'", bphone, AN);
+                    sql = updateClientSql("homeFax", handleString(homeFax2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
-                mphone = mobilePhone2.Text.Trim();
-                if (mphone != "")
+                if (!string.IsNullOrEmpty(businessPhone2.Text.Trim()))
                 {
-                    sql = string.Format("UPDATE Client SET mobilePhone = '{0}' WHERE accountNumber = '{1}' AND clientType = 'Co'", mphone, AN);
+                    sql = updateClientSql("businessPhone", handleString(businessPhone2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
-                hphone = homePhone2.Text.Trim();
-                if (hphone != "")
+                if (!string.IsNullOrEmpty(mobilePhone2.Text.Trim()))
                 {
-                    sql = string.Format("UPDATE Client SET homePhone = '{0}' WHERE accountNumber = '{1}' AND clientType = 'Co'", hphone, AN);
+                    sql = updateClientSql("mobilePhone", handleString(mobilePhone2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
-
+                if (!string.IsNullOrEmpty(passportCountry2.Text.Trim()))
+                {
+                    sql = updateClientSql("passportCountryOfIssue", handleString(passportCountry2.Text.Trim()), false, account_number);
+                    myHKeInvestData.setData(sql, trans);
+                }
+                if (!string.IsNullOrEmpty(occupation2.Text.Trim()))
+                {
+                    sql = updateClientSql("occupation", handleString(occupation2.Text.Trim()), false, account_number);
+                    myHKeInvestData.setData(sql, trans);
+                }
+                if (!string.IsNullOrEmpty(years2.Text.Trim()))
+                {
+                    sql = updateClientSql("yearsWithEmployer", handleString(years2.Text.Trim()), false, account_number);
+                    myHKeInvestData.setData(sql, trans);
+                }
+                if (!string.IsNullOrEmpty(employerName2.Text.Trim()))
+                {
+                    sql = updateClientSql("employerName", handleString(employerName2.Text.Trim()), false, account_number);
+                    myHKeInvestData.setData(sql, trans);
+                }
+                if (!string.IsNullOrEmpty(employerPhone2.Text.Trim()))
+                {
+                    sql = updateClientSql("employerPhone", handleString(employerPhone2.Text.Trim()), false, account_number);
+                    myHKeInvestData.setData(sql, trans);
+                }
+                if (!string.IsNullOrEmpty(natureOfBusiness2.Text.Trim()))
+                {
+                    sql = updateClientSql("natureOfBusiness", handleString(natureOfBusiness2.Text.Trim()), false, account_number);
+                    myHKeInvestData.setData(sql, trans);
+                }
             }
-
             myHKeInvestData.commitTransaction(trans);
             
-            string message = "alter('Congratulation! Your account number is:\n" + AN +"');";
-            ScriptManager.RegisterStartupScript(this.Page, this.GetType(), "Successful Application", message, true);
+            // notify the applicant that the security account has been successfully created
+            applyResult.Text = "Congratulation! Your security account number: " + account_number;
         }
 
         protected string generateAccountNumber(string last_name)
@@ -217,6 +254,7 @@ string.Format(" VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9
                 }
                 if (accountNumber.Length == 2) break;
             }
+            if (accountNumber.Length == 1) accountNumber += accountNumber;
             accountNumber = accountNumber.ToUpper();
 
             string sql = "select accountNumber from Account where accountNumber like '" + accountNumber + "%' order by CAST(SUBSTRING(accountNumber, 3, 8) AS INT) DESC";
@@ -235,6 +273,22 @@ string.Format(" VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9
             }
 
             return accountNumber;
+        }
+
+        protected string handleString(string data) {
+            data = data.Replace("'", "\'");
+            data = data.Replace('"', '\"');
+            return data;
+        }
+
+        protected string updateClientSql(string column,string data, bool isPrimary,string account)
+        {
+            data = handleString(data);string type;
+            if (isPrimary) type = "Yes";
+            else type = "No";
+            string sql = "UPDATE Client SET " + column + " = '" + data + "' "+
+                "WHERE accountNumber = '" + account +"' AND isPrimary = '"+type+"'";
+            return sql;
         }
 /*================================================================================================*/
         protected void AccountType_SelectedIndexChanged(object sender, EventArgs e)
@@ -259,11 +313,12 @@ string.Format(" VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9
         protected void dateOfBirthValidate_ServerValidate(object source, ServerValidateEventArgs args)
         {
             DateTime birth;
-            bool result = DateTime.TryParse(dateOfBirth.Text.Trim(), out birth);
+            bool result = DateTime.TryParseExact(dateOfBirth.Text.Trim(), "dd/MM/yyyy",
+                System.Globalization.CultureInfo.InvariantCulture,DateTimeStyles.None, out birth);
             if (!result)
             {
                 args.IsValid = false;
-                dateOfBirthValidate.ErrorMessage = "The date of birth is not valid.";
+                dateOfBirthValidate.ErrorMessage = "The date of birth is invalid.";
             }else
             {
                 if (birth.CompareTo(DateTime.Today) > 0)
@@ -277,7 +332,8 @@ string.Format(" VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9
         protected void dateOfBirth2Validate_ServerValidate(object source, ServerValidateEventArgs args)
         {
             DateTime birth;
-            bool result = DateTime.TryParse(dateOfBirth2.Text.Trim(), out birth);
+            bool result = DateTime.TryParseExact(dateOfBirth2.Text.Trim(), "dd/MM/yyyy",
+    System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out birth);
             if (!result)
             {
                 args.IsValid = false;
@@ -489,7 +545,7 @@ string.Format(" VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9
                 args.IsValid = false;
                 part4Validate.ErrorMessage = "Please select one option for every question in part 4";
             }
-            else if (AccountType.SelectedValue != "0" || AccountType.SelectedValue != "individual")
+            else if (AccountType.SelectedValue != "0" && AccountType.SelectedValue != "individual")
             {
                 if(part4CoQ1.SelectedIndex==-1 || part4CoQ2.SelectedIndex == -1)
                 {
@@ -645,6 +701,52 @@ string.Format(" VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9
             if (employmentStatus2.SelectedValue == "Employed" && string.IsNullOrEmpty(natureOfBusiness2.Text.Trim()))
             {
                 args.IsValid = false;
+            }
+        }
+
+        protected void HKIDValidate_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            string hkid = HKID.Text.Trim().ToUpper();
+            if (AccountType.SelectedValue != "0" && AccountType.SelectedValue != "individual" && hkid == HKID2.Text.Trim().ToUpper())
+            {
+                args.IsValid = false;
+                HKIDValidate.ErrorMessage = "The HKID of the primary holder cannot be the same as co account holder.";
+                return;
+            }
+            string sql = "SELECT HKIDPassportNumber from Client";
+            DataTable table = myHKeInvestData.getData(sql);
+            if (table == null || table.Rows.Count == 0) return;
+            foreach(DataRow row in table.Rows)
+            {
+                if (row.Field<string>("HKIDPassportNumber") == hkid)
+                {
+                    args.IsValid = false;
+                    HKIDValidate.ErrorMessage = "Dumplicate HKID is not allowed";
+                    break;
+                }
+            }
+        }
+
+        protected void HKID2Validate_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            string hkid2 = HKID2.Text.Trim().ToUpper();
+            if (AccountType.SelectedValue != "0" && AccountType.SelectedValue != "individual" && hkid2 == HKID.Text.Trim().ToUpper())
+            {
+                args.IsValid = false;
+                HKID2Validate.ErrorMessage = "The HKID of the primary holder cannot be the same as co account holder.";
+                return;
+            }
+            string sql = "SELECT HKIDPassportNumber from Client";
+            DataTable table = myHKeInvestData.getData(sql);
+            if (table == null || table.Rows.Count == 0) return;
+            foreach (DataRow row in table.Rows)
+            {
+                if (row.Field<string>("HKIDPassportNumber") == hkid2)
+                {
+                    args.IsValid = false;
+                    HKIDValidate.ErrorMessage = "Dumplicate HKID is not allowed";
+                    break;
+                }
             }
         }
     }
