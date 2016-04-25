@@ -76,13 +76,17 @@
         </div>
     
         <div>
-            <asp:Label runat="server" Text="Start date"></asp:Label>
-            <asp:Calendar ID="startDate" runat="server"></asp:Calendar>
+            <asp:CheckBox ID="cbCalendar" runat="server" AutoPostBack="true" OnCheckedChanged="cbCalendar_CheckedChanged" />
+            <asp:Label runat="server" Text="Do you want to set a range of dates?"></asp:Label>
         </div>
         <div>
-            <asp:Label runat="server" Text="End date"></asp:Label>
-            <asp:Calendar ID="endDate" runat="server"></asp:Calendar>
-            <asp:CustomValidator ID="cvDate" runat="server" Display="Dynamic" CssClass="text-danger" EnableClientScript="false"  ControlToValidate="endDate" OnServerValidate="cvDate_ServerValidate"></asp:CustomValidator>
+            <asp:Label runat="server" Text="Start date" Visible="false"></asp:Label>
+            <asp:Calendar ID="startDate" runat="server" AutoPostBack="true" Visible="false"></asp:Calendar>
+        </div>
+        <div>
+            <asp:Label runat="server" Text="End date" Visible="false"></asp:Label>
+            <asp:Calendar ID="endDate" runat="server" AutoPostBack="true" Visible="false"></asp:Calendar>
+            <asp:CustomValidator ID="cvDate" runat="server" Display="Dynamic" CssClass="text-danger" EnableClientScript="false"  OnServerValidate="cvDate_ServerValidate" Enabled="false"></asp:CustomValidator>
         </div>
         <asp:Button ID="searchHistory" runat="server" Text="search" OnClick="searchHistory_Click" />
         <div>
@@ -95,7 +99,6 @@
                 <asp:BoundField DataField="securityName" HeaderText="Security Name" ReadOnly="True" SortExpression="securityName" />
                 <asp:BoundField DataField="dateSubmitted" HeaderText="Submitted Date" ReadOnly="True" SortExpression="dateSubmitted" />
                 <asp:BoundField DataField="status" HeaderText="Current Status" ReadOnly="True" SortExpression="status" />
-                <asp:BoundField DataField="amount" HeaderText="Amount" ReadOnly="True"  DataFormatString="{0:n2}" SortExpression="amount" />
                 <asp:BoundField DataField="shares" HeaderText="Quantity of shares" ReadOnly="True" SortExpression="shares" />
                 <asp:BoundField DataField="executedAmount" HeaderText="Executed amount" ReadOnly="True" SortExpression="executedAmount" />
                 <asp:BoundField DataField="fee" HeaderText="Fee charged" ReadOnly="True" SortExpression="fee" />

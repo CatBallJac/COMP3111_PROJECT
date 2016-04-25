@@ -85,6 +85,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.GridView gvOrder;
         
         /// <summary>
+        /// cbCalendar control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbCalendar;
+        
+        /// <summary>
         /// startDate control.
         /// </summary>
         /// <remarks>

@@ -18,6 +18,7 @@ namespace HKeInvestWebApplication.ClientOnly
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
         ExternalData myExternalData = new ExternalData();
         private static Boolean updated = false;
+        private static Boolean dateChecked = false;
         protected void Page_Load(object sender, EventArgs e)
         {
             // Get the available currencies to populate the DropDownList.
@@ -454,14 +455,17 @@ namespace HKeInvestWebApplication.ClientOnly
         {
             DateTime StartDate = startDate.SelectedDate;
             DateTime EndDate = endDate.SelectedDate;
-            if (DateTime.Compare(StartDate, DateTime.Now) > 0)
+            DateTime CurrentDate = DateTime.Today;
+            if (DateTime.Compare(StartDate, CurrentDate) > 0)
             {
                 args.IsValid = false;
+                dateChecked = false;
                 cvDate.ErrorMessage = "Start date must be earlier than current date";
             }
             if (DateTime.Compare(StartDate, EndDate) > 0)
             {
                 args.IsValid = false;
+                dateChecked = false;
                 cvDate.ErrorMessage = "Start date must be earlier than end date";
             }
         }
@@ -483,7 +487,6 @@ namespace HKeInvestWebApplication.ClientOnly
             dtOrderList.Columns.Add("securityName", typeof(string));
             dtOrderList.Columns.Add("dateSubmitted", typeof(string));
             dtOrderList.Columns.Add("status", typeof(string));
-            dtOrderList.Columns.Add("amount", typeof(decimal));
             dtOrderList.Columns.Add("shares", typeof(decimal));
             dtOrderList.Columns.Add("executedAmount", typeof(decimal));
             dtOrderList.Columns.Add("fee", typeof(decimal));
@@ -501,7 +504,7 @@ namespace HKeInvestWebApplication.ClientOnly
                 foreach(DataRow row in dtOrders.Rows)
                 {
                     DateTime thisStartDate = Convert.ToDateTime(row["dateSubmitted"]);
-                    if (DateTime.Compare(StartDate, thisStartDate) < 0 && DateTime.Compare(EndDate, thisStartDate)>0)
+                    if (dateChecked==false||(DateTime.Compare(StartDate, thisStartDate) < 0 && DateTime.Compare(EndDate, thisStartDate)>0))
                     {
                         DataTable name = myExternalFunctions.getSecuritiesByName(row["securityType"].ToString().Trim(), row["securityCode"].ToString().Trim());
 
@@ -527,26 +530,107 @@ namespace HKeInvestWebApplication.ClientOnly
                         string dateSubmitted = row["dateSubmitted"].ToString().Trim();
                         string status = row["status"].ToString().Trim();
                         decimal eAmount = 0;
-                        decimal Shares = 0;
-                        decimal fee = 0;/////////////////////////////////////////////////////////////////////////////////////////////////////
+                        decimal shares = 0;
+                        decimal fee = 0;
+                        //decimal fee = Convert.ToDecimal(row["fee"]);/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                        string sqlTransaction = "selected * from [Transaction] ";
-                        DataTable dtTransaction = myHKeInvestData.getData(sqlTransaction);
-                        if(dtTransaction==null || dtTransaction.Rows.Count == 0)
+                        string sqlOrderTransaction = "select * from [Transaction] where [referenceNumber] = '"+referenceNumber+"'";
+                       
+                        DataTable dtOrderTransaction = myHKeInvestData.getData(sqlOrderTransaction);
+                        if (dtOrderTransaction == null || dtOrderTransaction.Rows.Count == 0)
                         {
 
                         }
                         else
                         {
-                            foreach(DataRow rows in dtTransaction.Rows)
+                            foreach (DataRow rows in dtOrderTransaction.Rows)
                             {
-                                eAmount += Convert.ToDecimal(rows["executeShares"]) * Convert.ToDecimal(rows["executePrice"]);
+                                
+                                    eAmount += Convert.ToDecimal(rows["executeShares"]) * Convert.ToDecimal(rows["executePrice"]);
+                                    shares = Convert.ToDecimal(rows["executeShares"]);
+                                    
+                                
+
                                 
                             }
+                            
                         }
+                        dtOrderList.Rows.Add(referenceNumber, buyOrSell, securityType, securityCode, securityName, dateSubmitted, status, shares, eAmount, fee);
+
+
                     }
                 }
+
+
+
+
+
+
+                
+                
+
             }
+
+            gvHistory.DataSource = dtOrderList;
+            gvHistory.DataBind();
+
+
+
+
+            /////
+            DataTable dtGVTransaction = new DataTable();
+            dtGVTransaction.Columns.Add("transactionNumber", typeof(string));
+            dtGVTransaction.Columns.Add("executedDate", typeof(string));
+            dtGVTransaction.Columns.Add("executedShares", typeof(string));
+            dtGVTransaction.Columns.Add("price", typeof(string));
+            decimal Shares = 0;
+            DateTime executedDate;
+            decimal price = 0;
+            string transactionNumber;
+            string sqlTransaction = "select * from [Transaction] ";
+            DataTable dtTransaction = myHKeInvestData.getData(sqlTransaction);
+            if (dtTransaction == null || dtTransaction.Rows.Count == 0)
+            {
+
+            }
+            else
+            {
+                foreach (DataRow rows in dtTransaction.Rows)
+                {
+                    DateTime thisStartDate = Convert.ToDateTime(rows["executeDate"]);
+                    if (dateChecked == false || (DateTime.Compare(StartDate, thisStartDate) < 0 && DateTime.Compare(EndDate, thisStartDate) > 0))
+                    {
+                        Shares = Convert.ToDecimal(rows["executeShares"]);
+                        executedDate = Convert.ToDateTime(rows["executeDate"]);
+                        price = Convert.ToDecimal(rows["executePrice"]);
+                        transactionNumber = rows["transactionNumber"].ToString().Trim();
+                        dtGVTransaction.Rows.Add(transactionNumber, executedDate, Shares, price);
+                    }
+                    
+                }
+                gvTransaction.DataSource = dtGVTransaction;
+                gvTransaction.DataBind();
+            }
+        }
+
+        protected void cbCalendar_CheckedChanged(object sender, EventArgs e)
+        {
+            //required validation missing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (cbCalendar.Checked == true)
+            {
+                startDate.Visible = true;
+                endDate.Visible = true;
+                cvDate.Enabled = true;
+                dateChecked = true;
+            }
+            else
+            {
+                startDate.Visible = false;
+                endDate.Visible = false;
+                cvDate.Enabled = false;
+                dateChecked = false;
+            }
+            
         }
     }
 }
