@@ -148,6 +148,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.Label LabelSellLimit;
         
         /// <summary>
+        /// TextMaxiShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextMaxiShares;
+        
+        /// <summary>
         /// divStockOrderDetail control.
         /// </summary>
         /// <remarks>
@@ -292,42 +301,6 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divMarketPrice;
         
         /// <summary>
-        /// LabelMarketPrice control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LabelMarketPrice;
-        
-        /// <summary>
-        /// TextMarketPrice control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextMarketPrice;
-        
-        /// <summary>
-        /// rfMarketPrice control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfMarketPrice;
-        
-        /// <summary>
-        /// rvMarketPrice control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator rvMarketPrice;
-        
-        /// <summary>
         /// divLimitPirce control.
         /// </summary>
         /// <remarks>
@@ -353,6 +326,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox TextLimitPrice;
+        
+        /// <summary>
+        /// cvLimitPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvLimitPrice;
         
         /// <summary>
         /// rfLimitPrice control.
@@ -443,6 +425,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox TextSellShares;
+        
+        /// <summary>
+        /// cvSellShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvSellShares;
         
         /// <summary>
         /// rfSellShares control.
@@ -542,6 +533,15 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox TextShares;
+        
+        /// <summary>
+        /// cvShares control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvShares;
         
         /// <summary>
         /// rfShares control.
