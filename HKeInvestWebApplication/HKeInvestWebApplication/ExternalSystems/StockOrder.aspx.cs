@@ -77,8 +77,8 @@ namespace HKeInvestWebApplication.ExternalSystems
                 // Get required values from the order.
                 decimal limitPrice = 0;
                 decimal stopPrice = 0;
-                string price = ((System.Web.UI.WebControls.TextBox)row.FindControl("txtExecutePrice")).Text.Trim();
-                string buyShares = ((System.Web.UI.WebControls.TextBox)row.FindControl("txtExecuteShares")).Text.Trim();
+                string price = (((TextBox)row.FindControl("txtExecutePrice")).Text.Trim()).Replace(",", "");
+                string buyShares = (((TextBox)row.FindControl("txtExecuteShares")).Text.Trim()).Replace(",","");
                 decimal orderShares = Convert.ToDecimal(row.Cells[9].Text);
                 string orderType = row.Cells[10].Text.Trim();
                 if (orderType == "limit" || orderType == "stop limit")
@@ -93,7 +93,7 @@ namespace HKeInvestWebApplication.ExternalSystems
                 // Check if inputs are valid.
                 if (!executionIsValid("buy", orderType, price, buyShares, orderShares, limitPrice, stopPrice)) { return; }
                 
-                // Calculate the number of shares remaining to buy and set the status accordingly.                              
+                // Calculate the remaining shares to buy and set the status accordingly.                              
                 decimal remainingShares = orderShares - Convert.ToDecimal(buyShares);
                 string orderStatus = "partial";
                 if (remainingShares == 0)
@@ -128,13 +128,13 @@ namespace HKeInvestWebApplication.ExternalSystems
 
         protected void gvStockBuyOrder_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            // Disable input of $Amount textbox if order is all or none.
+            // Disable input of #Shares textbox if order is all or none.
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 if (e.Row.Cells[12].Text.Trim() == "Y")
                 {
-                    ((System.Web.UI.WebControls.TextBox)e.Row.FindControl("txtExecuteAmount")).Text = e.Row.Cells[9].Text;
-                    ((System.Web.UI.WebControls.TextBox)e.Row.FindControl("txtExecuteAmount")).ReadOnly = true;
+                    ((TextBox)e.Row.FindControl("txtExecuteShares")).Text = e.Row.Cells[9].Text;
+                    ((TextBox)e.Row.FindControl("txtExecuteShares")).ReadOnly = true;
                 }
             }
         }
@@ -153,9 +153,9 @@ namespace HKeInvestWebApplication.ExternalSystems
                 // Get required values from the order.
                 decimal limitPrice = 0;
                 decimal stopPrice = 0;
-                string price = ((System.Web.UI.WebControls.TextBox)row.FindControl("txtExecutePrice")).Text.Trim();
-                string amount = ((System.Web.UI.WebControls.TextBox)row.FindControl("txtExecuteShares")).Text.Trim();
-                decimal orderAmount = Convert.ToDecimal(row.Cells[9].Text);
+                string price = (((TextBox)row.FindControl("txtExecutePrice")).Text.Trim()).Replace(",", "");
+                string sellShares = (((TextBox)row.FindControl("txtExecuteShares")).Text.Trim()).Replace(",", "");
+                decimal orderShares = Convert.ToDecimal(row.Cells[9].Text);
                 string orderType = row.Cells[10].Text.Trim();
                 if (orderType == "limit" || orderType == "stop limit")
                 {
@@ -167,11 +167,11 @@ namespace HKeInvestWebApplication.ExternalSystems
                 }
 
                 // Check if inputs are valid.
-                if (!executionIsValid("sell", orderType, price, amount, orderAmount, limitPrice, stopPrice)) { return; }
+                if (!executionIsValid("sell", orderType, price, sellShares, orderShares, limitPrice, stopPrice)) { return; }
 
                 // Calculate the remaining shares to sell and set the order status accordingly.
                 string orderStatus = "partial";
-                decimal remainingShares = orderAmount - Convert.ToDecimal(amount);
+                decimal remainingShares = orderShares - Convert.ToDecimal(sellShares);
                 if (remainingShares == 0)
                 {
                     orderStatus = "completed";
@@ -180,7 +180,7 @@ namespace HKeInvestWebApplication.ExternalSystems
                 // Create a transaction for the sell order, set the sell order status, update the security price and refresh the sell orders.
                 SqlTransaction trans = myExternalData.beginTransaction();
                 myExternalData.setData("insert into [Transaction] ([referenceNumber], [executeDate], [executeShares], [executePrice]) values (" +
-                    referenceNumber + ", '" + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt") + "', '" + amount + "', '" + price + "')", trans);
+                    referenceNumber + ", '" + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt") + "', '" + sellShares + "', '" + price + "')", trans);
                 myExternalData.setData("update [Order] set [status]='" + orderStatus + "', [shares]=" + remainingShares + " where [referenceNumber]=" + referenceNumber, trans);
                 myExternalData.setData("update [Stock] set [close]='" + price + "' where [code]='" + stockCode + "'", trans);
                 myExternalData.commitTransaction(trans);
@@ -209,8 +209,8 @@ namespace HKeInvestWebApplication.ExternalSystems
             {
                 if (e.Row.Cells[12].Text.Trim() == "Y")
                 {
-                    ((System.Web.UI.WebControls.TextBox)e.Row.FindControl("txtExecuteShares")).Text = e.Row.Cells[9].Text;
-                    ((System.Web.UI.WebControls.TextBox)e.Row.FindControl("txtExecuteShares")).ReadOnly = true;
+                    ((TextBox)e.Row.FindControl("txtExecuteShares")).Text = e.Row.Cells[9].Text;
+                    ((TextBox)e.Row.FindControl("txtExecuteShares")).ReadOnly = true;
                 }
             }
         }
