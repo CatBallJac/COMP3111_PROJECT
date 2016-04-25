@@ -43,6 +43,65 @@ namespace HKeInvestWebApplication.ClientOnly
             updateOrderDetail();
         }
 
+        protected void ddlCode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string securityType = rbSecurityType.SelectedValue.ToString().Trim();
+            string securityCode = ddlCode.SelectedValue.ToString().Trim();
+            // 
+            // if (securityType == "unit trust") securityType = "UnitTrust"; // table name no space
+            msg.Text = securityType + securityCode + "selected";
+            // string sql = string.Format("select name from [{0}] where [code] = '{1}' ", securityType, securityCode);
+            // string securityName = myExternalData.getData(sql).Rows[0].Field<string>("name");
+            DataTable dtSecurities = myExternalFunctions.getSecuritiesByCode(securityType, securityCode);
+            string securityName = "";
+            if (dtSecurities != null)
+            {
+                securityName = dtSecurities.Rows[0].Field<string>("name");
+            }
+            else
+            {
+                securityName = "no security found for code " + securityCode;
+            }
+
+            LabelSecurityNametxt.Text = securityName;
+            updated = true;
+
+            if (rbIsBuyOrSell.SelectedValue.Trim() == "sell order")
+                showSecuritySharesOwn();
+        }
+
+        protected void rbOrderType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string orderType = rbOrderType.SelectedValue.ToString().Trim();
+            divLimitPirce.Visible = false;
+
+            // divStopPrice.Visible = false;
+            divStopPrice.Visible = false;
+
+            if (orderType == "market")
+            {
+            }
+            else if (orderType == "limit")
+            {
+                divLimitPirce.Visible = true;
+            }
+            else if (orderType == "stop limit")
+            {
+                divStopPrice.Visible = true;
+                // PanelStopPrice.Enabled = true;
+
+                divLimitPirce.Visible = true;
+            }
+            else if (orderType == "stop")
+            {
+                divStopPrice.Visible = true;
+                // PanelStopPrice.Enabled = true;
+            }
+
+
+        }
+
+        // ---- event trigged by index changed ----
         protected void updateOrderDetail()
         {
             divStockOrderDetail.Visible = false;
@@ -73,7 +132,8 @@ namespace HKeInvestWebApplication.ClientOnly
             {
                 divStockOrderDetail.Visible = true;
                 divBuyStockOrder.Visible = true;
-            } else if (securityType == "stock" && IsBuyorSell == "sell order")
+            }
+            else if (securityType == "stock" && IsBuyorSell == "sell order")
             {
                 divStockOrderDetail.Visible = true;
                 divSellStockOrder.Visible = true;
@@ -139,40 +199,28 @@ namespace HKeInvestWebApplication.ClientOnly
 
         }
 
-        protected void ddlCode_SelectedIndexChanged(object sender, EventArgs e)
+        // ---- information provider ----
+        protected string showSecuritySharesOwn()
         {
-            string securityType = rbSecurityType.SelectedValue.ToString().Trim();
             string securityCode = ddlCode.SelectedValue.ToString().Trim();
-            // 
-            // if (securityType == "unit trust") securityType = "UnitTrust"; // table name no space
-            msg.Text = securityType + securityCode + "selected";
-            // string sql = string.Format("select name from [{0}] where [code] = '{1}' ", securityType, securityCode);
-            // string securityName = myExternalData.getData(sql).Rows[0].Field<string>("name");
-            DataTable dtSecurities = myExternalFunctions.getSecuritiesByCode(securityType, securityCode);
-            string securityName = "";
-            if (dtSecurities != null)
+            string securityType = rbSecurityType.SelectedValue.Trim();
+            if (securityCode == "" || securityType == "" || securityCode == null || securityType == null)
             {
-               securityName = dtSecurities.Rows[0].Field<string>("name");
-            }else
-            {
-                securityName = "no security found for code " + securityCode;
+                LabelSellLimit.Visible = true;
+                TextMaxiShares.Visible = true;
+                LabelSellLimit.Text = "security code: " + securityCode + 
+                                            "selected, order type: " + securityType;
+                // TextMaxiShares.Text = shares.ToString().Trim();
+                return null;
+
             }
-
-            LabelSecurityNametxt.Text = securityName;
-            updated = true;
-
-            if (rbIsBuyOrSell.SelectedValue.Trim() == "sell order")
-                showSecuritySharesOwn(securityCode, securityType);
-        }
-
-        protected string showSecuritySharesOwn(string securityCode, string securityType)
-        {
             string accountNumber = getAccountNumber();
             string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'", accountNumber, securityType, securityCode);
             // shares
             DataTable dtShareOwn = myHKeInvestData.getData(sql);
             if (myHKeInvestData.getData(sql).Rows == null) return null;
             decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
+
             msg.Text = "have shared " + shares.ToString();
             LabelSellLimit.Visible = true;
             TextMaxiShares.Visible = true;
@@ -181,45 +229,13 @@ namespace HKeInvestWebApplication.ClientOnly
             return shares.ToString();
         }
 
-        protected void rbOrderType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string orderType = rbOrderType.SelectedValue.ToString().Trim();
-            divLimitPirce.Visible = false;
-            divMarketPrice.Visible = false;
-            // divStopPrice.Visible = false;
-            divStopPrice.Visible = false;
-
-            if (orderType == "market")
-            {
-                divMarketPrice.Visible = true;
-            }
-            else if (orderType == "limit")
-            {
-                divLimitPirce.Visible = true;
-                divMarketPrice.Visible = true;
-            }
-            else if (orderType == "stop limit")
-            {
-                divStopPrice.Visible = true;
-                // PanelStopPrice.Enabled = true;
-
-                divLimitPirce.Visible = true;
-            }
-            else if(orderType == "stop")
-            {
-                divStopPrice.Visible = true;
-                // PanelStopPrice.Enabled = true;
-            }
-
-
-        }
-
         protected string getAccountNumber()
         {
             string userName = Context.User.Identity.Name;
-            msg.Text = "welcome " + userName;
             string sql = string.Format("select accountNumber from [AccountTemp] where [userName] = '{0}' ", userName);
             string accountNumber = myHKeInvestData.getData(sql).Rows[0].Field<string>("accountNumber");
+
+            msg.Text = "welcome " + userName + " account Number: " + accountNumber.ToString().Trim();
             return accountNumber.ToString().Trim();
         }
 
@@ -230,6 +246,7 @@ namespace HKeInvestWebApplication.ClientOnly
             {
                 return;
             }
+
             string accountNumber = getAccountNumber();
             if(accountNumber == null || accountNumber == "")
             {
@@ -246,7 +263,7 @@ namespace HKeInvestWebApplication.ClientOnly
             string allOrNone = rbAllOrNone.Text.Trim();
 
             string stopPrice = TextStopPrice.Text.Trim();
-            string marketPrice = TextMarketPrice.Text.Trim();
+            /// string marketPrice = TextMarketPrice.Text.Trim();
             string limitPrice = TextLimitPrice.Text.Trim();
 
             // for stock high price / low price
@@ -254,38 +271,42 @@ namespace HKeInvestWebApplication.ClientOnly
             string highPrice = limitPrice;
             // if sell order & stock order & allornone & stop limie || limit
             string lowPirce = limitPrice;
-
+            string numShown = "";
             // for bonds:
             string amount_buyBond = TextAmount.Text.Trim();
             string shares_sellBond = TextShares.Text.Trim();
             string isBuyOrSell = rbIsBuyOrSell.Text.Trim(); // buy order; sell order
             string securityType = rbSecurityType.Text.Trim();
-            string allmsg = string.Format("0{0}, 1{1},2{2},3{3},4{4},5{5},6{6},7{7},8{8}",
+            string allmsg = string.Format("0{0}, 1{1},2{2},3{3},4{4},5{5},6{6},7{7}",
                                              code, shares_buyStock, shares_sellStock, orderType,
-                                             expiryDay, allOrNone, stopPrice, marketPrice, limitPrice);
+                                             expiryDay, allOrNone, stopPrice, limitPrice);
             //System.Diagnostics.Debug.WriteLine(allmsg);
             // Response.Write(allmsg);
-            msg.Text = allmsg; // securityType + isBuyOrSell + " button click ";
+            // msg.Text = allmsg; // securityType + isBuyOrSell + " button click ";
             string referenceNumber = "";
             if (securityType == "stock" && isBuyOrSell == "buy order")
             {
-                
                 string shares = shares_buyStock;
+                numShown = shares;
                 referenceNumber = myHkeInvestFunctions.submitStockBuyOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice, accountNumber);
+
             }
             else if(securityType == "stock" && isBuyOrSell == "sell order")
             {
                 string shares = shares_sellStock;
+                numShown = shares;
                 referenceNumber = myHkeInvestFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice, accountNumber);
             }
 
             else if(securityType == "bond"  && isBuyOrSell == "buy order")
             {
                 string amount = amount_buyBond;
+                numShown = amount;
                 referenceNumber = myHkeInvestFunctions.submitBondBuyOrder(code, amount, accountNumber);
             }else if (securityType == "unit trust" && isBuyOrSell == "buy order")
             {
                 string amount = amount_buyBond;
+                numShown = amount;
                 referenceNumber = myHkeInvestFunctions.submitUnitTrustBuyOrder(code, amount, accountNumber);
             }
 
@@ -293,26 +314,28 @@ namespace HKeInvestWebApplication.ClientOnly
             else if (securityType == "bond" && isBuyOrSell == "sell order")
             {
                 string shares = shares_sellBond;
+                numShown = shares;
                 referenceNumber = myHkeInvestFunctions.submitBondSellOrder(code, shares, accountNumber);
             }
             else if (securityType == "unit trust" && isBuyOrSell == "sell order")
             {
                 string shares = shares_sellBond;
+                numShown = shares;
                 referenceNumber = myHkeInvestFunctions.submitUnitTrustSellOrder(code, shares, accountNumber);
             }
 
 
-            if (referenceNumber != "" || referenceNumber != null)
+            if (referenceNumber != "" && referenceNumber != null)
             {
-                LabelResult.Text = "order submitted, reference number: " + referenceNumber;
+                LabelResult.Text = "account: " + accountNumber + ": " + securityType + " "+ isBuyOrSell + ", amount/shares " + numShown + " submitted, reference number: " + referenceNumber;
             }else
             {
-                LabelResult.Text = "order submitted failed";
-
+                LabelResult.Text = "account: " + accountNumber + ", order submitted failed";
             }
 
         }
 
+        // ---- custormer validation ----
         protected void cvCode_ServerValidate(object source, ServerValidateEventArgs args)
         {
             if (ddlCode.SelectedValue.ToString().Trim() == "-- choose code of available security --" || ddlCode.SelectedValue == null )
@@ -324,40 +347,90 @@ namespace HKeInvestWebApplication.ClientOnly
            
         }
 
+        // sell bond/unit trust shares
         protected void cvSellShares_ServerValidate(object source, ServerValidateEventArgs args)
         {
-            decimal number;
-            string shares = TextSellShares.Text.ToString().Trim();
-            decimal sharesOwn;
-            
-            decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn);
-            msg.Text = sharesOwn.ToString();
-            
-            if (decimal.TryParse(shares, out number) && number > sharesOwn)
+            decimal numberSell = 0;
+            string shares_sellStock = TextSellShares.Text.ToString().Trim();
+
+            decimal sharesOwn = 0;
+            if (!decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn) ||
+                !decimal.TryParse(shares_sellStock, out numberSell))
             {
-                cvSellShares.ErrorMessage = " amount exceed maximum";
+                cvShares.ErrorMessage = "please input decimal number";
                 args.IsValid = false;
             }
-            msg.Text = number.ToString();
+
+//            decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn);
+//            msg.Text = sharesOwn.ToString();
+//            decimal.TryParse(shares, out number);
+
+            if (numberSell > sharesOwn)
+            {
+                cvSellShares.ErrorMessage = numberSell.ToString() + " amount exceed maximum " + sharesOwn.ToString();
+                args.IsValid = false;
+            }
+            // msg.Text = shares_sellStock.ToString();
+            // msg.Text = "number is " + shares_sellStock.ToString();
 
 
 
         }
 
+        // sell stock shares
         protected void cvShares_ServerValidate(object source, ServerValidateEventArgs args)
         {
-            string shares_buyStock = TextBuyShares.Text.Trim() + "00";
+            string shares_sellBonds = TextShares.Text.Trim();
             decimal number;
-            string shares = TextSellShares.Text.ToString().Trim();
+
+            string shares = showSecuritySharesOwn();
             decimal sharesOwn;
-            decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn);
-            msg.Text = sharesOwn.ToString();
-            if (decimal.TryParse(shares_buyStock, out number) && number > sharesOwn)
+
+            if (!decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn) ||
+                !decimal.TryParse(shares_sellBonds, out number))
             {
-                cvSellShares.ErrorMessage = " amount exceed maximum";
+                cvShares.ErrorMessage = "please input decimal number";
                 args.IsValid = false;
             }
-            msg.Text = number.ToString();
+            decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn);
+            decimal.TryParse(shares_sellBonds, out number);
+
+            msg.Text = sharesOwn.ToString();
+            if (number > sharesOwn)
+            {
+                cvShares.ErrorMessage = "invalid! Buy shares: " + shares_sellBonds + " exceed maximum value: " + shares;
+                args.IsValid = false;
+            }
+
+            // msg.Text = "number is " + number.ToString();
+            // LabelResult.Text = number.ToString() + LabelResult.Text + shares_buyStock;
+
+        }
+
+        protected void cvLimitPrice_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            string stopPricestr = TextStopPrice.Text.Trim();
+            decimal stopPrice = 0;
+
+            string limitPricestr = TextLimitPrice.Text.Trim();
+            decimal limitPrice = 0;
+
+            if (rbOrderType.SelectedValue.ToString().Trim() != "stop limit") return;
+            if(stopPricestr == "" || stopPricestr == null || limitPricestr == "" || limitPricestr == null)
+            {
+                cvLimitPrice.ErrorMessage = "price required";
+                args.IsValid = false;
+            }else if(rbIsBuyOrSell.SelectedValue.ToString().Trim() == "buy order" && stopPrice <= limitPrice)
+            {
+                cvLimitPrice.ErrorMessage = "invalid! for buy order, stop price: "+ stopPricestr +" should be larger than limit price " + limitPricestr;
+                args.IsValid = false;
+            }else if (rbIsBuyOrSell.SelectedValue.ToString().Trim() == "sell order" && stopPrice >= limitPrice)
+            {
+                cvLimitPrice.ErrorMessage = "invalid! for sell order, stop price should be smaller than limit price";
+                args.IsValid = false;
+            }
+
+
         }
     }
 }

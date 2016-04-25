@@ -171,6 +171,8 @@ namespace HKeInvestWebApplication.Code_File
             // Check if input is valid.
             if (!securityCodeIsValid("bond", code)) { return null; }
             if (!sharesIsValid("bond", shares)) { return null; }
+            if (!sellAmountIsValid("stock", code, accountNumber, shares)) { return null; }
+
             string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
             // Submit the order.
             string referenceNumber = myExternalFunctions.submitBondSellOrder(code, shares);
@@ -227,7 +229,9 @@ namespace HKeInvestWebApplication.Code_File
             {
                   sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ",";
             }
-            sql = sql + "'" +accountNumber + ", 0)";
+            sql = sql + "'" +accountNumber + "', 0)";
+
+
             submitOrder(sql);
             return referenceNumber;
         }
@@ -240,6 +244,9 @@ namespace HKeInvestWebApplication.Code_File
             if (!securityCodeIsValid("stock", code)) { return null; }
             if (!sharesIsValid("stock", shares)) { return null; }
             if (!orderTypeIsValid("sell", orderType, expiryDay.Trim(), allOrNone.Trim(), lowPrice.Trim(), stopPrice.Trim())) { return null; }
+            if (!sellAmountIsValid("stock", code, accountNumber, shares)) { return null; }
+
+
             string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
             string referenceNumber = myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
             // Construct the basic SQL statement.
@@ -298,16 +305,18 @@ namespace HKeInvestWebApplication.Code_File
 
         public string submitUnitTrustSellOrder(string code, string shares, string accountNumber)
         {
+            
             // Inserts a unit trust sell order into the Order table.
             // Check if input is valid.
             if (!securityCodeIsValid("unit trust", code)) { return null; }
             if (!sharesIsValid("unit trust", shares)) { return null; }
+            if (!sellAmountIsValid("unit trust", code, accountNumber, shares)) { return null; }
+
             string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
             // Submit the order.
-            string referenceNumber = myExternalFunctions.submitUnitTrustBuyOrder(code, shares);
+            string referenceNumber = myExternalFunctions.submitUnitTrustSellOrder(code, shares);
             int referenceNumber_int;
             if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
-
             submitOrder("insert into [Order] values (" + referenceNumber + ", 'sell', 'unit trust', '" + code + "', '" + dateNow
                 + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL, '"+ accountNumber + "', 0)");
             return referenceNumber;
@@ -397,6 +406,25 @@ namespace HKeInvestWebApplication.Code_File
             //            return referenceNumber;
             //            return sql;
             return;
+        }
+
+        private bool sellAmountIsValid(string securityType, string securityCode, string accountNumber, string placeAmount)
+        {
+            string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'", accountNumber, securityType, securityCode);
+            // shares
+            DataTable dtShareOwn = myHKeInvestData.getData(sql);
+            if (myHKeInvestData.getData(sql).Rows == null) return false;
+            System.Diagnostics.Debug.WriteLine(sql);
+            
+            return true;
+            decimal sharesOwn = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
+
+            decimal sharesToSell;
+            decimal.TryParse(placeAmount.ToString().Trim(), out sharesToSell);
+            if (sharesToSell > sharesOwn) return false;
+            else return true;
+
+
         }
 
         private bool securityCodeIsValid(string securityType, string securityCode)
