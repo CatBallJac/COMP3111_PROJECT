@@ -416,6 +416,7 @@
     </Compile>
     <Compile Include="Code_File\HKeInvestCode.cs" />
     <Compile Include="Code_File\HKeInvestData.cs" />
+    <Compile Include="Code_File\SQLStringHandleHelper.cs" />
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

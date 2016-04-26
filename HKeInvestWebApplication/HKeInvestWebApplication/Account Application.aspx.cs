@@ -15,6 +15,7 @@ namespace HKeInvestWebApplication
     public partial class Account_Application : System.Web.UI.Page
     {
         HKeInvestData myHKeInvestData = new HKeInvestData();
+        SQLStringHandleHelper myStringHandleHelper = new SQLStringHandleHelper();
         protected void Page_Load(object sender, EventArgs e)
         {
             applyResult.Text = "";
@@ -27,20 +28,20 @@ namespace HKeInvestWebApplication
             /*============get data for account and primary client==============*/
             string account_type = AccountType.SelectedValue;
             string p_title = title.SelectedValue;
-            string p_first_name = handleString( firstName.Text.Trim());
-            string p_last_name = handleString( lastName.Text.Trim());
+            string p_first_name = myStringHandleHelper.handleString( firstName.Text.Trim());
+            string p_last_name = myStringHandleHelper.handleString( lastName.Text.Trim());
             string p_date_of_birth = dateOfBirth.Text.Trim();
-            string p_email = handleString( email.Text.Trim());
-            string p_street = handleString(street.Text.Trim());
-            string p_district = handleString( district.Text.Trim());
-            string p_country_of_citizenship = handleString( citizenship.Text.Trim());
-            string p_country_of_legal_residence = handleString( legalResidence.Text.Trim());
-            string p_hkid = handleString(HKID.Text.Trim()).ToUpper();
+            string p_email = myStringHandleHelper.handleString( email.Text.Trim());
+            string p_street = myStringHandleHelper.handleString(street.Text.Trim());
+            string p_district = myStringHandleHelper.handleString( district.Text.Trim());
+            string p_country_of_citizenship = myStringHandleHelper.handleString( citizenship.Text.Trim());
+            string p_country_of_legal_residence = myStringHandleHelper.handleString( legalResidence.Text.Trim());
+            string p_hkid = myStringHandleHelper.handleString(HKID.Text.Trim()).ToUpper();
             string p_employment_status = employmentStatus.SelectedValue;
             string p_part4_q1 = part4PrimaryQ1.SelectedValue;
             string p_part4_q2 = part4PrimaryQ2.SelectedValue;
             string primary_source = primarySource.SelectedValue;
-            primary_source = primary_source == "Other" ? handleString(Part4Other.Text.Trim()) : primary_source;
+            primary_source = primary_source == "Other" ? myStringHandleHelper.handleString(Part4Other.Text.Trim()) : primary_source;
             string investment_objective = investmentObjective.SelectedValue;
             string investment_knowledge = investmentKnowledge.SelectedValue;
             string investment_experience = investmentExperience.SelectedValue;
@@ -96,57 +97,57 @@ namespace HKeInvestWebApplication
 
             if (!string.IsNullOrEmpty(building.Text.Trim()))
             {
-                sql = updateClientSql("building", handleString(building.Text.Trim()), true, account_number);
+                sql = updateClientSql("building", myStringHandleHelper.handleString(building.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
             if (!string.IsNullOrEmpty(homePhone.Text.Trim()))
             {
-                sql = updateClientSql("homePhone", handleString(homePhone.Text.Trim()), true, account_number);
+                sql = updateClientSql("homePhone", myStringHandleHelper.handleString(homePhone.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
             if (!string.IsNullOrEmpty(homeFax.Text.Trim()))
             {
-                sql = updateClientSql("homeFax", handleString(homeFax.Text.Trim()), true, account_number);
+                sql = updateClientSql("homeFax", myStringHandleHelper.handleString(homeFax.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
             if (!string.IsNullOrEmpty(businessPhone.Text.Trim()))
             {
-                sql = updateClientSql("businessPhone", handleString(businessPhone.Text.Trim()), true, account_number);
+                sql = updateClientSql("businessPhone", myStringHandleHelper.handleString(businessPhone.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
             if (!string.IsNullOrEmpty(mobilePhone.Text.Trim()))
             {
-                sql = updateClientSql("mobilePhone", handleString(mobilePhone.Text.Trim()), true, account_number);
+                sql = updateClientSql("mobilePhone", myStringHandleHelper.handleString(mobilePhone.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
             if (!string.IsNullOrEmpty(passportCountry.Text.Trim()))
             {
-                sql = updateClientSql("passportCountryOfIssue", handleString(passportCountry.Text.Trim()), true, account_number);
+                sql = updateClientSql("passportCountryOfIssue", myStringHandleHelper.handleString(passportCountry.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
             if (!string.IsNullOrEmpty(occupation.Text.Trim()))
             {
-                sql = updateClientSql("occupation", handleString(occupation.Text.Trim()), true, account_number);
+                sql = updateClientSql("occupation", myStringHandleHelper.handleString(occupation.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
             if (!string.IsNullOrEmpty(years.Text.Trim()))
             {
-                sql = updateClientSql("yearsWithEmployer", handleString(years.Text.Trim()), true, account_number);
+                sql = updateClientSql("yearsWithEmployer", myStringHandleHelper.handleString(years.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
             if (!string.IsNullOrEmpty(employerName.Text.Trim()))
             {
-                sql = updateClientSql("employerName", handleString(employerName.Text.Trim()), true, account_number);
+                sql = updateClientSql("employerName", myStringHandleHelper.handleString(employerName.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
             if (!string.IsNullOrEmpty(employerPhone.Text.Trim()))
             {
-                sql = updateClientSql("employerPhone", handleString(employerPhone.Text.Trim()), true, account_number);
+                sql = updateClientSql("employerPhone", myStringHandleHelper.handleString(employerPhone.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
             if (!string.IsNullOrEmpty(natureOfBusiness.Text.Trim()))
             {
-                sql = updateClientSql("natureOfBusiness", handleString(natureOfBusiness.Text.Trim()), true, account_number);
+                sql = updateClientSql("natureOfBusiness", myStringHandleHelper.handleString(natureOfBusiness.Text.Trim()), true, account_number);
                 myHKeInvestData.setData(sql, trans);
             }
 
@@ -154,15 +155,15 @@ namespace HKeInvestWebApplication
             if (account_type != "individual")
             {
                 string c_title = title2.SelectedValue;
-                string c_first_name = handleString(firstName2.Text.Trim());
-                string c_last_name = handleString(lastName2.Text.Trim());
+                string c_first_name = myStringHandleHelper.handleString(firstName2.Text.Trim());
+                string c_last_name = myStringHandleHelper.handleString(lastName2.Text.Trim());
                 string c_date_of_birth = dateOfBirth2.Text.Trim();
-                string c_email = handleString(email2.Text.Trim());
-                string c_street = handleString(street2.Text.Trim());
-                string c_district = handleString(district2.Text.Trim());
-                string c_country_of_citizenship = handleString(citizenship2.Text.Trim());
-                string c_country_of_legal_residence = handleString(legalResidence2.Text.Trim());
-                string c_hkid = handleString(HKID2.Text.Trim()).ToUpper();
+                string c_email = myStringHandleHelper.handleString(email2.Text.Trim());
+                string c_street = myStringHandleHelper.handleString(street2.Text.Trim());
+                string c_district = myStringHandleHelper.handleString(district2.Text.Trim());
+                string c_country_of_citizenship = myStringHandleHelper.handleString(citizenship2.Text.Trim());
+                string c_country_of_legal_residence = myStringHandleHelper.handleString(legalResidence2.Text.Trim());
+                string c_hkid = myStringHandleHelper.handleString(HKID2.Text.Trim()).ToUpper();
                 string c_employment_status = employmentStatus2.SelectedValue;
                 string c_part4_q1 = part4CoQ1.SelectedValue;
                 string c_part4_q2 = part4CoQ2.SelectedValue;
@@ -183,57 +184,57 @@ namespace HKeInvestWebApplication
                 myHKeInvestData.setData(sql, trans);
                 if (!string.IsNullOrEmpty(building2.Text.Trim()))
                 {
-                    sql = updateClientSql("building", handleString(building2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("building", myStringHandleHelper.handleString(building2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
                 if (!string.IsNullOrEmpty(homePhone2.Text.Trim()))
                 {
-                    sql = updateClientSql("homePhone", handleString(homePhone2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("homePhone", myStringHandleHelper.handleString(homePhone2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
                 if (!string.IsNullOrEmpty(homeFax2.Text.Trim()))
                 {
-                    sql = updateClientSql("homeFax", handleString(homeFax2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("homeFax", myStringHandleHelper.handleString(homeFax2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
                 if (!string.IsNullOrEmpty(businessPhone2.Text.Trim()))
                 {
-                    sql = updateClientSql("businessPhone", handleString(businessPhone2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("businessPhone", myStringHandleHelper.handleString(businessPhone2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
                 if (!string.IsNullOrEmpty(mobilePhone2.Text.Trim()))
                 {
-                    sql = updateClientSql("mobilePhone", handleString(mobilePhone2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("mobilePhone", myStringHandleHelper.handleString(mobilePhone2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
                 if (!string.IsNullOrEmpty(passportCountry2.Text.Trim()))
                 {
-                    sql = updateClientSql("passportCountryOfIssue", handleString(passportCountry2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("passportCountryOfIssue", myStringHandleHelper.handleString(passportCountry2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
                 if (!string.IsNullOrEmpty(occupation2.Text.Trim()))
                 {
-                    sql = updateClientSql("occupation", handleString(occupation2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("occupation", myStringHandleHelper.handleString(occupation2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
                 if (!string.IsNullOrEmpty(years2.Text.Trim()))
                 {
-                    sql = updateClientSql("yearsWithEmployer", handleString(years2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("yearsWithEmployer", myStringHandleHelper.handleString(years2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
                 if (!string.IsNullOrEmpty(employerName2.Text.Trim()))
                 {
-                    sql = updateClientSql("employerName", handleString(employerName2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("employerName", myStringHandleHelper.handleString(employerName2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
                 if (!string.IsNullOrEmpty(employerPhone2.Text.Trim()))
                 {
-                    sql = updateClientSql("employerPhone", handleString(employerPhone2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("employerPhone", myStringHandleHelper.handleString(employerPhone2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
                 if (!string.IsNullOrEmpty(natureOfBusiness2.Text.Trim()))
                 {
-                    sql = updateClientSql("natureOfBusiness", handleString(natureOfBusiness2.Text.Trim()), false, account_number);
+                    sql = updateClientSql("natureOfBusiness", myStringHandleHelper.handleString(natureOfBusiness2.Text.Trim()), false, account_number);
                     myHKeInvestData.setData(sql, trans);
                 }
             }
@@ -271,19 +272,13 @@ namespace HKeInvestWebApplication
                 num++;
                 accountNumber += num.ToString("D8");
             }
-
+            
             return accountNumber;
-        }
-
-        protected string handleString(string data) {
-            data = data.Replace("'", "\'");
-            data = data.Replace('"', '\"');
-            return data;
         }
 
         protected string updateClientSql(string column,string data, bool isPrimary,string account)
         {
-            data = handleString(data);string type;
+            data = myStringHandleHelper.handleString(data);string type;
             if (isPrimary) type = "Yes";
             else type = "No";
             string sql = "UPDATE Client SET " + column + " = '" + data + "' "+
@@ -526,13 +521,19 @@ namespace HKeInvestWebApplication
         {
             if (primarySource.SelectedValue == "Other")
             {
-                Part4Other.ReadOnly = false;
-                Part4Other.BackColor = System.Drawing.Color.White;
+                if (Part4Other.ReadOnly)
+                {
+                    Part4Other.ReadOnly = false;
+                    Part4Other.BackColor = System.Drawing.Color.White;
+                }
             }else
             {
-                Part4Other.Text = "";
-                Part4Other.ReadOnly = true;
-                Part4Other.BackColor = System.Drawing.Color.Gray;
+                if (!Part4Other.ReadOnly)
+                {
+                    Part4Other.Text = "";
+                    Part4Other.ReadOnly = true;
+                    Part4Other.BackColor = System.Drawing.Color.Gray;
+                }
             }
         }
 
@@ -652,6 +653,11 @@ namespace HKeInvestWebApplication
             {
                 args.IsValid = false;
                 part7Validator.ErrorMessage = "At least HK$20,000 is needed to create a security account";
+            }
+            if (sum.ToString("F2").Length >13)
+            {
+                args.IsValid = false;
+                part7Validator.ErrorMessage = "The total value of initial account deposit is too large for the database";
             }
         }
 
