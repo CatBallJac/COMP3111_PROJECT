@@ -58,7 +58,7 @@ namespace HKeInvestWebApplication.Account
         private bool CheckClientRecord(string firstName, string lastName, string dateOfBirth, string email, string HKID, string accountNumber)
         {
             string isPrimary = "yes";
-            string sql = "select [firstName], [lastName], [dateOfBirth], [email], [HKIDPassportNumber] from [ClientTemp] where [accountNumber]='" + accountNumber + "' and [firstName]='"+ firstName+"' and [lastName]='"+lastName+ "' and [dateOfBirth]=CONVERT(date, '" + DateOfBirth.Text+ "', 103) and [email]='"+email+"' and [HKIDPassportNumber]='"+HKID+"' and [isPrimary]='"+isPrimary+"'";
+            string sql = "select [firstName], [lastName], [dateOfBirth], [email], [HKIDPassportNumber] from [Client] where [accountNumber]='" + accountNumber + "' and [firstName]='"+ firstName+"' and [lastName]='"+lastName+ "' and [dateOfBirth]=CONVERT(date, '" + DateOfBirth.Text+ "', 103) and [email]='"+email+"' and [HKIDPassportNumber]='"+HKID+"' and [isPrimary]='"+isPrimary+"'";
             HKeInvestData myInvestData = new HKeInvestData();
             DataTable dtClient = myInvestData.getData(sql);
             if(dtClient == null || dtClient.Rows.Count==0) { return false; }
