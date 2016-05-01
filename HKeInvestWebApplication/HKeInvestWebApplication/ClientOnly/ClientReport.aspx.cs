@@ -19,6 +19,10 @@ namespace HKeInvestWebApplication.ClientOnly
         ExternalData myExternalData = new ExternalData();
         private static Boolean updated = false;
         private static Boolean dateChecked = false;
+        private static DataTable dtSortOrder;
+        private static DataTable dtSortTransaction;
+        private static DataTable dtSortHistory;
+        private static DataTable dtSummaryConvert;
         protected void Page_Load(object sender, EventArgs e)
         {
             // Get the available currencies to populate the DropDownList.
@@ -27,6 +31,18 @@ namespace HKeInvestWebApplication.ClientOnly
             string AccountSql = "select [accountNumber] from [AccountTemp] where [userName]='" + userName + "'";
             DataTable dTaccountNumberOfClient = myHKeInvestData.getData(AccountSql);
             if (dTaccountNumberOfClient == null) { return; } // If the DataSet is null, a SQL error occurred.
+
+            DataTable dtCurrency = myExternalFunctions.getCurrencyData();
+
+            if (updated == false)
+            {
+                foreach (DataRow row in dtCurrency.Rows)
+                {
+                    ddlCurrency.Items.Add(row["currency"].ToString().Trim());
+                    Session.Add(row["currency"].ToString().Trim(), row["rate"].ToString().Trim());
+                }
+                updated = true;
+            }
 
             // If no result is returned by the SQL statement, then display a message.
             if (dTaccountNumberOfClient.Rows.Count == 0)
@@ -58,16 +74,9 @@ namespace HKeInvestWebApplication.ClientOnly
                 }
                 j = j + 1;
             }
-            DataTable dtCurrency = myExternalFunctions.getCurrencyData();
+            
 
-            if (updated == false)
-            {
-                foreach (DataRow row in dtCurrency.Rows)
-                {
-                    ddlCurrency.Items.Add(row["currency"].ToString().Trim());
-                }
-                updated = true;
-            }
+            
 
             string sql = "select * from [SecurityHolding] where [SecurityHolding].[accountNumber] = '" + accountNumber + "' ";
             DataTable dtSecurities = myHKeInvestData.getData(sql);
@@ -110,11 +119,12 @@ namespace HKeInvestWebApplication.ClientOnly
             }
             DataTable dtSummary = new DataTable();
             dtSummary.Columns.Add("totalValue", typeof(decimal));
+            dtSummary.Columns.Add("convertedValue", typeof(decimal));
             dtSummary.Columns.Add("freeBalance", typeof(decimal));
             dtSummary.Columns.Add("stockValue", typeof(decimal));
             dtSummary.Columns.Add("bondValue", typeof(decimal));
             dtSummary.Columns.Add("unitTrustValue", typeof(decimal));
-            dtSummary.Columns.Add("lastOrderDate", typeof(string));
+            dtSummary.Columns.Add("lastOrderDate", typeof(DateTime));
             dtSummary.Columns.Add("lastOrderValue", typeof(string));
 
             //for last order information
@@ -174,8 +184,12 @@ namespace HKeInvestWebApplication.ClientOnly
 
 
 
-            dtSummary.Rows.Add(totalValue, freeBalance, stockValue, bondValue, unitTrustValue, orderTime.ToString(), orderValue.ToString());
-
+            dtSummary.Rows.Add(totalValue, 0, freeBalance, stockValue, bondValue, unitTrustValue, orderTime, orderValue.ToString());
+            dtSummaryConvert = dtSummary.Clone();
+            for (int i = 0; i < dtSummary.Rows.Count; i++)
+            {
+                dtSummaryConvert.ImportRow(dtSummary.Rows[i]);
+            }
             gvSummary.DataSource = dtSummary;
             gvSummary.DataBind();
 
@@ -186,7 +200,7 @@ namespace HKeInvestWebApplication.ClientOnly
             dtOrderList.Columns.Add("securityType", typeof(string));
             dtOrderList.Columns.Add("securityCode", typeof(string));
             dtOrderList.Columns.Add("securityName", typeof(string));
-            dtOrderList.Columns.Add("dateSubmitted", typeof(string));
+            dtOrderList.Columns.Add("dateSubmitted", typeof(DateTime));
             dtOrderList.Columns.Add("status", typeof(string));
             dtOrderList.Columns.Add("amount", typeof(decimal));
             dtOrderList.Columns.Add("shares", typeof(decimal));
@@ -199,7 +213,7 @@ namespace HKeInvestWebApplication.ClientOnly
             DataTable dtOrderTable = myHKeInvestData.getData(sql);
             foreach(DataRow row in dtOrderTable.Rows)
             {
-                DataTable name = myExternalFunctions.getSecuritiesByName(row["securityType"].ToString().Trim(), row["securityCode"].ToString().Trim());
+                DataTable name = myExternalFunctions.getSecuritiesByCode(row["securityType"].ToString().Trim(), row["securityCode"].ToString().Trim());
                 
                 if (name == null || name.Rows.Count == 0)
                 {
@@ -218,7 +232,7 @@ namespace HKeInvestWebApplication.ClientOnly
                 string buyOrSell = row["buyOrSell"].ToString().Trim();
                 string securityType = row["securityType"].ToString().Trim();
                 string securityCode = row["securityCode"].ToString().Trim();
-                string dateSubmitted = row["dateSubmitted"].ToString().Trim();
+                DateTime dateSubmitted = Convert.ToDateTime(row["dateSubmitted"].ToString().Trim());
                 string status = row["status"].ToString().Trim();
                 decimal Shares = 0;
                 decimal StopPrice = 0;
@@ -256,10 +270,19 @@ namespace HKeInvestWebApplication.ClientOnly
 
                 dtOrderList.Rows.Add(referenceNumber, buyOrSell, securityType, securityCode, securityName, dateSubmitted, status, Amount, Shares, LimitPrice, StopPrice, expiryDay);
 
+                dtSortOrder = dtOrderList.Clone();
+                for (int i = 0; i < dtOrderList.Rows.Count; i++)
+                {
+                    dtSortOrder.ImportRow(dtOrderList.Rows[i]);
+                }
+                //
+                DataView sortedView = new DataView(dtSortOrder);
+                sortedView.Sort = "dateSubmitted" + " " + "Asc";
+                gvOrder.DataSource = sortedView;
 
+                gvOrder.DataBind();
             }
-            gvOrder.DataSource = dtOrderList;
-            gvOrder.DataBind();
+            
 
         }
 
@@ -388,35 +411,35 @@ namespace HKeInvestWebApplication.ClientOnly
         protected void ddlCurrency_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Get the index value of the convertedValue column in the GridView using the helper method "getColumnIndexByName".
-            int convertedValueIndex = myHKeInvestCode.getColumnIndexByName(gvSecurityHolding, "convertedValue");
+            int convertedValueIndex = myHKeInvestCode.getColumnIndexByName(gvSummary, "convertedValue");
 
             // Get the currency to convert to from the ddlCurrency dropdownlist.
             // Hide the converted currency column if no currency is selected.
             string toCurrency = ddlCurrency.SelectedValue;
             if (toCurrency == "0")
             {
-                gvSecurityHolding.Columns[convertedValueIndex].Visible = false;
+                gvSummary.Columns[convertedValueIndex].Visible = false;
                 return;
             }
             string toCurrencyRate = myExternalFunctions.getCurrencyRate(toCurrency).ToString();
             // Make the convertedValue column visible and create a DataTable from the GridView.
             // Since a GridView cannot be updated directly, it is first loaded into a DataTable using the helper method 'unloadGridView'.
-            gvSecurityHolding.Columns[convertedValueIndex].Visible = true;
-            DataTable dtSecurityHolding = myHKeInvestCode.unloadGridView(gvSecurityHolding);
+            gvSummary.Columns[convertedValueIndex].Visible = true;
+            
 
             // ***********************************************************************************************************
             // TODO: For each row in the DataTable, get the base currency of the security, convert the current value to  *
             //       the selected currency and assign the converted value to the convertedValue column in the DataTable. *
             // ***********************************************************************************************************
             int dtRow = 0;
-            foreach (DataRow row in dtSecurityHolding.Rows)
+            foreach (DataRow row in dtSummaryConvert.Rows)
             {
                 // Add your code here!
-                string base_currency = row["base"].ToString();
+                string base_currency = "HKD";
                 string baseCurrencyRate = myExternalFunctions.getCurrencyRate(base_currency).ToString();
-                decimal valueToConvert = Convert.ToDecimal(row["shares"]) * Convert.ToDecimal(row["price"]);
+                decimal valueToConvert = Convert.ToDecimal(row["totalValue"]);
                 decimal convertedV = myHKeInvestCode.convertCurrency(base_currency, baseCurrencyRate, toCurrency, toCurrencyRate, valueToConvert);
-                dtSecurityHolding.Rows[dtRow]["convertedValue"] = convertedV;
+                dtSummaryConvert.Rows[dtRow]["convertedValue"] = convertedV;
                 dtRow = dtRow + 1;
             }
 
@@ -424,8 +447,55 @@ namespace HKeInvestWebApplication.ClientOnly
             gvSecurityHolding.Columns[convertedValueIndex].HeaderText = "Value in " + toCurrency;
 
             // Bind the DataTable to the GridView.
-            gvSecurityHolding.DataSource = dtSecurityHolding;
-            gvSecurityHolding.DataBind();
+            gvSummary.DataSource = dtSummaryConvert;
+            gvSummary.DataBind();
+            string type = ddlSecurityType.SelectedValue;
+            if (type != "0")
+            {
+                // Get the index value of the convertedValue column in the GridView using the helper method "getColumnIndexByName".
+                convertedValueIndex = myHKeInvestCode.getColumnIndexByName(gvSecurityHolding, "convertedValue");
+
+                // Get the currency to convert to from the ddlCurrency dropdownlist.
+                // Hide the converted currency column if no currency is selected.
+                
+                if (toCurrency == "0")
+                {
+                    gvSecurityHolding.Columns[convertedValueIndex].Visible = false;
+                    return;
+                }
+                
+                // Make the convertedValue column visible and create a DataTable from the GridView.
+                // Since a GridView cannot be updated directly, it is first loaded into a DataTable using the helper method 'unloadGridView'.
+                gvSecurityHolding.Columns[convertedValueIndex].Visible = true;
+                DataTable dtSecurityHolding = myHKeInvestCode.unloadGridView(gvSecurityHolding);
+
+                // ***********************************************************************************************************
+                // TODO: For each row in the DataTable, get the base currency of the security, convert the current value to  *
+                //       the selected currency and assign the converted value to the convertedValue column in the DataTable. *
+                // ***********************************************************************************************************
+                dtRow = 0;
+                foreach (DataRow row in dtSecurityHolding.Rows)
+                {
+                    // Add your code here!
+                    string base_currency = row["base"].ToString();
+                    string baseCurrencyRate = myExternalFunctions.getCurrencyRate(base_currency).ToString();
+                    decimal valueToConvert = Convert.ToDecimal(row["shares"]) * Convert.ToDecimal(row["price"]);
+                    decimal convertedV = myHKeInvestCode.convertCurrency(base_currency, baseCurrencyRate, toCurrency, toCurrencyRate, valueToConvert);
+                    dtSecurityHolding.Rows[dtRow]["convertedValue"] = convertedV;
+                    dtRow = dtRow + 1;
+                }
+
+                // Change the header text of the convertedValue column to indicate the currency. 
+                gvSecurityHolding.Columns[convertedValueIndex].HeaderText = "Value in " + toCurrency;
+
+                // Bind the DataTable to the GridView.
+                gvSecurityHolding.DataSource = dtSecurityHolding;
+                gvSecurityHolding.DataBind();
+            }
+
+
+
+            
         }
 
         protected void gvSecurityHolding_Sorting(object sender, GridViewSortEventArgs e)
@@ -446,10 +516,25 @@ namespace HKeInvestWebApplication.ClientOnly
             gvSecurityHolding.DataBind();
         }
 
-        protected void gvSecurityHolding_SelectedIndexChanged(object sender, EventArgs e)
+        protected void gvOrder_Sorting(object sender, GridViewSortEventArgs e)
         {
-
+            DataView sortedView = new DataView(dtSortOrder);
+            sortedView.Sort = e.SortExpression + " " + "Asc";
+            gvOrder.DataSource = sortedView;
+            gvOrder.DataBind();
         }
+
+        protected void gvHistory_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            DataView sortedView = new DataView(dtSortHistory);
+            sortedView.Sort = e.SortExpression + " " + "Asc";
+            gvHistory.DataSource = sortedView;
+            gvHistory.DataBind();
+        }
+
+        
+
+
 
         protected void cvDate_ServerValidate(object source, ServerValidateEventArgs args)
         {
@@ -506,7 +591,7 @@ namespace HKeInvestWebApplication.ClientOnly
                     DateTime thisStartDate = Convert.ToDateTime(row["dateSubmitted"]);
                     if (dateChecked==false||(DateTime.Compare(StartDate, thisStartDate) < 0 && DateTime.Compare(EndDate, thisStartDate)>0))
                     {
-                        DataTable name = myExternalFunctions.getSecuritiesByName(row["securityType"].ToString().Trim(), row["securityCode"].ToString().Trim());
+                        DataTable name = myExternalFunctions.getSecuritiesByCode(row["securityType"].ToString().Trim(), row["securityCode"].ToString().Trim());
 
                         if (name == null || name.Rows.Count == 0)
                         {
@@ -545,9 +630,17 @@ namespace HKeInvestWebApplication.ClientOnly
                         {
                             foreach (DataRow rows in dtOrderTransaction.Rows)
                             {
-                                
+                                if (rows["executeShares"] == null)
+                                {
+                                    eAmount = 0;
+                                    shares = Convert.ToDecimal(rows["executeShares"]);
+                                }
+                                else
+                                {
                                     eAmount += Convert.ToDecimal(rows["executeShares"]) * Convert.ToDecimal(rows["executePrice"]);
                                     shares = Convert.ToDecimal(rows["executeShares"]);
+                                }
+                                    
                                     
                                 
 
@@ -571,7 +664,16 @@ namespace HKeInvestWebApplication.ClientOnly
 
             }
 
-            gvHistory.DataSource = dtOrderList;
+            dtSortHistory = dtOrderList.Clone();
+            for (int i = 0; i < dtOrderList.Rows.Count; i++)
+            {
+                dtSortHistory.ImportRow(dtOrderList.Rows[i]);
+            }
+            //
+            DataView sortedView = new DataView(dtSortHistory);
+            sortedView.Sort = "securityType" + " " + "Asc";
+            gvHistory.DataSource = sortedView;
+
             gvHistory.DataBind();
 
 
@@ -608,8 +710,18 @@ namespace HKeInvestWebApplication.ClientOnly
                     }
                     
                 }
-                gvTransaction.DataSource = dtGVTransaction;
+                dtSortTransaction = dtGVTransaction.Clone();
+                for (int i = 0; i < dtGVTransaction.Rows.Count; i++)
+                {
+                    dtSortTransaction.ImportRow(dtGVTransaction.Rows[i]);
+                }
+                //
+                DataView sortedView1 = new DataView(dtSortTransaction);
+                sortedView1.Sort = "executedDate" + " " + "Asc";
+                gvTransaction.DataSource = sortedView1;
+
                 gvTransaction.DataBind();
+
             }
         }
 
@@ -622,6 +734,8 @@ namespace HKeInvestWebApplication.ClientOnly
                 endDate.Visible = true;
                 cvDate.Enabled = true;
                 dateChecked = true;
+                startDate.SelectedDate = DateTime.Today;
+                endDate.SelectedDate = DateTime.Today;
             }
             else
             {
@@ -629,8 +743,11 @@ namespace HKeInvestWebApplication.ClientOnly
                 endDate.Visible = false;
                 cvDate.Enabled = false;
                 dateChecked = false;
+                
             }
             
         }
+
+        
     }
 }

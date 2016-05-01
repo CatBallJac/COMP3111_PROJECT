@@ -17,30 +17,11 @@ namespace HKeInvestWebApplication
         HKeInvestCode myHKeInvestCode = new HKeInvestCode();
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
         private static Boolean updated = false;
-        protected void SaveInSession()
-        {
-
-            if (Session.Count < 5)
-            {
-                DataTable dtCurrency = myExternalFunctions.getCurrencyData();
-                foreach (DataRow row in dtCurrency.Rows)
-                {
-                    Session[row["currency"].ToString().Trim()] = row["rate"].ToString().Trim();
-                }
-            }
-
-            if (updated == false)
-            {
-                for (int iCounter = 0; iCounter <= (Session.Count - 1); iCounter++)
-                {
-                    ddlCurrency.Items.Add(Session.Keys[iCounter]);
-                }
-                updated = true;
-            }
-        }
+        private static DataTable dtView;
+        
         protected void Page_Load(object sender, EventArgs e)
         {
-            SaveInSession();
+            
            
 
         }
@@ -67,10 +48,7 @@ namespace HKeInvestWebApplication
             }
         }
 
-        protected void ddlCurrency_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
+        
 
         protected void search_Click(object sender, EventArgs e)
         {
@@ -83,7 +61,7 @@ namespace HKeInvestWebApplication
                 gvStock.DataBind();
 
                 gvStock.Visible = true;
-                ddlCurrency.Visible = true;
+                
                 return;
             }
             UnloadGV();
@@ -101,7 +79,7 @@ namespace HKeInvestWebApplication
                 
                 if (securityType == "Stock")
                 {
-                    sql = "select * from[" + securityType + "] where [name] like '%" + securityName + "%' and [volume] IS NOT NULL ";
+                    sql = "select * from[" + securityType + "] where [name] like '%" + securityName + "%' ";
                     dtType = myExternalData.getData(sql);
                     if (dtType == null)
                     {
@@ -114,16 +92,25 @@ namespace HKeInvestWebApplication
                     }
                     ViewState["SortExpression"] = "name";
                     ViewState["SortDirection"] = "ASC";
-                    gvStock.DataSource = dtType;
+                    dtView = dtType.Clone();
+                    for (int i = 0; i < dtType.Rows.Count; i++)
+                    {
+                        dtView.ImportRow(dtType.Rows[i]);
+                    }
+                    //
+                    DataView sortedView = new DataView(dtView);
+                    sortedView.Sort = "name" + " " + "Asc";
+                    gvStock.DataSource = sortedView;
+
                     gvStock.DataBind();
 
                     gvStock.Visible = true;
-                    ddlCurrency.Visible = true;
+                    
 
                 }
                 else if (securityType == "Bond")
                 {
-                    sql = "select * from[" + securityType + "] where [name] like '%" + securityName + "%' and [size] IS NOT NULL ";
+                    sql = "select * from[" + securityType + "] where [name] like '%" + securityName + "%' ";
                     dtType = myExternalData.getData(sql);
                     if (dtType == null)
                     {
@@ -136,15 +123,24 @@ namespace HKeInvestWebApplication
                     }
                     ViewState["SortExpression"] = "name";
                     ViewState["SortDirection"] = "ASC";
-                    gvBond.DataSource = dtType;
+                    dtView = dtType.Clone();
+                    for (int i = 0; i < dtType.Rows.Count; i++)
+                    {
+                        dtView.ImportRow(dtType.Rows[i]);
+                    }
+                    //
+                    DataView sortedView = new DataView(dtView);
+                    sortedView.Sort = "name" + " " + "Asc";
+                    gvBond.DataSource = sortedView;
+
                     gvBond.DataBind();
 
                     gvBond.Visible = true;
-                    ddlCurrency.Visible = true;
+                    
                 }
                 else
                 {
-                    sql = "select * from[" + securityType + "] where [name] like '%" + securityName + "%' and [size] IS NOT NULL ";
+                    sql = "select * from[" + securityType + "] where [name] like '%" + securityName + "%' ";
                     dtType = myExternalData.getData(sql);
                     if (dtType == null)
                     {
@@ -157,11 +153,20 @@ namespace HKeInvestWebApplication
                     }
                     ViewState["SortExpression"] = "name";
                     ViewState["SortDirection"] = "ASC";
-                    gvUnitTrust.DataSource = dtType;
+                    dtView = dtType.Clone();
+                    for (int i = 0; i < dtType.Rows.Count; i++)
+                    {
+                        dtView.ImportRow(dtType.Rows[i]);
+                    }
+                    //
+                    DataView sortedView = new DataView(dtView);
+                    sortedView.Sort = "name" + " " + "Asc";
+                    gvUnitTrust.DataSource = sortedView;
+
                     gvUnitTrust.DataBind();
 
                     gvUnitTrust.Visible = true;
-                    ddlCurrency.Visible = true;
+                    
                 }
                 
                 
@@ -183,7 +188,7 @@ namespace HKeInvestWebApplication
                 
                 if (securityType == "Stock")
                 {
-                    sql = "select * from [" + securityType + "] where [code] = '" + securityCode + "' and [volume] IS NOT NULL ";
+                    sql = "select * from [" + securityType + "] where [code] = '" + securityCode + "' ";
                     dtType = myExternalData.getData(sql);
                     if (dtType == null)
                     {
@@ -196,16 +201,25 @@ namespace HKeInvestWebApplication
                     }
                     ViewState["SortExpression"] = "name";
                     ViewState["SortDirection"] = "ASC";
-                    gvStock.DataSource = dtType;
+                    dtView = dtType.Clone();
+                    for (int i = 0; i < dtType.Rows.Count; i++)
+                    {
+                        dtView.ImportRow(dtType.Rows[i]);
+                    }
+                    //
+                    DataView sortedView = new DataView(dtView);
+                    sortedView.Sort = "name" + " " + "Asc";
+                    gvStock.DataSource = sortedView;
+
                     gvStock.DataBind();
 
                     gvStock.Visible = true;
-                    ddlCurrency.Visible = true;
+                    
 
                 }
                 else if (securityType == "Bond")
                 {
-                    sql = "select * from [" + securityType + "] where [code] = '" + securityCode + "' and [size] IS NOT NULL ";
+                    sql = "select * from [" + securityType + "] where [code] = '" + securityCode + "' ";
                     dtType = myExternalData.getData(sql);
                     if (dtType == null)
                     {
@@ -218,15 +232,24 @@ namespace HKeInvestWebApplication
                     }
                     ViewState["SortExpression"] = "name";
                     ViewState["SortDirection"] = "ASC";
-                    gvBond.DataSource = dtType;
+                    dtView = dtType.Clone();
+                    for (int i = 0; i < dtType.Rows.Count; i++)
+                    {
+                        dtView.ImportRow(dtType.Rows[i]);
+                    }
+                    //
+                    DataView sortedView = new DataView(dtView);
+                    sortedView.Sort = "name" + " " + "Asc";
+                    gvBond.DataSource = sortedView;
+
                     gvBond.DataBind();
 
                     gvBond.Visible = true;
-                    ddlCurrency.Visible = true;
+                    
                 }
                 else
                 {
-                    sql = "select * from [" + securityType + "] where [code] = '" + securityCode + "' and [size] IS NOT NULL ";
+                    sql = "select * from [" + securityType + "] where [code] = '" + securityCode + "' ";
                     dtType = myExternalData.getData(sql);
                     if (dtType == null)
                     {
@@ -239,11 +262,20 @@ namespace HKeInvestWebApplication
                     }
                     ViewState["SortExpression"] = "name";
                     ViewState["SortDirection"] = "ASC";
-                    gvUnitTrust.DataSource = dtType;
+                    dtView = dtType.Clone();
+                    for (int i = 0; i < dtType.Rows.Count; i++)
+                    {
+                        dtView.ImportRow(dtType.Rows[i]);
+                    }
+                    //
+                    DataView sortedView = new DataView(dtView);
+                    sortedView.Sort = "name" + " " + "Asc";
+                    gvUnitTrust.DataSource = sortedView;
+
                     gvUnitTrust.DataBind();
 
                     gvUnitTrust.Visible = true;
-                    ddlCurrency.Visible = true;
+                    
                 }
 
 
@@ -256,7 +288,7 @@ namespace HKeInvestWebApplication
 
                 if (securityType == "Stock")
                 {
-                    sql = "select * from [" + securityType + "] where [volume] IS NOT NULL";
+                    sql = "select * from [" + securityType + "]";
                     
                     dtType = myExternalData.getData(sql);
                     if (dtType == null)
@@ -270,16 +302,25 @@ namespace HKeInvestWebApplication
                     }
                     ViewState["SortExpression"] = "name";
                     ViewState["SortDirection"] = "ASC";
-                    gvStock.DataSource = dtType;
+                    dtView = dtType.Clone();
+                    for (int i = 0; i < dtType.Rows.Count; i++)
+                    {
+                        dtView.ImportRow(dtType.Rows[i]);
+                    }
+                    //
+                    DataView sortedView = new DataView(dtView);
+                    sortedView.Sort = "name" + " " + "Asc";
+                    gvStock.DataSource = sortedView;
+
                     gvStock.DataBind();
 
                     gvStock.Visible = true;
-                    ddlCurrency.Visible = true;
+                    
 
                 }
                 else if (securityType == "Bond")
                 {
-                    sql = "select * from [" + securityType + "] where [size] IS NOT NULL ";
+                    sql = "select * from [" + securityType + "] ";
                     dtType = myExternalData.getData(sql);
                     if (dtType == null)
                     {
@@ -292,15 +333,24 @@ namespace HKeInvestWebApplication
                     }
                     ViewState["SortExpression"] = "name";
                     ViewState["SortDirection"] = "ASC";
-                    gvBond.DataSource = dtType;
+                    dtView = dtType.Clone();
+                    for (int i = 0; i < dtType.Rows.Count; i++)
+                    {
+                        dtView.ImportRow(dtType.Rows[i]);
+                    }
+                    //
+                    DataView sortedView = new DataView(dtView);
+                    sortedView.Sort = "name" + " " + "Asc";
+                    gvBond.DataSource = sortedView;
+
                     gvBond.DataBind();
 
                     gvBond.Visible = true;
-                    ddlCurrency.Visible = true;
+                    
                 }
                 else
                 {
-                    sql = "select * from [" + securityType + "] where [size] IS NOT NULL ";
+                    sql = "select * from [" + securityType + "] ";
                     dtType = myExternalData.getData(sql);
                     if (dtType == null)
                     {
@@ -313,11 +363,20 @@ namespace HKeInvestWebApplication
                     }
                     ViewState["SortExpression"] = "name";
                     ViewState["SortDirection"] = "ASC";
-                    gvUnitTrust.DataSource = dtType;
+                    dtView = dtType.Clone();
+                    for (int i = 0; i < dtType.Rows.Count; i++)
+                    {
+                        dtView.ImportRow(dtType.Rows[i]);
+                    }
+                    //
+                    DataView sortedView = new DataView(dtView);
+                    sortedView.Sort = "name" + " " + "Asc";
+                    gvUnitTrust.DataSource = sortedView;
+
                     gvUnitTrust.DataBind();
 
                     gvUnitTrust.Visible = true;
-                    ddlCurrency.Visible = true;
+                    
                 }
             }
             
@@ -329,89 +388,13 @@ namespace HKeInvestWebApplication
             gvUnitTrust.Visible = false;
         }
 
-        protected void display(string type, string sql, DataTable dtType)
-        {
-            if (type == "Stock")
-            {
-                string sql2 = "select * from [" + type + "] where [volume] IS NOT NULL ";
-                dtType = myExternalData.getData(sql2);
+      
 
-                if (dtType == null)
-                {
-                    return;
-                }
+        
 
-                if (dtType.Rows.Count == 0)
-                {
-                    return;
-                }
-                ViewState["SortExpression"] = "name";
-                ViewState["SortDirection"] = "ASC";
-                gvStock.DataSource = dtType;
-                gvStock.DataBind();
+        
 
-                gvStock.Visible = true;
-                ddlCurrency.Visible = true;
-            }
-            if (type == "Bond")
-            {
-                sql += "[size] != NULL";
-                dtType = myExternalData.getData(sql);
-                if (dtType == null)
-                {
-                    return;
-                }
-
-                if (dtType.Rows.Count == 0)
-                {
-                    return;
-                }
-                ViewState["SortExpression"] = "name";
-                ViewState["SortDirection"] = "ASC";
-                gvBond.DataSource = dtType;
-                gvBond.DataBind();
-
-                gvBond.Visible = true;
-                ddlCurrency.Visible = true;
-            }
-            if (type == "UnitTrust")
-            {
-                sql += "[size] != NULL ";
-                dtType = myExternalData.getData(sql);
-                if (dtType == null)
-                {
-                    return;
-                }
-
-                if (dtType.Rows.Count == 0)
-                {
-                    return;
-                }
-                ViewState["SortExpression"] = "name";
-                ViewState["SortDirection"] = "ASC";
-                gvUnitTrust.DataSource = dtType;
-                gvUnitTrust.DataBind();
-
-                gvBond.Visible = true;
-                ddlCurrency.Visible = true;
-            }
-        }
-
-        protected void gvStock_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void gvStock_Sorting(object sender, GridViewSortEventArgs e)
-        {
-            DataTable dtType = myHKeInvestCode.unloadGridView(gvStock);
-            string sortExpression = e.SortExpression.ToLower();
-            ViewState["SortExpression"] = sortExpression;
-            dtType.DefaultView.Sort = sortExpression + " " + myHKeInvestCode.getSortDirection(ViewState, e.SortExpression);
-            dtType.AcceptChanges();
-            gvStock.DataSource = dtType.DefaultView;
-            gvStock.DataBind();
-        }
+        
 
         protected void CustomCode_ServerValidate(object source, ServerValidateEventArgs args)
         {
@@ -434,6 +417,34 @@ namespace HKeInvestWebApplication
             }
             else args.IsValid = true;
             
+        }
+
+        
+
+       
+
+        protected void gvStock_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            DataView sortedView = new DataView(dtView);
+            sortedView.Sort = e.SortExpression + " " + "Asc";
+            gvStock.DataSource = sortedView;
+            gvStock.DataBind();
+        }
+
+        protected void gvBond_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            DataView sortedView = new DataView(dtView);
+            sortedView.Sort = e.SortExpression + " " + "Asc";
+            gvBond.DataSource = sortedView;
+            gvBond.DataBind();
+        }
+
+        protected void gvUnitTrust_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            DataView sortedView = new DataView(dtView);
+            sortedView.Sort = e.SortExpression + " " + "Asc";
+            gvUnitTrust.DataSource = sortedView;
+            gvUnitTrust.DataBind();
         }
     }
 }
