@@ -562,9 +562,15 @@
                 balance in your HKeInvest account, to provide necessary cash collateral in your Margin Account (if
                 applicable) or to the extent necessary to settle securities transactions. </p>
             </div>
-            <asp:CheckBox ID="part6" runat="server" Text="Yes, sweep my Free Credit Balance into the Fund."/>
+            <asp:RadioButtonList ID="part6" runat="server">
+                <asp:ListItem Value="Yes">Yes, sweep my Free Credit Balance into the Fund</asp:ListItem>
+                <asp:ListItem Selected="True" Value="No">No</asp:ListItem>
+        </asp:RadioButtonList>
+                <p>The option for part 6 is set to "No" as default. You can change it.</p>
             </div>
         </div>
+
+        
 
         <hr />
         <h3>7. Initial Account Deposit</h3>

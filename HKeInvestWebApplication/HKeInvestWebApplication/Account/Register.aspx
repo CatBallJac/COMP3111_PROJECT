@@ -20,6 +20,7 @@
         <div class="col-md-4">
         <asp:TextBox ID="LastName" runat="server" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="LastName" CssClass="text-danger" Text="*" EnableClientScript="false" Display="Dynamic" runat="server" ErrorMessage="Last Name is required." ValidationGroup="Page"></asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ControlToValidate="lastName" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The last name must contain at least one alpahbet" ForeColor="Red" ValidationExpression="^.*[a-zA-Z]+.*$">*</asp:RegularExpressionValidator>
 </div>
     </div>
 
@@ -28,13 +29,14 @@
         <div class="col-md-4">
         <asp:TextBox ID="AccountNumber" runat="server" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="AccountNumber" CssClass="text-danger" Display="Dynamic" Text="*" EnableClientScript="false" runat="server" ErrorMessage="Account Number is required." ValidationGroup="Page"></asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ID="RegularExpressionValidator3" runat="server" ControlToValidate="AccountNumber" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of the account number  is invalid" ForeColor="Red" ValidationExpression="^[A-Z]{2}[0-9]{8}$">*</asp:RegularExpressionValidator>
         <asp:CustomValidator ID="cvAccountNumber" ValidateEmptyText="true" ControlToValidate="AccountNumber" CssClass="text-danger" Display="Dynamic" Text="*" EnableClientScript="false" runat="server" ErrorMessage="The account number does not match the client's last name." OnServerValidate="cvAccountNumber_ServerValidate" ValidationGroup="Page"></asp:CustomValidator>
         </div>
         <asp:Label runat="server" Text="HKID/Passport#" AssociatedControlID="HKID" CssClass="label-control col-md-2"></asp:Label>
         <div class="col-md-4">
         <asp:TextBox ID="HKID" runat="server" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="HKID" CssClass="text-danger" Text="*" Display="Dynamic" EnableClientScript="false" runat="server" ErrorMessage="A HKID or Passport number is required." ValidationGroup="Page"></asp:RequiredFieldValidator>
-            <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="HKID" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of HKID is invalid" ForeColor="Red">*</asp:RegularExpressionValidator>
+            <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="HKID" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of HKID is invalid" ForeColor="Red" ValidationExpression="^[0-9A-Z]{8}$">*</asp:RegularExpressionValidator>
     </div>
         </div>
 
@@ -57,7 +59,7 @@
         <div class="col-md-4">
         <asp:TextBox ID="UserName" runat="server" MaxLength="10" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="UserName" CssClass="text-danger" Display="Dynamic" EnableClientScript="false" Text="*"  runat="server" ErrorMessage="User Name is required."></asp:RequiredFieldValidator>
-        <asp:RegularExpressionValidator ControlToValidate="UserName" CssClass="text-danger" Display="Dynamic" EnableClientScript="false" Text="*" ValidationExpression="^.{6,}$" runat="server" ErrorMessage="User Name must contain at least 6 characters." ValidationGroup="Page"></asp:RegularExpressionValidator>
+        <asp:RegularExpressionValidator ControlToValidate="UserName" CssClass="text-danger" Display="Dynamic" EnableClientScript="false" Text="*" ValidationExpression="^.{6,10}$" runat="server" ErrorMessage="User Name must be between 6 and 10 characters." ValidationGroup="Page"></asp:RegularExpressionValidator>
         <asp:RegularExpressionValidator ControlToValidate="UserName" CssClass="text-danger" EnableClientScript="false" ValidationExpression="^[a-zA-Z0-9]+$" Text="*" Display="Dynamic" runat="server" ErrorMessage="User Name must contain only letters and digits." ValidationGroup="Page"></asp:RegularExpressionValidator>
     </div>
         </div>
@@ -67,8 +69,8 @@
         <div class="col-md-4">
         <asp:TextBox ID="Password" runat="server" TextMode="Password" MaxLength="15" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="Password" CssClass="text-danger" Display="Dynamic" Text="*" EnableClientScript="false" runat="server" ErrorMessage="Password isrequired."  ValidationGroup="Page"></asp:RequiredFieldValidator>
-        <asp:RegularExpressionValidator ControlToValidate="Password"  CssClass="text-danger" Display="Dynamic" EnableClientScript="false" Text="*" ValidationExpression="^.{8,}$" runat="server" ErrorMessage="Password must contain at least 8 characters." ValidationGroup="Page"></asp:RegularExpressionValidator>
-        <asp:RegularExpressionValidator ControlToValidate="Password" CssClass="text-danger" Display="Dynamic" EnableClientScript="false" Text="*" ValidationExpression="^.*(?=.*[^a-zA-Z0-9].*[^a-zA-Z0-9]).*$" runat="server" ErrorMessage="Password must contain at least 2 nonalphanumeric characters."  ValidationGroup="Page"></asp:RegularExpressionValidator>
+        <asp:RegularExpressionValidator ControlToValidate="Password"  CssClass="text-danger" Display="Dynamic" EnableClientScript="false" Text="*" ValidationExpression="^.{8,15}$" runat="server" ErrorMessage="Password must be between 8 and 15 characters." ValidationGroup="Page"></asp:RegularExpressionValidator>
+        <asp:RegularExpressionValidator ControlToValidate="Password" CssClass="text-danger" Display="Dynamic" EnableClientScript="false" Text="*" ValidationExpression="^(.*?[^0-9a-zA-Z]){2}.*$" runat="server" ErrorMessage="Password must contain at least 2 nonalphanumeric characters."  ValidationGroup="Page"></asp:RegularExpressionValidator>
         </div>
         <asp:Label  runat="server" Text="Confirm Password" AssociatedControlID="ConfirmPassword" CssClass="label-control col-md-2"></asp:Label>
         <div class="col-md-4">

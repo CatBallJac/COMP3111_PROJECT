@@ -36,6 +36,7 @@ namespace HKeInvestWebApplication
             string p_district = myStringHandleHelper.handleString( district.Text.Trim());
             string p_country_of_citizenship = myStringHandleHelper.handleString( citizenship.Text.Trim());
             string p_country_of_legal_residence = myStringHandleHelper.handleString( legalResidence.Text.Trim());
+            string p_hkid_used = HKIDUsed.Checked ? "Yes" : "No";
             string p_hkid = myStringHandleHelper.handleString(HKID.Text.Trim()).ToUpper();
             string p_employment_status = employmentStatus.SelectedValue;
             string p_part4_q1 = part4PrimaryQ1.SelectedValue;
@@ -47,7 +48,7 @@ namespace HKeInvestWebApplication
             string investment_experience = investmentExperience.SelectedValue;
             string annual_income = annualIncome.SelectedValue;
             string liquid_net_worth = liquidNetWorth.SelectedValue;
-            string account_feature = part6.Checked ? "Yes" : "No";
+            string account_feature = part6.SelectedValue;
             decimal deposit = decimal.Zero;decimal money = decimal.Zero;
             if (cheque.Checked)
             {
@@ -84,14 +85,14 @@ namespace HKeInvestWebApplication
                 "(accountNumber,isPrimary,title,firstName,lastName,dateOfBirth,email,street,"+
                 "district,countryOfCitizenship,countryOfLegalResidence,HKIDPassportNumber," +
                 "employmentStatus," +
-                "employedByFinancialInstitution,isADirector) " +
+                "employedByFinancialInstitution,isADirector,isHKIDUsed) " +
                 "VALUES ('{0}','Yes','{1}','{2}','{3}',CONVERT(date,'{4}',103),'{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}'," +
-                "'{13}')",
+                "'{13}','{14}')",
                 account_number,p_title,p_first_name,p_last_name,p_date_of_birth,p_email,
                 p_street,p_district,
                 p_country_of_citizenship,p_country_of_legal_residence,p_hkid,
                 p_employment_status,
-                p_part4_q1,p_part4_q2
+                p_part4_q1,p_part4_q2,p_hkid_used
                 );
             myHKeInvestData.setData(sql, trans);
 
@@ -163,6 +164,7 @@ namespace HKeInvestWebApplication
                 string c_district = myStringHandleHelper.handleString(district2.Text.Trim());
                 string c_country_of_citizenship = myStringHandleHelper.handleString(citizenship2.Text.Trim());
                 string c_country_of_legal_residence = myStringHandleHelper.handleString(legalResidence2.Text.Trim());
+                string c_hkid_used = HKIDUsed2.Checked ? "Yes" : "No";
                 string c_hkid = myStringHandleHelper.handleString(HKID2.Text.Trim()).ToUpper();
                 string c_employment_status = employmentStatus2.SelectedValue;
                 string c_part4_q1 = part4CoQ1.SelectedValue;
@@ -172,14 +174,14 @@ namespace HKeInvestWebApplication
                     "(accountNumber,isPrimary,title,firstName,lastName,dateOfBirth,email,street," +
                     "district,countryOfCitizenship,countryOfLegalResidence,HKIDPassportNumber," +
                     "employmentStatus," +
-                    "employedByFinancialInstitution,isADirector)" +
+                    "employedByFinancialInstitution,isADirector,isHKIDUsed)" +
                     "VALUES ('{0}','No','{1}','{2}','{3}',CONVERT(date,'{4}',103),'{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}'," +
-                    "'{13}')",
+                    "'{13}','{14}')",
                     account_number, c_title, c_first_name, c_last_name, c_date_of_birth, c_email,
                     c_street, c_district,
                     c_country_of_citizenship, c_country_of_legal_residence, c_hkid,
                     c_employment_status,
-                    c_part4_q1, c_part4_q2
+                    c_part4_q1, c_part4_q2,c_hkid_used
                     );
                 myHKeInvestData.setData(sql, trans);
                 if (!string.IsNullOrEmpty(building2.Text.Trim()))

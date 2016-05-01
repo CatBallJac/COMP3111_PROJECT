@@ -21,76 +21,97 @@ namespace HKeInvestWebApplication.Account
             {
                 return;
             }
-            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
-            bool isClientExists = CheckClientRecord(FirstName.Text.Trim(), LastName.Text.Trim(), DateOfBirth.Text.Trim(), Email.Text.Trim(),
-    HKID.Text.Trim(), AccountNumber.Text.Trim());
-            if (!isClientExists)
-            {
-                ErrorMessage.Text = "No client exists.";
+            if(!InfoMatch()){
                 return;
             }
-            var user = new ApplicationUser() { UserName = UserName.Text, Email = Email.Text };
-            
-            
+
+            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
+            var user = new ApplicationUser() { UserName = UserName.Text.Trim().ToLower(), Email = Email.Text };
             IdentityResult result = manager.Create(user, Password.Text);
             if (result.Succeeded)
             {
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                //string code = manager.GenerateEmailConfirmationToken(user.Id);
-                //string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
-                //manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
-                IdentityResult roleResult = manager.AddToRole(user.Id, "Client"); 
+                string code = manager.GenerateEmailConfirmationToken(user.Id);
+                string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
+                manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+
+                // associate username with accountnumber
+                HKeInvestData data_helper = new HKeInvestData();
+                System.Data.SqlClient.SqlTransaction trans = data_helper.beginTransaction();
+                string sql = "UPDATE [Account] SET [Account].[userName] = '" + UserName.Text.Trim().ToLower() + "' WHERE [Account].[accountNumber] = '" + AccountNumber.Text.Trim() + "'";
+                data_helper.setData(sql, trans);
+                data_helper.commitTransaction(trans);
+
+                // assign user to Client
+                IdentityResult roleResult = manager.AddToRole(user.Id, "Client");
                 if (!roleResult.Succeeded)
                 {
                     ErrorMessage.Text = roleResult.Errors.FirstOrDefault();
                 }
-                UpdateAccountUserName(AccountNumber.Text.Trim(), UserName.Text.Trim());
-                signInManager.SignIn( user, isPersistent: false, rememberBrowser: false);
+                System.Security.Claims.Claim claim = new System.Security.Claims.Claim("role", "Client");
+                manager.AddClaim(user.Id, claim);
+
+                signInManager.SignIn(user, isPersistent: false, rememberBrowser: false);
                 IdentityHelper.RedirectToReturnUrl(Request.QueryString["ReturnUrl"], Response);
             }
-            else 
+            else
             {
                 ErrorMessage.Text = result.Errors.FirstOrDefault();
             }
         }
-
-        private bool CheckClientRecord(string firstName, string lastName, string dateOfBirth, string email, string HKID, string accountNumber)
-        {
-            string isPrimary = "yes";
-            string sql = "select [firstName], [lastName], [dateOfBirth], [email], [HKIDPassportNumber] from [ClientTemp] where [accountNumber]='" + accountNumber + "' and [firstName]='"+ firstName+"' and [lastName]='"+lastName+ "' and [dateOfBirth]=CONVERT(date, '" + DateOfBirth.Text+ "', 103) and [email]='"+email+"' and [HKIDPassportNumber]='"+HKID+"' and [isPrimary]='"+isPrimary+"'";
-            HKeInvestData myInvestData = new HKeInvestData();
-            DataTable dtClient = myInvestData.getData(sql);
-            if(dtClient == null || dtClient.Rows.Count==0) { return false; }
-            else
-            {
-
-                return true;
-            }
-            
-        }
-
-        private void UpdateAccountUserName(string accountNumber, string userName)
-        {
-            HKeInvestData myInvestData = new HKeInvestData();
-            string sql = "update Account set userName ='" + userName + "' where [accountNumber]='" + accountNumber + "'";
-            SqlTransaction trans = myInvestData.beginTransaction();
-            myInvestData.setData(sql, trans);
-            myInvestData.commitTransaction(trans);
-            
-
-        }
-
-
 
         protected void Page_Load(object sender, EventArgs e)
         {
 
         }
 
+        private bool InfoMatch()
+        {
+            // get information entered
+            string first_name = mySQLStringHandleHelper.handleString(FirstName.Text.Trim());
+            string last_name = mySQLStringHandleHelper.handleString(LastName.Text.Trim());
+            string account = AccountNumber.Text.Trim();
+            string hkid = HKID.Text.Trim();
+            string birth = DateOfBirth.Text.Trim();
+            string email = Email.Text.Trim();
+
+            // get Client information in the table
+            string sql = "SELECT * from [Client] WHERE [Client].[accountNumber] = '" + account + "' AND [Client].[isPrimary]='Yes'";
+            HKeInvestData data_helper = new HKeInvestData();
+            DataTable client_info = data_helper.getData(sql);
+            if (client_info == null || client_info.Rows.Count == 0)
+            {
+                ErrorMessage.Text = "This client does not exist!";
+                return false;
+            }
+            else
+            {
+                DataRow row = client_info.Rows[0];
+                if (!row.IsNull("userName"))
+                {
+                    ErrorMessage.Text = "This security account has already registered a login account!";
+                    return false;
+                }
+                if (!first_name.Equals(row.Field<string>("firstName").Trim()) ||
+                    !last_name.Equals(row.Field<string>("lastName").Trim()) ||
+                    !account.Equals(row.Field<string>("accountNumber").Trim()) ||
+                    !hkid.Equals(row.Field<string>("HKIDPassportNumber").Trim()) ||
+                    !birth.Equals(row.Field<DateTime>("dateOfBirth").ToString("dd/MM/yyyy").Trim()) ||
+                    !email.Equals(row.Field<string>("email").Trim()))
+                {
+                    ErrorMessage.Text = "The information entered does not match!";
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         protected void cvAccountNumber_ServerValidate(object source, System.Web.UI.WebControls.ServerValidateEventArgs args)
         {
             string accountNumber = AccountNumber.Text.Trim();
+            // check if the account number match with the client's last name
             string lastName = LastName.Text.Trim();
             if (string.IsNullOrEmpty(accountNumber) || string.IsNullOrEmpty(lastName)) return;
             string temp = "";
