@@ -78,7 +78,7 @@ namespace HKeInvestWebApplication
 
         private void CheckOrder()
         {
-            /*
+            
             do
             {
                 DataTable dTpendingOrder = myHKeInvestFunction.getPendingorPartialOrder();
@@ -90,30 +90,49 @@ namespace HKeInvestWebApplication
                         string referenceNumber = row["referenceNumber"].ToString().Trim();
                         string status = row["status"].ToString().Trim();
                         string securityType = row["securityType"].ToString().Trim();
-                        string currentstatus = myExternalFunctions.getOrderStatus(referenceNumber);
+                        
                         string buyOrSell = row["buyOrSell"].ToString().Trim();
                         string securityCode = row["securityCode"].ToString().Trim();
                         string accountNumber = row["accountNumber"].ToString().Trim();
                         string allOrNone = row["allOrNone"].ToString().Trim();
 
-                        if (currentstatus == null || status == null) return;
 
-                        if (securityType == "unit trust")
+                        string currentstatus = myExternalFunctions.getOrderStatus(referenceNumber);
+                        if (currentstatus == null || status == null) return;
+                        if (securityType == "unit trust" || securityType == "bond")
                         {
                             string amount = row["amount"].ToString().Trim();
                             if (currentstatus == "completed")
                             {
-                                if (buyOrSell == "buy")
+                                myHKeInvestFunction.completeBondOrder(referenceNumber, amount, securityCode, buyOrSell, accountNumber);
+                            }
+                            else continue;
+                        }else if (securityType == "stock")
+                        {
+                            
+                            if (myHKeInvestFunction.isExpired(referenceNumber)
+                            {
+                                // #TODO: fetch information of the stock order
+                                if (currentstatus == "cancelled" || myHKeInvestFunction.checkStockOrderTranscation(referenceNumber, allOrNone) == "cancelled")
                                 {
-                                    myHKeInvestFunction.completeBuyUnitTrustOrder(referenceNumber, amount, securityCode, buyOrSell, accountNumber);
+                                    currentstatus = "cancelled";
+                                    myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus);
+                                }else
+                                {
+                                    // #TODO: not cancelled, fetch the information of transaction:
+                                    currentstatus = myHKeInvestFunction.checkStockOrderTranscation(referenceNumber, allOrNone);
+                                    myHKeInvestFunction.stockTransactionHandler(referenceNumber);
+                                    myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus);
                                 }
                             }
+                            else continue;
+
                         }
                     }
                 }
 
                 Thread.Sleep(60000);
-            } while (true);*/
+            } while (true);
 
         }
     }
