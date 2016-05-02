@@ -10,7 +10,7 @@
 namespace HKeInvestWebApplication.ExternalSystems {
     
     
-    public partial class ManageCurrencyConversion {
+    public partial class ManageCurrencies {
         
         /// <summary>
         /// gvCurrencyConversion control.

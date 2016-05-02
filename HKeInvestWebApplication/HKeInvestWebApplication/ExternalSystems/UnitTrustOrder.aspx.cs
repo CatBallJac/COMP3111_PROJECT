@@ -11,6 +11,7 @@ namespace HKeInvestWebApplication.ExternalSystems
     {
         ExternalData myExternalData = new ExternalData();
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
+        decimal maxShares = Convert.ToDecimal(9999999999.99);
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -81,8 +82,9 @@ namespace HKeInvestWebApplication.ExternalSystems
                     showMessage("buy", "The buying price is not valid.", "danger");
                         return;
                 }
-                decimal buyAmount = Convert.ToDecimal(row.Cells[7].Text);               
-                decimal buyShares = buyAmount / buyPrice;
+                decimal buyAmount = Convert.ToDecimal(row.Cells[7].Text.Trim().Replace(",", ""));               
+                decimal buyShares = Math.Round((convertAmountToBase(unitTrustCode, buyAmount) / buyPrice), 2);
+                if (sharesExceedLimit(buyShares)) { return; }
 
                 // Create a transaction for the buy order, change the buy order status to completed, update the security price and refresh the buy orders.
                 SqlTransaction trans = myExternalData.beginTransaction();
@@ -119,7 +121,7 @@ namespace HKeInvestWebApplication.ExternalSystems
                     showMessage("sell", "The selling price is not valid.", "danger");
                     return;
                 }
-                decimal sellShares = Convert.ToDecimal(row.Cells[7].Text);               
+                decimal sellShares = Convert.ToDecimal(row.Cells[7].Text.Trim().Replace(",", ""));               
 
                 // Create a transaction for the sell order, change the sell order status to completed, update the security price and refresh the sell orders.
                 SqlTransaction trans = myExternalData.beginTransaction();
@@ -152,6 +154,24 @@ namespace HKeInvestWebApplication.ExternalSystems
                 lblSellMessage.CssClass = "label label-" + messageType;
                 lblSellMessage.Visible = true;
             }
+        }
+
+        private decimal convertAmountToBase(string securityCode, decimal amount)
+        {
+            string securityBase = myExternalData.getData("select [base] from [UnitTrust] where [code]='" + securityCode + "'").Rows[0].Field<string>("base");
+            decimal exchangeRate = myExternalFunctions.getCurrencyRate(securityBase);
+            return amount / exchangeRate;
+        }
+
+        private bool sharesExceedLimit(decimal shares)
+        {
+            //if (shares.ToString("0.##").Length > 13)
+            if (decimal.Compare(shares, maxShares) > 0)
+            {
+                showMessage("buy", "The number of shares to buy, " + shares.ToString("0.00") + ", exceeds the system limit of " + maxShares.ToString() + ".", "danger");
+                return true;
+            }
+            return false;
         }
     }
 }

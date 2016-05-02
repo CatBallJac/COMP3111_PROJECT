@@ -4,7 +4,7 @@ using HKeInvestWebApplication.ExternalSystems.Code_File;
 
 namespace HKeInvestWebApplication.ExternalSystems
 {
-    public partial class ManageCurrencyConversion : System.Web.UI.Page
+    public partial class ManageCurrencies : System.Web.UI.Page
     {
         ExternalData myExternalData = new ExternalData();
 

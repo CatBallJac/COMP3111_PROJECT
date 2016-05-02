@@ -17,6 +17,7 @@ namespace HKeInvestWebApplication.Code_File
         HKeInvestData myHKeInvestData = new HKeInvestData();
         HKeInvestCode myHKeInvestCode = new HKeInvestCode();
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
+        HKeInvestEmail myHKeInvestEmail = new HKeInvestEmail();
 
         /* 
           `getSharesOfSecurityHolding`
@@ -78,7 +79,7 @@ namespace HKeInvestWebApplication.Code_File
 
             //# TODO: CALCULATE IF EXPIRY DATE PASS
 
-            int expiryDay = (int)dtStatus.Rows[0].Field<int>("expiryDay");
+            int expiryDay = 1;// (int)dtStatus.Rows[0].Field<int>("expiryDay");
             DateTime dateSubmit = (DateTime)dtStatus.Rows[0].Field<DateTime>("dateSubmitted");
 
             DateTime dateNow = DateTime.Now;
@@ -233,6 +234,8 @@ namespace HKeInvestWebApplication.Code_File
                 updateSecurityHolding(accountNumber, type, securityCode, Convert.ToDecimal(executeShares), buyOrSell);
                 updateBalance(accountNumber, -totalAmount);
                 updateOrderStatus(referenceNumber, "completed");
+
+
 
             }else
             {
@@ -478,7 +481,197 @@ namespace HKeInvestWebApplication.Code_File
     
 
 // -----------------------------------
+        public string getEmailAddress(string accountNumber)
+        {
+            DataTable dtEmail = new DataTable();
+            dtEmail = myHKeInvestData.getData("select [email] from [Client] where [accountNumber] = '" + accountNumber +
+                "' and [isPrimary] = 'Yes'");
+            // Return -1 if no result is returned.
+            if (dtEmail == null)
+            {
+                return null;
+            }
+            else if (dtEmail.Rows.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return dtEmail.Rows[0]["email"].ToString().Trim();
+            }
+        }
+
+        public void generateInvoice(string accountNumber, string referenceNumber, string SecurityType, string SecurityName)
+        {
+            DataTable dtOrder = new DataTable();
+            dtOrder = myHKeInvestData.getData("select * from [Order] where [referenceNumber] = '" + referenceNumber +
+                "'");
 
 
+            if (dtOrder == null || dtOrder.Rows.Count == 0)
+            {
+                return;
+            }
+            string email = getEmailAddress(accountNumber);
+            string s = "Invoice: " + referenceNumber;
+
+            string b = "Invoice\n\nOrder Information\n";
+            b += "Reference Number: " + dtOrder.Rows[0]["referenceNumber"].ToString().Trim() + "\n";
+            b += "Account Number: " + accountNumber + "\n";
+            b += "Buy Or Sell: " + dtOrder.Rows[0]["buyOrSell"].ToString().Trim() + "\n";
+            b += "Security Code: " + dtOrder.Rows[0]["securityCode"].ToString().Trim() + "\n";
+            b += "Security Name: " + SecurityName + "\n";
+            b += "Security Type: " + dtOrder.Rows[0]["securityType"].ToString().Trim() + "\n";
+            if (SecurityType == "stock")
+            {
+                b += "Stock Order Type: " + dtOrder.Rows[0]["stockOrderType"].ToString().Trim() + "\n";
+            }
+            b += "Date of Submission: " + dtOrder.Rows[0]["dateSubmitted"].ToString().Trim() + "\n";
+            b += "Shares: " + dtOrder.Rows[0]["shares"].ToString().Trim() + "\n";
+            b += "Amount: " + dtOrder.Rows[0]["amount"].ToString().Trim() + "\n";
+            b += "Fee: " + dtOrder.Rows[0]["fee"].ToString().Trim() + "\n\n\n";
+
+
+            b += "Transction Record\n";
+            b += String.Format("{0,-20}{1,30}{2,20}{3,20}\n", "Transaction Number", "Execute Date", "Execute Shares", "Execute Price");
+           
+            DataTable dtTransaction = new DataTable();
+            dtTransaction = myHKeInvestData.getData("select * from [Transaction] where [referenceNumber] = '" + referenceNumber +
+                "'");
+            foreach (DataRow row in dtTransaction.Rows)
+            {
+                b += String.Format("{0,-20}{1,30}{2,20}{3,20}\n", row["transactionNumber"].ToString().Trim(), row["executeDate"].ToString().Trim(), row["executeShares"].ToString().Trim(), row["executePrice"]).ToString().Trim();
+            }
+
+            myHKeInvestEmail.sendEmail(email, s, b);
+        }
+
+        public void checkAlert()
+        {
+            //MessageBox.Show("-1");
+
+            DataTable dtLowAlert = new DataTable();
+            dtLowAlert = myHKeInvestData.getData("select * from [SecurityHolding] where (lowAlertValue IS NOT NULL)");
+            int expiryDay = 1;// (int)dtStatus.Rows[0].Field<int>("expiryDay");
+            DateTime dateNow = DateTime.Now;
+
+            //MessageBox.Show("1");
+
+            if (dtLowAlert != null && dtLowAlert.Rows.Count != 0)
+            {
+
+                foreach (DataRow row in dtLowAlert.Rows)
+                {
+                    decimal dlow = Convert.ToDecimal(row["lowAlertValue"]);
+                    string type = row["type"].ToString().Trim();
+                    string code = row["code"].ToString().Trim();
+                    string accountNumber = row["accountNumber"].ToString().Trim();
+                    decimal price = myExternalFunctions.getSecuritiesPrice(type, code);
+
+                    if (price <= dlow)
+                    {
+                        bool lowflag = false;
+                        
+                        if (row["lowLastTriggered"] == null || row["lowLastTriggered"].ToString() == "" || row["lowLastTriggered"].ToString() == null)
+                        {
+                            lowflag = true;
+
+                        }
+                        else
+                        {
+                            try
+                            {
+                                DateTime dateLow = row.Field<DateTime>("lowLastTriggered");
+                                int dateDiff = dateNow.Subtract(dateLow).Days;
+                                if (dateDiff >= expiryDay) lowflag = true;
+                            } catch (Exception e)
+                            {
+                                MessageBox.Show(e.ToString());
+                            }
+                           
+                        }
+
+
+                        if (lowflag)
+                        {
+                            DataTable dtSecurity = myExternalFunctions.getSecuritiesByCode(type, code);
+                            if (dtSecurity == null) return;
+                            string name = dtSecurity.Rows[0]["name"].ToString().Trim();
+
+                            string s = "Alert: Low price reached";
+                            string b = "Alert: Low price reached";
+                            b += "Security Code: " + code + "\n";
+                            b += "Security Name: " + name + "\n";
+                            b += "Security Type: " + type + "\n";
+                            b += "Price: " + price + "\n";
+                            b += "Alert Price: " + Convert.ToString(dlow);
+
+                            string email = getEmailAddress(accountNumber);
+                            myHKeInvestEmail.sendEmail(email, s, b);
+
+                            SqlTransaction trans = myHKeInvestData.beginTransaction();
+                            myHKeInvestData.setData("update [SecurityHolding] set [lowLastTriggered]='" + dateNow.ToString("MM/dd/yyyy hh:mm:ss tt") + "'", trans);
+                            myHKeInvestData.commitTransaction(trans);
+                        }
+                    }
+
+
+                }
+            }
+
+            //MessageBox.Show("2");
+
+            DataTable dtHighAlert = new DataTable();
+            dtHighAlert = myHKeInvestData.getData("select * from [SecurityHolding] where (highAlertValue IS NOT NULL)");
+            if (dtHighAlert != null && dtHighAlert.Rows.Count != 0)
+            {
+                foreach (DataRow row in dtHighAlert.Rows)
+                {
+                    decimal dhigh = Convert.ToDecimal(row["highAlertValue"]);
+                    string type = row["type"].ToString().Trim();
+                    string code = row["code"].ToString().Trim();
+                    string accountNumber = row["accountNumber"].ToString().Trim();
+                    decimal price = myExternalFunctions.getSecuritiesPrice(type, code);
+
+                    if (price >= dhigh)
+                    {
+                        bool highflag = false;
+                        if (row["highLastTriggered"] == null || row["highLastTriggered"].ToString() == "" || row["highLastTriggered"].ToString() == null)
+                            {
+                                highflag = true;
+                        }
+                        else
+                        {
+                            DateTime dateHigh = (DateTime)row.Field<DateTime>("highLastTriggered");
+                            int dateDiff = dateNow.Subtract(dateHigh).Days;
+                            if (dateDiff >= expiryDay) highflag = true;
+                        }
+
+                        if (highflag)
+                        {
+                            DataTable dtSecurity = myExternalFunctions.getSecuritiesByCode(type, code);
+                            if (dtSecurity == null) return;
+                            string name = dtSecurity.Rows[0]["name"].ToString().Trim();
+
+                            string s = "Alert: High price reached";
+                            string b = "Alert: High price reached";
+                            b += "Security Code: " + code + "\n";
+                            b += "Security Name: " + name + "\n";
+                            b += "Security Type: " + type + "\n";
+                            b += "Price: " + price + "\n";
+                            b += "Alert Price: " + Convert.ToString(dhigh);
+
+                            string email = getEmailAddress(accountNumber);
+                            myHKeInvestEmail.sendEmail(email, s, b);
+
+                            SqlTransaction trans = myHKeInvestData.beginTransaction();
+                            myHKeInvestData.setData("update [SecurityHolding] set [highLastTriggered]='" + dateNow.ToString("MM/dd/yyyy hh:mm:ss tt") + "'", trans);
+                            myHKeInvestData.commitTransaction(trans);
+                        }
+                    }
+                }
+            }
+
+        }
     }
 }

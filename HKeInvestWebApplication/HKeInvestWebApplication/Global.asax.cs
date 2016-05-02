@@ -20,6 +20,7 @@ namespace HKeInvestWebApplication
         HKeInvestCode myHKeInvestCode = new HKeInvestCode();
         HKeInvestFunctions myHKeInvestFunction = new HKeInvestFunctions();
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
+        HKeInvestEmail myHKeInvestEmail = new HKeInvestEmail();
 
         void Application_Start(object sender, EventArgs e)
         {
@@ -27,10 +28,15 @@ namespace HKeInvestWebApplication
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            Thread mythread = new Thread(CheckOrder);
+            Thread mythread = new Thread(CheckOrderAndAlert);
             mythread.IsBackground = true;
             mythread.Start();
 
+            /*
+            Thread mythread2 = new Thread(CheckAlert);
+            mythread2.IsBackground = true;
+            mythread2.Start();
+            */
         }
 
         private void testThread()
@@ -76,12 +82,13 @@ namespace HKeInvestWebApplication
             */
         }
 
-        private void CheckOrder()
+        private void CheckOrderAndAlert()
         {
             
             do
             {
-                MessageBox.Show("point1");
+                myHKeInvestFunction.checkAlert();
+
                 DataTable dTpendingOrder = myHKeInvestFunction.getPendingorPartialOrder();
 
                 if (dTpendingOrder != null)
@@ -109,6 +116,13 @@ namespace HKeInvestWebApplication
                                 MessageBox.Show("complete order found");
                                 myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus);
                                 myHKeInvestFunction.completeBondUnitTrustOrder(referenceNumber, amount, securityCode, buyOrSell, accountNumber, securityType);
+
+                                DataTable dtSecurity = myExternalFunctions.getSecuritiesByCode(securityType, securityCode);
+                                if (dtSecurity == null) return;
+                                string name = dtSecurity.Rows[0]["name"].ToString().Trim();
+
+                                myHKeInvestFunction.generateInvoice(accountNumber, referenceNumber, securityType, name);
+
                             }
                             else continue;
                         }else if (securityType == "stock")
@@ -139,6 +153,16 @@ namespace HKeInvestWebApplication
                 Thread.Sleep(10000);
             } while (true);
 
+        }
+
+        private void CheckAlert()
+        {
+            do
+            {
+                Thread.Sleep(30000);
+                myHKeInvestFunction.checkAlert();
+                Thread.Sleep(30000);
+            } while (true);
         }
     }
 }
