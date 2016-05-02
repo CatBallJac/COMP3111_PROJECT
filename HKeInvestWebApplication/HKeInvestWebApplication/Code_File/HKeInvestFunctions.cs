@@ -454,6 +454,8 @@ namespace HKeInvestWebApplication.Code_File
         {
             Show("transaction detected" + transactionNumber);
             SqlTransaction trans = myHKeInvestData.beginTransaction();
+
+
             myHKeInvestData.setData("insert into [Transaction]([transactionNumber], [referenceNumber], [executeDate], [executeShares], [executePrice]) values ('" +
                 transactionNumber + "', '" + referenceNumber + "', '" + executeDate + "', '" + executeShares + "', '" + executePrice + "')", trans);
             myHKeInvestData.commitTransaction(trans);
@@ -492,8 +494,15 @@ namespace HKeInvestWebApplication.Code_File
             if (ownedShares == 0)
             {
                 SqlTransaction trans = myHKeInvestData.beginTransaction();
-                myHKeInvestData.setData("insert into [SecurityHolding] values('" + accountNumber + "','" + type + "', '" + code
-            + "','" + name + "', '" + Convert.ToString(shares).Trim() + "', '" + bases + "')", trans);
+                string sql = string.Format(
+                   "INSERT INTO [SecurityHolding] " +
+                   "(accountNumber, type, code, name, shares, base) " +
+                   "VALUES" +
+                   "('{0}','{1}','{2}','{3}','{4}','{5}')",
+                   accountNumber, type, code, name, shares.ToString(), bases
+                   );
+
+                myHKeInvestData.setData(sql, trans);
                 myHKeInvestData.commitTransaction(trans);
                 return updatedShares;
             }
@@ -524,7 +533,7 @@ namespace HKeInvestWebApplication.Code_File
 // -----------------------------------
         private void Show(string msg)
         {
-            //MessageBox.Show(msg);
+           // MessageBox.Show(msg);
         }
 
     }

@@ -535,16 +535,11 @@ namespace HKeInvestWebApplication.ClientOnly
 
         private void submitOrder(string sql)
         {
-            Show(sql);
-            // System.Web.HttpContext.Current.Response.Write(sql);
-            // System.Diagnostics.Debug.WriteLine(sql);
+            Show("aql: " + sql);
             SqlTransaction trans = myHKeInvestData.beginTransaction();
             myHKeInvestData.setData(sql, trans);
-            //            string referenceNumber = myExternalFunctions.submitOrder(sql);
-            //myExternalData.getOrderReferenceNumber("select max([referenceNumber]) from [Order]", trans);
             myHKeInvestData.commitTransaction(trans);
-            //            return referenceNumber;
-            //            return sql;
+
             return;
         }
 
@@ -702,7 +697,7 @@ namespace HKeInvestWebApplication.ClientOnly
 
         private void Show(string msg)
         {
-            //MessageBox.Show(msg);
+           // MessageBox.Show(msg);
         }
 
         protected void cvAmount_ServerValidate(object source, ServerValidateEventArgs args)
