@@ -131,40 +131,7 @@ namespace HKeInvestWebApplication.Code_File
 
         }
 
-        // for completed order or partial order
-        public void stockTransactionHandler(string referenceNumber, string allOrNone)
-        {
-            DataTable dTstockTransaction = myExternalFunctions.getOrderTransaction(referenceNumber);
-            if (dTstockTransaction == null || dTstockTransaction.Rows.Count == 0) return; // error state
-            string tansactionNumber;
-            string executeDate;
-            decimal executeShares = 0;
-            decimal executePrice = 0;
-            decimal totalSpend = 0;
-            foreach (DataRow row in dTstockTransaction.Rows)
-            {
-                tansactionNumber = row["tansactionNumber"].ToString().Trim();
-                executeDate = row["executeDate"].ToString().Trim();
-                executeShares = row.Field<decimal>("executeShares");
-                executePrice = row.Field<decimal>("executePrice");
-                totalSpend += executeShares * executePrice;
-                insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares.ToString(), executePrice.ToString());
-            }
 
-            // ALLORNOE: just read one transaction
-            if (allOrNone == "Y")
-            {
-                // must be completed when this function is called
-
-            }
-            // #TODO: update insert all transaction, calculate all the fee,
-
-            // NOT ALLORNOE: can have more than one transaction
-            // #TODO: update insert all transaction, calculate all the fee, 
-
-
-            // #TODO: update security holdings & balance
-        }
         /*
           handle each row of the pending order table:
           
@@ -213,6 +180,34 @@ namespace HKeInvestWebApplication.Code_File
             `completeBondOrder`: fetch the complete bond/unit trust order, update fee & securityHolding & balance & order status
             `completeStockOrder`: fetch the complete stock order, update fee & securityHolding & balance & order status
         */
+        // for completed order or partial order
+        public void stockTransactionHandler(string referenceNumber, string allOrNone)
+        {
+            DataTable dTstockTransaction = myExternalFunctions.getOrderTransaction(referenceNumber);
+            if (dTstockTransaction == null || dTstockTransaction.Rows.Count == 0) return; // error state
+            string tansactionNumber;
+            string executeDate;
+            decimal executeShares = 0;
+            decimal executePrice = 0;
+            decimal totalSpend = 0;
+            decimal totalShares = 0;
+            foreach (DataRow row in dTstockTransaction.Rows)
+            {
+                tansactionNumber = row["transactionNumber"].ToString().Trim();
+                executeDate = row["executeDate"].ToString().Trim();
+                executeShares = row.Field<decimal>("executeShares");
+                executePrice = row.Field<decimal>("executePrice");
+                // acc the total spend on the shares
+                totalSpend += executeShares * executePrice;
+                totalShares += executeShares;
+                // update insert all transaction
+                insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares.ToString(), executePrice.ToString());
+            }
+
+            // #TODO: update security holdings & balance
+
+        }
+
         public void completeBondUnitTrustOrder(string referenceNumber, string amount, string securityCode, string buyOrSell, string accountNumber, string type)
         {
             DataTable dTtransaction = myExternalFunctions.getOrderTransaction(referenceNumber);
@@ -220,7 +215,7 @@ namespace HKeInvestWebApplication.Code_File
             {
                 return;
             }
-            string tansactionNumber = dTtransaction.Rows[0]["tansactionNumber"].ToString().Trim();
+            string tansactionNumber = dTtransaction.Rows[0]["transactionNumber"].ToString().Trim();
             string executeDate = dTtransaction.Rows[0]["executeDate"].ToString().Trim();
             string executeShares = dTtransaction.Rows[0]["executeShares"].ToString().Trim();
             string executePrice = dTtransaction.Rows[0]["executePrice"].ToString().Trim();
@@ -228,8 +223,8 @@ namespace HKeInvestWebApplication.Code_File
             insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares, executePrice);
 
             decimal dAmount;
-            decimal.TryParse(amount, out dAmount);
-            if(buyOrSell == "buy order")
+            decimal.TryParse(executeShares, out dAmount);
+            if(buyOrSell == "buy")
             {
                 decimal fee = calculateBondUnitTrustFees("buy", accountNumber, amount);
                 decimal totalAmount = dAmount + fee;
@@ -428,8 +423,8 @@ namespace HKeInvestWebApplication.Code_File
         {
             MessageBox.Show("transaction detected" + transactionNumber);
             SqlTransaction trans = myHKeInvestData.beginTransaction();
-            myHKeInvestData.setData("insert into [Transaction]([transactionNumber], [referenceNumber], [executeDate], [executeShares], [executePrice]) values (" +
-                transactionNumber + ", '" + referenceNumber + "', " + executeDate + ", '" + executeShares + ", '" + executePrice + "')", trans);
+            myHKeInvestData.setData("insert into [Transaction]([transactionNumber], [referenceNumber], [executeDate], [executeShares], [executePrice]) values ('" +
+                transactionNumber + "', '" + referenceNumber + "', '" + executeDate + "', '" + executeShares + "', '" + executePrice + "')", trans);
             myHKeInvestData.commitTransaction(trans);
         }
 
@@ -441,20 +436,21 @@ namespace HKeInvestWebApplication.Code_File
             myHKeInvestData.commitTransaction(trans);
         }
 
-        private void updateSecurityHolding(string accountNumber, string type, string code, decimal shares)
+        private void updateSecurityHolding(string accountNumber, string type, string code, decimal shares, string buyOrSell)
         {
+            MessageBox.Show("update security holding");
             decimal ownedShares = getSharesOfSecurityHolding(accountNumber, type, code);
             decimal updatedShares = ownedShares + shares;
             DataTable dtSecurity = myExternalFunctions.getSecuritiesByCode(type, code);
             if (dtSecurity == null) return;
 
-            string name = dtSecurity.Rows[0].Field<string>("price").Trim();
-            string bases = dtSecurity.Rows[0].Field<string>("base").Trim();
+            string name = dtSecurity.Rows[0]["name"].ToString().Trim();
+            string bases = dtSecurity.Rows[0]["base"].ToString().Trim();
 
             if (ownedShares == 0)
             {
                 SqlTransaction trans = myHKeInvestData.beginTransaction();
-                myHKeInvestData.setData("insert into [SecurityHolding] values(" + accountNumber + "','" + type + "', '" + code
+                myHKeInvestData.setData("insert into [SecurityHolding] values('" + accountNumber + "','" + type + "', '" + code
             + "','" + name + "', '" + Convert.ToString(shares).Trim() + "', '" + bases + "')", trans);
                 myHKeInvestData.commitTransaction(trans);
                 return;
@@ -471,11 +467,12 @@ namespace HKeInvestWebApplication.Code_File
 
         private void updateBalance(string accountNumber, decimal amount)
         {
+            MessageBox.Show("update security balance");
             decimal balance = getBalance(accountNumber);
             decimal updatedBalance = balance + amount;
 
             SqlTransaction trans = myHKeInvestData.beginTransaction();
-            myHKeInvestData.setData("update [AccountTemp] set [balance]='" + Convert.ToString(updatedBalance).Trim() + "' where [accountNumber] = '" + accountNumber + "'", trans);
+            myHKeInvestData.setData("update [Account] set [balance]='" + Convert.ToString(updatedBalance).Trim() + "' where [accountNumber] = '" + accountNumber + "'", trans);
             myHKeInvestData.commitTransaction(trans);
         }
     
