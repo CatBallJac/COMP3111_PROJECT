@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 //using Microsoft.AspNet.Identity;
 //using Microsoft.AspNet.Identity.Owin;
@@ -121,6 +123,7 @@ namespace HKeInvestWebApplication.ClientOnly
         /// for sell stock:
         /// </summary>
 
+        // view control:
         protected void updateOrderDetail()
         {
             divStockOrderDetail.Visible = false;
@@ -243,7 +246,7 @@ namespace HKeInvestWebApplication.ClientOnly
             // if (myHKeInvestData.getData(sql).Rows == null) return null;
             // decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
 
-            decimal shares = myHkeInvestFunctions.checkMaxiSharesSell(accountNumber, securityType, securityCode);
+            decimal shares = checkMaxiSharesSell(accountNumber, securityType, securityCode);
             msg.Text = "have shared " + shares.ToString();
             LabelSellLimit.Visible = true;
             TextMaxiShares.Visible = true;
@@ -330,7 +333,7 @@ namespace HKeInvestWebApplication.ClientOnly
                     shares_stock = shares_sellStock;
                 }
                 numShown = shares_stock;
-                referenceNumber = myHkeInvestFunctions.submitStockOrder(codeInput, shares_stock, orderType, expiryDay, allOrNone, limitPrice, stopPrice, accountNumber, isBuyOrSell);
+                referenceNumber = submitStockOrder(codeInput, shares_stock, orderType, expiryDay, allOrNone, limitPrice, stopPrice, accountNumber, isBuyOrSell);
 
             }
             else
@@ -345,7 +348,7 @@ namespace HKeInvestWebApplication.ClientOnly
                     numShown = shares_sellBond;
                 }
           
-                referenceNumber = myHkeInvestFunctions.submitBondOrder(codeInput, amount_buyBond, shares_sellBond, accountNumber, securityType, isBuyOrSell);
+                referenceNumber = submitBondOrder(codeInput, amount_buyBond, shares_sellBond, accountNumber, securityType, isBuyOrSell);
             }
 
 
@@ -360,7 +363,182 @@ namespace HKeInvestWebApplication.ClientOnly
 
         }
 
-        // ---- custormer validation ----
+        public decimal checkMaxiSharesSell(string accountNumber, string securityType, string securityCode)
+        {
+            string sql = string.Format("select * from [SecurityHolding]" +
+                " where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'",
+                accountNumber, securityType, securityCode);
+            // shares
+            DataTable dtShareOwn = myHKeInvestData.getData(sql);
+            if (dtShareOwn == null || dtShareOwn.Rows.Count == 0) return -1;
+
+            decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
+
+            string sqlInternal = string.Format("select * from [Order] where ([status]='pending' or [status]='partial')" +
+                " [accountNumber] = '{0}' and [securityType] = '{1}' and [securityCode] = '{2}' ",
+                accountNumber, securityType, securityCode);
+            decimal numOrderBefore = myHKeInvestData.getAggregateValue(sqlInternal);
+            decimal sharedInOrdering = 0;
+            if (numOrderBefore != 0)
+            {
+                DataTable dtShareInOrder = myHKeInvestData.getData(sql);
+                if (myHKeInvestData.getData(sqlInternal).Rows == null) return -1;
+                for (int i = 0; i < (int)(numOrderBefore); i++)
+                {
+                    sharedInOrdering = sharedInOrdering + dtShareInOrder.Rows[i].Field<decimal>("shares");
+                }
+            }
+            return shares - sharedInOrdering;
+        }
+
+        // submit order:
+
+        public string submitBondOrder(string code, string amount, string shares, string accountNumber, string securityType, string buyOrSell)
+        {
+
+            // Inserts a bond buy order into the Order table.
+            // Check if input is valid.
+
+
+            string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
+            // Submit the order.
+            string referenceNumber;
+
+            if (securityType == "bond" && buyOrSell == "sell order")
+            {
+                referenceNumber = myExternalFunctions.submitBondSellOrder(code, shares);
+            }
+            else if (securityType == "unit trust" && buyOrSell == "sell order")
+            {
+                referenceNumber = myExternalFunctions.submitUnitTrustSellOrder(code, shares);
+            }
+            else if (securityType == "bond" && buyOrSell == "buy order")
+            {
+                referenceNumber = myExternalFunctions.submitBondBuyOrder(code, amount);
+            }
+            else if (securityType == "unit trust" && buyOrSell == "buy order")
+            {
+                referenceNumber = myExternalFunctions.submitUnitTrustBuyOrder(code, amount);
+            }
+            else return null;
+
+            int referenceNumber_int;
+            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
+            // all attribute:
+            // (referenceNumber, buyOrSell, securityType, securityCode, dateSubmitted, status, 
+            // shares, amount, stockOrderType,
+            // expiryDay, allOrNone, limitPrice, stopPrice, accountNumber, fee)
+
+            if (buyOrSell == "buy order")
+            {
+                buyOrSell = "buy";
+                shares = "NULL";
+            }
+            else
+            {
+                buyOrSell = "sell";
+                amount = "NULL";
+            }
+            string sql = string.Format(
+              "INSERT INTO [Order] " +
+              "(referenceNumber, buyOrSell, securityType, securityCode, dateSubmitted, accountNumber," +
+              "shares, amount)" +
+              "VALUES" +
+              "({0},'{1}','{2}','{3}','{4}','{5}'" +
+              ",{6},{7})",
+               referenceNumber, buyOrSell, securityType, code, dateNow, accountNumber,
+               shares.Trim(), amount.Trim()
+             );
+            //System.Web.HttpContext.Current.Response.Write(sql);
+            submitOrder(sql);
+
+            return referenceNumber;
+        }
+
+        public string submitStockOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string limitPrice, string stopPrice, string accountNumber, string buyOrSell)
+        {
+            // Inserts a stock buy order into the Order table.
+            // Check if input is valid.
+            string securityType = "stock";
+            orderType = orderType.Trim().ToLower();
+            string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
+            string referenceNumber;
+            if (buyOrSell == "buy order")
+            {
+                buyOrSell = "buy";
+                referenceNumber = myExternalFunctions.submitStockBuyOrder(code, shares, orderType, expiryDay, allOrNone, limitPrice, stopPrice);
+
+            }
+            else
+            {
+                buyOrSell = "sell";
+                referenceNumber = myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, limitPrice, stopPrice);
+            }
+            // Construct the basic SQL statement.
+            int referenceNumber_int;
+            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
+            // all attribute:
+            // (referenceNumber, buyOrSell, securityType, securityCode, dateSubmitted, status, 
+            // shares, amount, stockOrderType,
+            // expiryDay, allOrNone, limitPrice, stopPrice, accountNumber, fee)
+
+            // Check for order type and set SQL statement accordingly.
+            if (orderType == "market")
+            {
+                limitPrice = "NULL";
+                stopPrice = "NULL";
+            }
+            else if (orderType == "limit")
+            {
+                stopPrice = "NULL";
+            }
+            else if (orderType == "stop")
+            {
+                limitPrice = "NULL";
+            }
+
+
+            string sql = string.Format(
+               "INSERT INTO [Order] " +
+               "(referenceNumber, buyOrSell, securityType, securityCode, dateSubmitted, accountNumber, " +
+               "shares, stockOrderType, expiryDay, allOrNone," +
+               "limitPrice, stopPrice)" +
+               "VALUES" +
+               "({0},'{1}','{2}','{3}','{4}','{5}'" +
+               ",'{6}','{7}','{8}','{9}'" +
+               ",{10},{11})",
+               referenceNumber, buyOrSell, securityType, code, dateNow, accountNumber,
+               shares.Trim(), orderType, expiryDay, allOrNone.ToUpper(),
+               limitPrice.Trim(), stopPrice.Trim()
+               );
+            //System.Web.HttpContext.Current.Response.Write(sql);
+            submitOrder(sql);
+            return referenceNumber;
+        }
+
+        //private 
+
+        private void submitOrder(string sql)
+        {
+            // System.Web.HttpContext.Current.Response.Write(sql);
+            // System.Diagnostics.Debug.WriteLine(sql);
+            SqlTransaction trans = myHKeInvestData.beginTransaction();
+            myHKeInvestData.setData(sql, trans);
+            //            string referenceNumber = myExternalFunctions.submitOrder(sql);
+            //myExternalData.getOrderReferenceNumber("select max([referenceNumber]) from [Order]", trans);
+            myHKeInvestData.commitTransaction(trans);
+            //            return referenceNumber;
+            //            return sql;
+            return;
+        }
+
+
+
+
+
+        // ****************************
+        // *   custormer validation   *
+        // ****************************
         protected void cvCode_ServerValidate(object source, ServerValidateEventArgs args)
         {
             if (ddlCode.SelectedValue.ToString().Trim() == "-- choose code of available security --" || ddlCode.SelectedValue == null )
