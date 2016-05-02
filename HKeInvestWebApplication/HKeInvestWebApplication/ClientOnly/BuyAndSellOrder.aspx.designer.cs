@@ -22,13 +22,13 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.Label msg;
         
         /// <summary>
-        /// labelSecurityType control.
+        /// welcomeMsg control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelSecurityType;
+        protected global::System.Web.UI.WebControls.Label welcomeMsg;
         
         /// <summary>
         /// rbSecurityType control.
@@ -47,15 +47,6 @@ namespace HKeInvestWebApplication.ClientOnly {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfSecurityType;
-        
-        /// <summary>
-        /// labelIsBuyOrSell control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelIsBuyOrSell;
         
         /// <summary>
         /// rbIsBuyOrSell control.
@@ -85,13 +76,58 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divCodeAndName;
         
         /// <summary>
-        /// labelCode control.
+        /// inputCode control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelCode;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl inputCode;
+        
+        /// <summary>
+        /// TextCode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextCode;
+        
+        /// <summary>
+        /// cvCodeInput control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvCodeInput;
+        
+        /// <summary>
+        /// rfCodeInput control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfCodeInput;
+        
+        /// <summary>
+        /// erCode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator erCode;
+        
+        /// <summary>
+        /// listCode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl listCode;
         
         /// <summary>
         /// ddlCode control.
@@ -112,22 +148,13 @@ namespace HKeInvestWebApplication.ClientOnly {
         protected global::System.Web.UI.WebControls.CustomValidator cvCode;
         
         /// <summary>
-        /// rfCode control.
+        /// rfCodeSelect control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfCode;
-        
-        /// <summary>
-        /// labelSecurityName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelSecurityName;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfCodeSelect;
         
         /// <summary>
         /// LabelSecurityNametxt control.

@@ -24,31 +24,40 @@ namespace HKeInvestWebApplication.ClientOnly
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            string userName = Context.User.Identity.Name;
 
+            welcomeMsg.Text = "welcome " + userName + " account Number: " + getAccountNumber();
         }
 
         protected void rbSecurityType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string securityType = rbSecurityType.SelectedValue.Trim();
-            if(securityType != null)
-            //labelIsBuyOrSell.Text = "buy/sell " + securityType + ":";
-            updateCodeData();
-            updateOrderDetail();
+                updateCodeData();
+                updateOrderDetail();  
         }
 
         protected void rbIsBuyOrSell_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if(rbIsBuyOrSell.SelectedItem.Text.ToString().Trim() == "buy order")
+            {
+                inputCode.Visible = true;
+                listCode.Visible = false;
+            }
+            else
+            {
+                inputCode.Visible = false;
+                listCode.Visible = true;
+            }
             // update the code data
             updateCodeData();
             updateOrderDetail();
+
         }
 
         protected void ddlCode_SelectedIndexChanged(object sender, EventArgs e)
         {
             string securityType = rbSecurityType.SelectedValue.ToString().Trim();
             string securityCode = ddlCode.SelectedValue.ToString().Trim();
-            // 
-            // if (securityType == "unit trust") securityType = "UnitTrust"; // table name no space
+            
             msg.Text = securityType + securityCode + "selected";
             // string sql = string.Format("select name from [{0}] where [code] = '{1}' ", securityType, securityCode);
             // string securityName = myExternalData.getData(sql).Rows[0].Field<string>("name");
@@ -67,7 +76,7 @@ namespace HKeInvestWebApplication.ClientOnly
             updated = true;
 
             if (rbIsBuyOrSell.SelectedValue.Trim() == "sell order")
-                showSecuritySharesOwn();
+            { showSecuritySharesOwn(); }
         }
 
         protected void rbOrderType_SelectedIndexChanged(object sender, EventArgs e)
@@ -102,6 +111,16 @@ namespace HKeInvestWebApplication.ClientOnly
         }
 
         // ---- event trigged by index changed ----
+
+        /// <summary>
+        /// based on the type of the order(buy and sell) and security type
+        /// different information input are required, which is controled by `updateOrderDetail`
+        /// for buy bond/unit trust:
+        /// for buy stock:
+        /// for sell bond/unit trust:
+        /// for sell stock:
+        /// </summary>
+
         protected void updateOrderDetail()
         {
             divStockOrderDetail.Visible = false;
@@ -122,7 +141,7 @@ namespace HKeInvestWebApplication.ClientOnly
                 if (IsBuyorSell == "buy order")
                 {
                     divBondOrderDetail_buy.Visible = true;
-                }else
+                }else if(IsBuyorSell == "sell order")
                 {
                     divBondOrderDetail_sell.Visible = true;
                 }
@@ -141,11 +160,10 @@ namespace HKeInvestWebApplication.ClientOnly
 
 
         }
-
+        // update code data based on the security type and buy/sell order
         protected void updateCodeData()
         {
             // init
-
 
             LabelSecurityNametxt.Text = "";
             updated = false;
@@ -200,8 +218,11 @@ namespace HKeInvestWebApplication.ClientOnly
         }
 
         // ---- information provider ----
+        // check for the simultaneous sell orders for the same security & security amount the client own
+        // return the maximum amount of shares the client can sell
         protected string showSecuritySharesOwn()
         {
+
             string securityCode = ddlCode.SelectedValue.ToString().Trim();
             string securityType = rbSecurityType.SelectedValue.Trim();
             if (securityCode == "" || securityType == "" || securityCode == null || securityType == null)
@@ -215,12 +236,14 @@ namespace HKeInvestWebApplication.ClientOnly
 
             }
             string accountNumber = getAccountNumber();
-            string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'", accountNumber, securityType, securityCode);
-            // shares
-            DataTable dtShareOwn = myHKeInvestData.getData(sql);
-            if (myHKeInvestData.getData(sql).Rows == null) return null;
-            decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
 
+            // string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'", accountNumber, securityType, securityCode);
+            // shares
+            // DataTable dtShareOwn = myHKeInvestData.getData(sql);
+            // if (myHKeInvestData.getData(sql).Rows == null) return null;
+            // decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
+
+            decimal shares = myHkeInvestFunctions.checkMaxiSharesSell(accountNumber, securityType, securityCode);
             msg.Text = "have shared " + shares.ToString();
             LabelSellLimit.Visible = true;
             TextMaxiShares.Visible = true;
@@ -232,13 +255,11 @@ namespace HKeInvestWebApplication.ClientOnly
         protected string getAccountNumber()
         {
             string userName = Context.User.Identity.Name;
-            string sql = string.Format("select accountNumber from [AccountTemp] where [userName] = '{0}' ", userName);
+            string sql = string.Format("select accountNumber from [Account] where [userName] = '{0}' ", userName);
             string accountNumber = myHKeInvestData.getData(sql).Rows[0].Field<string>("accountNumber");
 
-            msg.Text = "welcome " + userName + " account Number: " + accountNumber.ToString().Trim();
             return accountNumber.ToString().Trim();
         }
-
 
         protected void submit_Click(object sender, EventArgs e)
         {
@@ -250,11 +271,24 @@ namespace HKeInvestWebApplication.ClientOnly
             string accountNumber = getAccountNumber();
             if(accountNumber == null || accountNumber == "")
             {
-                LabelResult.Text = "db[AccountTemp] can not get accountNumber for user " + Context.User.Identity.Name;
+                LabelResult.Text = "can not get accountNumber for user " + Context.User.Identity.Name;
                 return;
             }
             // get all text data:
             string code = ddlCode.Text.Trim();
+            string codeInput = TextCode.Text.Trim();
+            int count = 0;
+            foreach (Char c in codeInput.ToCharArray())
+            {
+                if (c == '0')
+                {
+                    count++;
+                }
+                else break;
+            }
+            codeInput = codeInput.Substring(count, codeInput.Length - count);
+
+
             string shares_buyStock = TextBuyShares.Text.Trim() + "00"; // need to * 100
             string shares_sellStock = TextSellShares.Text.Trim();
             // for stock order
@@ -284,44 +318,34 @@ namespace HKeInvestWebApplication.ClientOnly
             // Response.Write(allmsg);
             // msg.Text = allmsg; // securityType + isBuyOrSell + " button click ";
             string referenceNumber = "";
-            if (securityType == "stock" && isBuyOrSell == "buy order")
+            if (securityType == "stock")
             {
-                string shares = shares_buyStock;
-                numShown = shares;
-                referenceNumber = myHkeInvestFunctions.submitStockBuyOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice, accountNumber);
+                string shares_stock;
+                if (isBuyOrSell == "buy order")
+                {
+                    shares_stock = shares_buyStock;
+                }
+                else
+                {
+                    shares_stock = shares_sellStock;
+                }
+                numShown = shares_stock;
+                referenceNumber = myHkeInvestFunctions.submitStockOrder(codeInput, shares_stock, orderType, expiryDay, allOrNone, limitPrice, stopPrice, accountNumber, isBuyOrSell);
 
             }
-            else if(securityType == "stock" && isBuyOrSell == "sell order")
+            else
             {
-                string shares = shares_sellStock;
-                numShown = shares;
-                referenceNumber = myHkeInvestFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice, accountNumber);
-            }
-
-            else if(securityType == "bond"  && isBuyOrSell == "buy order")
-            {
-                string amount = amount_buyBond;
-                numShown = amount;
-                referenceNumber = myHkeInvestFunctions.submitBondBuyOrder(code, amount, accountNumber);
-            }else if (securityType == "unit trust" && isBuyOrSell == "buy order")
-            {
-                string amount = amount_buyBond;
-                numShown = amount;
-                referenceNumber = myHkeInvestFunctions.submitUnitTrustBuyOrder(code, amount, accountNumber);
-            }
-
-
-            else if (securityType == "bond" && isBuyOrSell == "sell order")
-            {
-                string shares = shares_sellBond;
-                numShown = shares;
-                referenceNumber = myHkeInvestFunctions.submitBondSellOrder(code, shares, accountNumber);
-            }
-            else if (securityType == "unit trust" && isBuyOrSell == "sell order")
-            {
-                string shares = shares_sellBond;
-                numShown = shares;
-                referenceNumber = myHkeInvestFunctions.submitUnitTrustSellOrder(code, shares, accountNumber);
+           
+                if (isBuyOrSell == "buy order")
+                {
+                    numShown = amount_buyBond;
+                }
+                else
+                {
+                    numShown = shares_sellBond;
+                }
+          
+                referenceNumber = myHkeInvestFunctions.submitBondOrder(codeInput, amount_buyBond, shares_sellBond, accountNumber, securityType, isBuyOrSell);
             }
 
 
@@ -330,6 +354,7 @@ namespace HKeInvestWebApplication.ClientOnly
                 LabelResult.Text = "account: " + accountNumber + ": " + securityType + " "+ isBuyOrSell + ", amount/shares " + numShown + " submitted, reference number: " + referenceNumber;
             }else
             {
+                
                 LabelResult.Text = "account: " + accountNumber + ", order submitted failed";
             }
 
@@ -429,6 +454,35 @@ namespace HKeInvestWebApplication.ClientOnly
                 cvLimitPrice.ErrorMessage = "invalid! for sell order, stop price should be smaller than limit price";
                 args.IsValid = false;
             }
+
+
+        }
+
+        protected void cvCodeInput_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            string securityCode = TextCode.Text.ToString().Trim();
+            int count = 0;
+            foreach (Char c in securityCode.ToCharArray())
+            {
+                if (c == '0')
+                {
+                    count++;
+                }
+                else break;
+            }
+            securityCode = securityCode.Substring(count, securityCode.Length - count);
+            string securityType = rbSecurityType.SelectedValue.ToString().Trim();
+            if (securityType == "" || rbSecurityType == null) return;
+            DataTable dtSecurities = myExternalFunctions.getSecuritiesByCode(securityType, securityCode);
+            if (dtSecurities == null || dtSecurities.Rows.Count == 0)
+            {
+                // showError();
+                cvCodeInput.ErrorMessage = "no security found for code " + securityCode;
+                args.IsValid = false;
+            }
+
+            string securityName = dtSecurities.Rows[0].Field<string>("name");
+            LabelSecurityNametxt.Text = securityName;
 
 
         }

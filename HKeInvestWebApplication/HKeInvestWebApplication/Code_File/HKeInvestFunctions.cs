@@ -18,100 +18,36 @@ namespace HKeInvestWebApplication.Code_File
         HKeInvestCode myHKeInvestCode = new HKeInvestCode();
         ExternalData myExternalData = new ExternalData();
         ExternalFunctions myExternalFunctions = new ExternalFunctions();
-        // Returns the CurrencyRate table.
-        public DataTable getCurrencyData()
-        {
-            DataTable dtCurrencyTable = new DataTable();
-            dtCurrencyTable = myExternalData.getData("select * from [CurrencyRate] order by [currency]");
-            if (dtCurrencyTable == null || dtCurrencyTable.Rows.Count == 0)
-            {
-                return null;
-            }
-            return dtCurrencyTable;
-        }
 
-        public DataTable getCurrencies()
-        {
-            // Returns the list of available currencies.
-            DataTable dtCurrencies = new DataTable();
-            dtCurrencies = myExternalData.getData("select [currency] from [CurrencyRate] order by [currency]");
-            if (dtCurrencies == null || dtCurrencies.Rows.Count == 0)
-            {
-                return null;
-            }
-            return dtCurrencies;
-        }
+        // getSecurities -> XXX
 
-        public decimal getCurrencyRate(string currency)
+        /* `getSharesOfSecurityHolding`
+           return -1/0 if no securityHolding found
+           else return the amount of security holds
+
+            `getPendingorPartialOrder`:
+                return the table in our order db which status are 'pending' or  'partial'
+
+            `completeBondOrder`: fetch the complete bond/unit trust order, update fee & securityHolding & balance & order status
+            
+        */
+        public decimal getSharesOfSecurityHolding(string accountNumber, string type, string code)
         {
-            // Returns the exchange rate to the Hong Kong dollar for the specified currency.
-            DataTable dtCurrencies = new DataTable();
-            dtCurrencies = myExternalData.getData("select [rate] from [CurrencyRate] where [currency]='" + currency + "'");
+            DataTable dtShares = new DataTable();
+            dtShares = myHKeInvestData.getData("select [shares] from [SecurityHolding] where [accountNumber] = '" + accountNumber +
+                "' and [type] = '" + type + "' and [code] = '" + code + "'");
             // Return -1 if no result is returned.
-            if (dtCurrencies == null || dtCurrencies.Rows.Count == 0)
+            if (dtShares == null)
             {
                 return -1;
             }
-            else
+            else if (dtShares.Rows.Count == 0)
             {
-                return dtCurrencies.Rows[0].Field<decimal>("rate");
-            }
-        }
-
-        public DataTable getSecuritiesData(string securityType)
-        {
-            // Returns all the data for the specified security type.
-            DataTable dtSecurities = new DataTable();
-            if (securityType == "bond")
-            {
-                dtSecurities = myExternalData.getData("select * from [Bond]");
-            }
-            else if (securityType == "stock")
-            {
-                dtSecurities = myExternalData.getData("select * from [Stock]");
-            }
-            else if (securityType == "unit trust")
-            {
-                dtSecurities = myExternalData.getData("select * from [UnitTrust]");
-            }
-            // Unknown security type; return null.
-            else { return null; }
-
-            // Return null if no result is returned.
-            if (dtSecurities == null || dtSecurities.Rows.Count == 0)
-            {
-                return null;
-            }
-            return dtSecurities;
-        }
-
-        public decimal getSecuritiesPrice(string securityType, string securityCode)
-        {
-            // Returns the current price of the specified security type and security code.
-            DataTable dtSecurities = new DataTable();
-            if (securityType == "bond")
-            {
-                dtSecurities = myExternalData.getData("select [price] from [Bond] where [code]='" + securityCode + "'");
-            }
-            else if (securityType == "stock")
-            {
-                dtSecurities = myExternalData.getData("select [close] as [price] from [Stock] where [code]='" + securityCode + "'");
-            }
-            else if (securityType == "unit trust")
-            {
-                dtSecurities = myExternalData.getData("select [price] from [UnitTrust] where [code]='" + securityCode + "'");
-            }
-            // Unknown security type; return -1.
-            else { return -1; }
-
-            // Return -1 if no result is returned.
-            if (dtSecurities == null || dtSecurities.Rows.Count == 0)
-            {
-                return -1;
+                return 0;
             }
             else
             {
-                return dtSecurities.Rows[0].Field<decimal>("price");
+                return dtShares.Rows[0].Field<decimal>("shares");
             }
         }
 
@@ -119,7 +55,7 @@ namespace HKeInvestWebApplication.Code_File
         {
             // Returns all pending or partial orders
             DataTable dTpendingOrder = new DataTable();
-            string sql = "select * from [Order] where ([status]='pending' or [status]='partial'";
+            string sql = "select * from [Order] where ([status]='pending' or [status]='partial')";
 
             dTpendingOrder = myHKeInvestData.getData(sql);
 
@@ -131,9 +67,49 @@ namespace HKeInvestWebApplication.Code_File
             return dTpendingOrder;
         }
 
-        public void completeSellUnitTrustOrder(string referenceNumber, string amount, string securityCode, string buyOrSell, string accountNumber)
+
+        /*
+          handle each row of the pending order table:
+          
+          1. for bond/unit trust securities, 
+               check the numOfTotalTransaction in the [transaction] table in external system
+               if # == 1:
+                   call `completeBondOrder` 
+               
+
+          2. for stock securities, 
+             check if out of date:
+             if ddl not past, do nothing
+             else if ddl past, 
+             {  
+                calculate the total executedAmountOfShares in the [transaction] table in external system
+                1. for allorNone order:
+                    if executedAmountOfShares < placedAmountOfShares: 
+                        order 'canceled'
+                    else: 
+                        call `completeStockOrder`:
+                            update all the transaction, 
+                            update fee: calculate the stock service fee based on the price
+                            update order status:
+                            update balance & security holding
+
+                2. for not allorNone order:
+                    if executedAmountOfShares == 0: 
+                        order 'canceled'
+                        return
+                    eles if executedAmountOfShares < placedAmountOfShares: 
+                        order 'partially executed'
+                    eles if executedAmountOfShares == executedAmountOfShares:
+                        order 'complete executed'
+
+                    call `completeStockOrder`:
+                END
+               }  
+         */
+
+        public void completeBondOrder(string referenceNumber, string amount, string securityCode, string buyOrSell, string accountNumber)
         {
-            DataTable dTtransaction = getOrderTransaction(referenceNumber);
+            DataTable dTtransaction = myExternalFunctions.getOrderTransaction(referenceNumber);
             if (dTtransaction == null || dTtransaction.Rows.Count == 0)
             {
                 return;
@@ -143,224 +119,37 @@ namespace HKeInvestWebApplication.Code_File
             string executeShares = dTtransaction.Rows[0]["executeShares"].ToString().Trim();
             string executePrice = dTtransaction.Rows[0]["executePrice"].ToString().Trim();
 
-            insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares, executePrice, accountNumber);
+            insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares, executePrice);
 
             decimal dAmount;
             decimal.TryParse(amount, out dAmount);
-        }
 
-        public string submitBondBuyOrder(string code, string amount, string accountNumber)
+            decimal fee = calculateUnitTrustFees("buy", accountNumber, amount);
+            decimal totalAmount = dAmount + fee;
+
+            updateFee(Convert.ToString(fee), referenceNumber);
+            updateSecurityHolding(accountNumber, "unit trust", securityCode, Convert.ToDecimal(executeShares));
+            updateBalance(accountNumber, -totalAmount);
+            updateOrderStatus(referenceNumber, "completed");
+        }
+        
+        // updateOrderStatus
+        public void updateOrderStatus(string referenceNumber, string status)
         {
-            // Inserts a bond buy order into the Order table.
-            // Check if input is valid.
-            if (!securityCodeIsValid("bond", code)) { return null; }
-            if (!amountIsValid("bond", amount)) { return null; }
-            string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
-            // Submit the order.
-            string referenceNumber = myExternalFunctions.submitBondSellOrder(code, amount);
-            int referenceNumber_int;
-            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
-            submitOrder("insert into [Order] values (" + referenceNumber + ", 'buy', 'bond', '" + code + "', '" + dateNow
-            + "', 'pending', " + "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL, '" + accountNumber +"', 0)");
-            return referenceNumber;
+            SqlTransaction trans = myHKeInvestData.beginTransaction();
+            myHKeInvestData.setData("update [Order] set [status]='" + status + "' where [referenceNumber]='" + referenceNumber + "'", trans);
+            myHKeInvestData.commitTransaction(trans);
         }
 
-        public string submitBondSellOrder(string code, string shares, string accountNumber)
-        {
-            // Inserts a bond sell order into the Order table.
-            // Check if input is valid.
-            if (!securityCodeIsValid("bond", code)) { return null; }
-            if (!sharesIsValid("bond", shares)) { return null; }
-            if (!sellAmountIsValid("stock", code, accountNumber, shares)) { return null; }
 
-            string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
-            // Submit the order.
-            string referenceNumber = myExternalFunctions.submitBondSellOrder(code, shares);
-            int referenceNumber_int;
-            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
-
-            submitOrder("insert into [Order] values (" + referenceNumber + ",'sell', 'bond', '" + code + "', '" + dateNow
-                + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL, '"+ accountNumber + "', 0)");
-            return referenceNumber;
-        }
-
-        public string submitStockBuyOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string highPrice, string stopPrice, string accountNumber)
-        {
-            // Inserts a stock buy order into the Order table.
-            // Check if input is valid.
-            orderType = orderType.Trim().ToLower();
-            if (!securityCodeIsValid("stock", code)) { return null; }
-            if (!sharesIsValid("stock", shares)) { return null; }
-            if (!sharesAmountIsValid(shares)) { return null; }
-            if (!orderTypeIsValid("buy", orderType, expiryDay, allOrNone, highPrice, stopPrice)) { return null; }
-            string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
-
-            // string isBuyOrSell = "buy";
-            // string securityType = "stock";
-            // string status = "pending";
-            // string amount = "NULL";
-            string referenceNumber = myExternalFunctions.submitStockBuyOrder(code, shares, orderType, expiryDay, allOrNone, highPrice, stopPrice);
-            // Construct the basic SQL statement.
-            int referenceNumber_int;
-
-            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
-            string sql = "insert into [Order] values ('" + referenceNumber + "','buy', 'stock', '" + code + "', '" + dateNow + "', 'pending', " +
-                shares.Trim() + ", NULL, '" + orderType.Trim() + "', " + expiryDay.Trim() + ", '" + allOrNone.Trim().ToUpper() + "', ";
-
-            // Check for order type and set SQL statement accordingly.
-            if (orderType == "market")
-            {
-                sql = sql + "NULL, NULL,";
-                // highPrice = "NULL";
-                // stopPrice = "NULL";
-            }
-            else if (orderType == "limit")
-            {
-                sql = sql + highPrice.Trim() + ", NULL,";
-                // stopPrice = "NULL";
-            }
-            else if (orderType == "stop")
-            {
-
-                 sql = sql + "NULL, " + stopPrice.Trim() + ", ";
-                 // highPrice = "NULL";
-            }
-            else if (orderType == "stop limit")// Order type is stop limit.
-            {
-                  sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ",";
-            }
-            sql = sql + "'" +accountNumber + "', 0)";
-
-
-            submitOrder(sql);
-            return referenceNumber;
-        }
-
-        public string submitStockSellOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string lowPrice, string stopPrice, string accountNumber)
-        {
-            // Inserts a stock sell order into the Order table.
-            // Check if input is valid.
-            orderType = orderType.Trim();
-            if (!securityCodeIsValid("stock", code)) { return null; }
-            if (!sharesIsValid("stock", shares)) { return null; }
-            if (!orderTypeIsValid("sell", orderType, expiryDay.Trim(), allOrNone.Trim(), lowPrice.Trim(), stopPrice.Trim())) { return null; }
-            if (!sellAmountIsValid("stock", code, accountNumber, shares)) { return null; }
-
-
-            string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
-            string referenceNumber = myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
-            // Construct the basic SQL statement.
-            int referenceNumber_int;
-
-            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
-
-            // Construct the basic SQL statement.
-            string sql = "insert into [Order] values (" + referenceNumber + ", 'sell', 'stock', '" + code + "', '" + dateNow + "', 'pending', " +
-                shares.Trim() + ", NULL, '" + orderType.Trim() + "', " + expiryDay.Trim() + ", '" + allOrNone.Trim().ToUpper() + "', ";
-
-            // Check for order type and set SQL statement accordingly.
-            if (orderType == "market")
-            {
-                sql = sql + "NULL, NULL, ";
-            }
-            else if (orderType == "limit")
-            {
-                sql = sql + lowPrice.Trim() + ", NULL,";
-            }
-            else if (orderType == "stop")
-            {
-                sql = sql + "NULL, " + stopPrice.Trim() + ", ";
-            }
-            else // Order type is stop limit.
-            {
-                sql = sql + lowPrice.Trim() + ", " + stopPrice.Trim() + ",";
-            }
-            // Submit the order.
-
-            sql = sql + "'" + accountNumber + "', 0)";
-                submitOrder(sql);
-
-
-            return referenceNumber;
-            // myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, lowPrice, stopPrice);
-        }
-
-        public string submitUnitTrustBuyOrder(string code, string amount, string accountNumber)
-        {
-            // Inserts a unit trust buy order into the Order table.
-            // Check if input is valid.
-            if (!securityCodeIsValid("unit trust", code)) { return null; }
-            if (!amountIsValid("unit trust", amount)) { return null; }
-            string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
-            // Submit the order.
-
-            string referenceNumber = myExternalFunctions.submitUnitTrustBuyOrder(code, amount);
-            int referenceNumber_int;
-            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
-            submitOrder("insert into [Order] values (" + referenceNumber + ", 'buy', 'unit trust', '" + code + "', '" + dateNow
-                + "', 'pending', " + "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL, '" + accountNumber + "', 0)");
-            return referenceNumber;
-
-        }
-
-        public string submitUnitTrustSellOrder(string code, string shares, string accountNumber)
-        {
-            
-            // Inserts a unit trust sell order into the Order table.
-            // Check if input is valid.
-            if (!securityCodeIsValid("unit trust", code)) { return null; }
-            if (!sharesIsValid("unit trust", shares)) { return null; }
-            if (!sellAmountIsValid("unit trust", code, accountNumber, shares)) { return null; }
-
-            string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
-            // Submit the order.
-            string referenceNumber = myExternalFunctions.submitUnitTrustSellOrder(code, shares);
-            int referenceNumber_int;
-            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
-            submitOrder("insert into [Order] values (" + referenceNumber + ", 'sell', 'unit trust', '" + code + "', '" + dateNow
-                + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL, '"+ accountNumber + "', 0)");
-            return referenceNumber;
-        }
-
-        public string getOrderStatus(string referenceNumber)
-        {
-            // Returns the status of the order specified by its reference number.
-            int number;
-            if (int.TryParse(referenceNumber, out number))
-            {
-                DataTable dtStatus = myExternalData.getData("select [status] from [Order] where [referenceNumber]='" + referenceNumber.Trim() + "'");
-                // Return null if no result is returned.
-                if (!(dtStatus == null || dtStatus.Rows.Count == 0))
-                {
-                    return dtStatus.Rows[0].Field<string>("status");
-                }
-            }
-            return null;
-        }
-
-        public DataTable getOrderTransaction(string referenceNumber)
-        {
-            // Returns all the transactions for an order specified by its reference number.
-            int number;
-            if (int.TryParse(referenceNumber, out number))
-            {
-                DataTable dtTransaction = myExternalData.getData("select * from [Transaction] where [referenceNumber]='" + referenceNumber.Trim() + "'");
-                // Return null if no result is returned.
-                if (!(dtTransaction == null || dtTransaction.Rows.Count == 0))
-                {
-                    return dtTransaction;
-                }
-            }
-            return null;
-        }
-
+        // `getBalance`: return the balance of the account 
         public decimal getBalance(string accountNumber)
         {
             // Returns the balance of account number.
             int number;
             if (int.TryParse(accountNumber, out number))
             {
-                DataTable dtBalance = myExternalData.getData("select [balance] from [Account] where [referenceNumber]='" + accountNumber.Trim() + "'");
+                DataTable dtBalance = myHKeInvestData.getData("select [balance] from [Account] where [referenceNumber]='" + accountNumber.Trim() + "'");
                 // Return null if no result is returned.
                 if (!(dtBalance == null || dtBalance.Rows.Count == 0))
                 {
@@ -370,13 +159,15 @@ namespace HKeInvestWebApplication.Code_File
             return 0;
         }
 
+        // `getCurrentValueOfSecuries`: add up all the value of the current securityHoding: 
+        // TODO: need currency conversion?
         public decimal getCurrentValueOfSecuries(string accountNumber)
         {
             int number;
             decimal value = 0;
             if (int.TryParse(accountNumber, out number))
             {
-                DataTable dtSecurities = myExternalData.getData("select * from [SecurityHolding] where [SecurityHolding].[accountNumber] = '" + accountNumber.Trim() + "' ");
+                DataTable dtSecurities = myHKeInvestData.getData("select * from [SecurityHolding] where [accountNumber] = '" + accountNumber.Trim() + "' ");
                 // Return 0 if no result is returned.
                 if (dtSecurities == null || dtSecurities.Rows.Count == 0)
                 {
@@ -390,6 +181,338 @@ namespace HKeInvestWebApplication.Code_File
                 }
             }
             return value;
+        }
+
+        // `getAssets`: return all valuesOfSecurityHolds + balance
+        public decimal getAssets(string accountNumber)
+        {
+            int number;
+            if (int.TryParse(accountNumber, out number))
+            {
+                return getBalance(accountNumber) + getCurrentValueOfSecuries(accountNumber);
+            }
+            return 0;
+        }
+
+        // `calculateBondFees`: return the service fee of bonds
+        private decimal calculateBondFees(string buyOrSell, string accountNumber, string amount)
+        {
+            decimal dAmount = Convert.ToDecimal(amount);
+            decimal assets = getAssets(accountNumber);
+            if (assets < (decimal)500000)
+            {
+                if (buyOrSell == "buy")
+                {
+                    return dAmount * (decimal)0.05;
+                }
+                else if (buyOrSell == "sell")
+                {
+                    return 100;
+                }
+            }
+            else if (assets >= (decimal)500000)
+            {
+                if (buyOrSell == "buy")
+                {
+                    return dAmount * (decimal)0.03;
+                }
+                else if (buyOrSell == "sell")
+                {
+                    return 50;
+                }
+            }
+            return 0;
+        }
+
+        // calculateUnitTrustFees
+        private decimal calculateUnitTrustFees(string buyOrSell, string accountNumber, string amount)
+        {
+            decimal dAmount = Convert.ToDecimal(amount);
+            decimal assets = getAssets(accountNumber);
+            if (assets < (decimal)500000)
+            {
+                if (buyOrSell == "buy")
+                {
+                    return dAmount * (decimal)0.05;
+                }
+                else if (buyOrSell == "sell")
+                {
+                    return 100;
+                }
+            }
+            else if (assets >= (decimal)500000)
+            {
+                if (buyOrSell == "buy")
+                {
+                    return dAmount * (decimal)0.03;
+                }
+                else if (buyOrSell == "sell")
+                {
+                    return 50;
+                }
+            }
+            return 0;
+        }
+
+        // `calculateStockFees`: return the service fee of stocks
+        private decimal calculateStockFees(string stockOrderType, string accountNumber, string amount)
+        {
+            decimal dAmount = Convert.ToDecimal(amount);
+            decimal assets = getAssets(accountNumber);
+            decimal fee = 0;
+            if (assets < (decimal)1000000)
+            {
+                if (stockOrderType == "market")
+                {
+                    fee = dAmount * (decimal)0.004;
+                }
+                else if (stockOrderType == "limit" || stockOrderType == "stop")
+                {
+                    fee = dAmount * (decimal)0.006;
+                }
+                else if (stockOrderType == "stop limit")
+                {
+                    fee = dAmount * (decimal)0.008;
+                }
+
+                if (fee > (decimal)150)
+                    return fee;
+                else return (decimal)150;
+            }
+            else if (assets >= (decimal)1000000)
+            {
+                if (stockOrderType == "market")
+                {
+                    fee = dAmount * (decimal)0.002;
+                }
+                else if (stockOrderType == "limit" || stockOrderType == "stop")
+                {
+                    fee = dAmount * (decimal)0.004;
+                }
+                else if (stockOrderType == "stop limit")
+                {
+                    fee = dAmount * (decimal)0.006;
+                }
+
+                if (fee > (decimal)100)
+                    return fee;
+                else return (decimal)100;
+            }
+            return 0;
+        }
+
+        // insertTransaction
+        // updateFee
+        // updateSecurityHolding
+        // updateBalance
+        private void insertTransaction(string transactionNumber, string referenceNumber, string executeDate, string executeShares, string executePrice)
+        {
+            MessageBox.Show("transaction detected" + transactionNumber);
+            SqlTransaction trans = myHKeInvestData.beginTransaction();
+            myHKeInvestData.setData("insert into [Transaction]([transactionNumber], [referenceNumber], [executeDate], [executeShares], [executePrice]) values (" +
+                transactionNumber + ", '" + referenceNumber + "', " + executeDate + ", '" + executeShares + ", '" + executePrice + "')", trans);
+            myHKeInvestData.commitTransaction(trans);
+        }
+
+        private void updateFee(string fee, string referenceNumber)
+        {
+            string Fee = Convert.ToString(fee);
+            SqlTransaction trans = myHKeInvestData.beginTransaction();
+            myHKeInvestData.setData("update [order] set [fee]='" + Convert.ToString(Fee).Trim() + "' where [referenceNumber]='" + referenceNumber + "'", trans);
+            myHKeInvestData.commitTransaction(trans);
+        }
+
+        private void updateSecurityHolding(string accountNumber, string type, string code, decimal shares)
+        {
+            decimal ownedShares = getSharesOfSecurityHolding(accountNumber, type, code);
+            decimal updatedShares = ownedShares + shares;
+            DataTable dtSecurity = myExternalFunctions.getSecuritiesByCode(type, code);
+            if (dtSecurity == null) return;
+
+            string name = dtSecurity.Rows[0].Field<string>("price").Trim();
+            string bases = dtSecurity.Rows[0].Field<string>("base").Trim();
+
+            if (ownedShares == 0)
+            {
+                SqlTransaction trans = myHKeInvestData.beginTransaction();
+                myHKeInvestData.setData("insert into [SecurityHolding] values(" + accountNumber + "','" + type + "', '" + code
+            + "','" + name + "', '" + Convert.ToString(shares).Trim() + "', '" + bases + "')", trans);
+                myHKeInvestData.commitTransaction(trans);
+                return;
+            }
+            else if (ownedShares > 0)
+            {
+                SqlTransaction trans = myHKeInvestData.beginTransaction();
+                myHKeInvestData.setData("update [SecurityHolding] set [shares]='" + Convert.ToString(updatedShares).Trim() + "' where [accountNumber] = '" + accountNumber +
+                "' and [type] = '" + type + "' and [code] = '" + code + "'", trans);
+                myHKeInvestData.commitTransaction(trans);
+            }
+            return;
+        }
+
+        private void updateBalance(string accountNumber, decimal amount)
+        {
+            decimal balance = getBalance(accountNumber);
+            decimal updatedBalance = balance + amount;
+
+            SqlTransaction trans = myHKeInvestData.beginTransaction();
+            myHKeInvestData.setData("update [AccountTemp] set [balance]='" + Convert.ToString(updatedBalance).Trim() + "' where [accountNumber] = '" + accountNumber + "'", trans);
+            myHKeInvestData.commitTransaction(trans);
+        }
+    
+
+// -----------------------------------
+       public decimal checkMaxiSharesSell(string accountNumber, string securityType, string securityCode)
+        {
+            string sql = string.Format("select * from [SecurityHolding]" +
+                " where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'", 
+                accountNumber, securityType, securityCode);
+            // shares
+            DataTable dtShareOwn = myHKeInvestData.getData(sql);
+            if (dtShareOwn == null || dtShareOwn.Rows.Count == 0) return -1;
+
+            decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
+
+            string sqlInternal = string.Format("select * from [Order] where ([status]='pending' or [status]='partial')" + 
+                " [accountNumber] = '{0}' and [securityType] = '{1}' and [securityCode] = '{2}' ",
+                accountNumber, securityType, securityCode);
+            decimal numOrderBefore = myHKeInvestData.getAggregateValue(sqlInternal);
+            decimal sharedInOrdering = 0;
+            if(numOrderBefore != 0)
+            {
+                DataTable dtShareInOrder = myHKeInvestData.getData(sql);
+                if (myHKeInvestData.getData(sqlInternal).Rows == null) return -1;
+                for (int i = 0; i < (int)(numOrderBefore); i++)
+                {
+                    sharedInOrdering = sharedInOrdering + dtShareInOrder.Rows[i].Field<decimal>("shares");
+                }
+            }
+            return shares - sharedInOrdering;
+        }
+
+        // submit order:
+
+        public string submitBondOrder(string code, string amount, string shares, string accountNumber, string securityType, string buyOrSell)
+        {
+
+            // Inserts a bond buy order into the Order table.
+            // Check if input is valid.
+            
+
+            string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
+            // Submit the order.
+            string referenceNumber;
+
+            if (securityType == "bond" && buyOrSell == "sell order")
+            {
+                referenceNumber = myExternalFunctions.submitBondSellOrder(code, shares);
+            }
+            else if (securityType == "unit trust" && buyOrSell == "sell order")
+            {
+                referenceNumber = myExternalFunctions.submitUnitTrustSellOrder(code, shares);
+            }
+            else if (securityType == "bond" && buyOrSell == "buy order")
+            {
+                referenceNumber = myExternalFunctions.submitBondBuyOrder(code, amount);
+            }
+            else if (securityType == "unit trust" && buyOrSell == "buy order")
+            {
+                referenceNumber = myExternalFunctions.submitUnitTrustBuyOrder(code, amount);
+            }
+            else return null;
+
+            int referenceNumber_int;
+            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
+            // all attribute:
+            // (referenceNumber, buyOrSell, securityType, securityCode, dateSubmitted, status, 
+            // shares, amount, stockOrderType,
+            // expiryDay, allOrNone, limitPrice, stopPrice, accountNumber, fee)
+            
+            if (buyOrSell == "buy order")
+            {
+                buyOrSell = "buy";
+                shares = "NULL";
+            }
+            else
+            {
+                buyOrSell = "sell";
+                amount = "NULL";
+            }
+            string sql = string.Format(
+              "INSERT INTO [Order] " +
+              "(referenceNumber, buyOrSell, securityType, securityCode, dateSubmitted, accountNumber," +
+              "shares, amount)" +
+              "VALUES" +
+              "({0},'{1}','{2}','{3}','{4}','{5}'" +
+              ",{6},{7})",
+               referenceNumber, buyOrSell, securityType, code, dateNow, accountNumber,
+               shares.Trim(), amount.Trim()
+             );
+            //System.Web.HttpContext.Current.Response.Write(sql);
+            submitOrder(sql);
+
+            return referenceNumber;
+        }
+
+        public string submitStockOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string limitPrice, string stopPrice, string accountNumber, string buyOrSell)
+        {
+            // Inserts a stock buy order into the Order table.
+            // Check if input is valid.
+            string securityType = "stock";
+            orderType = orderType.Trim().ToLower();
+            string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
+            string referenceNumber;
+            if (buyOrSell == "buy order")
+            {
+                buyOrSell = "buy";
+                referenceNumber = myExternalFunctions.submitStockBuyOrder(code, shares, orderType, expiryDay, allOrNone, limitPrice, stopPrice);
+
+            }
+            else
+            {
+                buyOrSell = "sell";
+                referenceNumber = myExternalFunctions.submitStockSellOrder(code, shares, orderType, expiryDay, allOrNone, limitPrice, stopPrice);
+            }
+            // Construct the basic SQL statement.
+            int referenceNumber_int;
+            if (!int.TryParse(referenceNumber, out referenceNumber_int)) return null;
+            // all attribute:
+            // (referenceNumber, buyOrSell, securityType, securityCode, dateSubmitted, status, 
+            // shares, amount, stockOrderType,
+            // expiryDay, allOrNone, limitPrice, stopPrice, accountNumber, fee)
+
+            // Check for order type and set SQL statement accordingly.
+            if (orderType == "market")
+            {
+                limitPrice = "NULL";
+                stopPrice = "NULL";
+            }
+            else if (orderType == "limit")
+            {
+                stopPrice = "NULL";
+            }
+            else if (orderType == "stop")
+            {
+                limitPrice = "NULL";
+            }
+
+
+            string sql = string.Format(
+               "INSERT INTO [Order] " +
+               "(referenceNumber, buyOrSell, securityType, securityCode, dateSubmitted, accountNumber, " +
+               "shares, stockOrderType, expiryDay, allOrNone," +
+               "limitPrice, stopPrice)" +
+               "VALUES" +
+               "({0},'{1}','{2}','{3}','{4}','{5}'" +
+               ",'{6}','{7}','{8}','{9}'" +
+               ",{10},{11})",
+               referenceNumber, buyOrSell, securityType, code, dateNow, accountNumber,
+               shares.Trim(), orderType, expiryDay, allOrNone.ToUpper(),
+               limitPrice.Trim(), stopPrice.Trim()
+               );
+            //System.Web.HttpContext.Current.Response.Write(sql);
+            submitOrder(sql);
+            return referenceNumber;
         }
 
         //private 
@@ -406,140 +529,6 @@ namespace HKeInvestWebApplication.Code_File
             //            return referenceNumber;
             //            return sql;
             return;
-        }
-
-        private bool sellAmountIsValid(string securityType, string securityCode, string accountNumber, string placeAmount)
-        {
-            string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'", accountNumber, securityType, securityCode);
-            // shares
-            DataTable dtShareOwn = myHKeInvestData.getData(sql);
-            if (myHKeInvestData.getData(sql).Rows == null) return false;
-            System.Diagnostics.Debug.WriteLine(sql);
-            
-            return true;
-            decimal sharesOwn = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
-
-            decimal sharesToSell;
-            decimal.TryParse(placeAmount.ToString().Trim(), out sharesToSell);
-            if (sharesToSell > sharesOwn) return false;
-            else return true;
-
-
-        }
-
-        private bool securityCodeIsValid(string securityType, string securityCode)
-        {
-            DataTable dtSecurities = myExternalFunctions.getSecuritiesByCode(securityType, securityCode);
-            if (dtSecurities == null || dtSecurities.Rows.Count == 0)
-            {
-                // showError();
-                return false;
-            }
-            return true;
-        }
-
-        private bool amountIsValid(string securityType, string amount)
-        {
-            decimal number;
-            if (!decimal.TryParse(amount, out number) || number <= 0)
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or missing dollar amount of " + securityType + " to buy.\nValue is '" + amount + "'.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool sharesIsValid(string securityType, string shares)
-        {
-            decimal number;
-            if (!decimal.TryParse(shares, out number) || number <= 0)
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or missing number of " + securityType + " shares to sell.\nValue is '" + shares + "'.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool sharesAmountIsValid(string shares)
-        {
-            decimal number = Convert.ToDecimal(shares);
-            if ((number % 100) != 0)
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Shares to buy is not a multiple of 100.\nValue is '" + shares + "'.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool orderTypeIsValid(string buyOrSell, string orderType, string expiryDay, string allOrNone, string limitPrice, string stopPrice)
-        {
-            int intNumber;
-            decimal decLimitPrice = 0;
-            decimal decStopPrice = 0;
-
-            // Check if order type is valid.
-            if (!(orderType == "market" || orderType == "limit" || orderType == "stop" || orderType == "stop limit"))
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or missing stock order type.\nValue is '" + orderType + "'.");
-                return false;
-            }
-
-            // Check if expiry day is valid.
-            if (!int.TryParse(expiryDay, out intNumber) || intNumber < 1 || intNumber > 7)
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or missing expiry day.\nValue is '" + expiryDay + "'.");
-                return false;
-            }
-
-            // Check if all or none is valid.
-            if (!(allOrNone.ToUpper() == "Y" || allOrNone.ToUpper() == "N"))
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or missing all or none.\nValue is '" + allOrNone + "'.");
-                return false;
-            }
-
-            // Check if limit price is valid.
-            if (orderType == "limit" || orderType == "stop limit")
-            {
-                if (!decimal.TryParse(limitPrice, out decLimitPrice) || decLimitPrice <= 0)
-                {
-                    MessageBox.Show(new Form { TopMost = true }, "Invalid or missing limit price.\nValue is '" + limitPrice + "'.");
-                    return false;
-                }
-            }
-
-            // Check if stop price is valid.
-            if (orderType == "stop" || orderType == "stop limit")
-            {
-                if (!decimal.TryParse(stopPrice, out decStopPrice) || decStopPrice <= 0)
-                {
-                    MessageBox.Show(new Form { TopMost = true }, "Invalid or missing stop price.\nValue is '" + stopPrice + "'.");
-                    return false;
-                }
-
-            }
-
-            // Check if stop and limit prices are in correct relationship to each other.
-            if (orderType == "stop limit")
-            {
-                if (buyOrSell == "buy")
-                {
-                    if (decStopPrice > decLimitPrice)
-                    {
-                        MessageBox.Show(new Form { TopMost = true }, "Stock buy order:\nstop price must be <= limit price.");
-                        return false;
-                    }
-                }
-                else // Sell order.
-                {
-                    if (decStopPrice < decLimitPrice)
-                    {
-                        MessageBox.Show(new Form { TopMost = true }, "Stock sell order:\n stop price must be >= limit price.");
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
 
         private void insertTransaction(string tansactionNumber, string referenceNumber, string executeDate, string executeShares, string executePrice, string accountNumber)
