@@ -715,22 +715,42 @@ namespace HKeInvestWebApplication
         protected void HKIDValidate_ServerValidate(object source, ServerValidateEventArgs args)
         {
             string hkid = HKID.Text.Trim().ToUpper();
-            if (AccountType.SelectedValue != "0" && AccountType.SelectedValue != "individual" && hkid == HKID2.Text.Trim().ToUpper())
+            if (AccountType.SelectedValue != "0" && AccountType.SelectedValue != "individual")
             {
-                args.IsValid = false;
-                HKIDValidate.ErrorMessage = "The HKID of the primary holder cannot be the same as co account holder.";
-                return;
-            }
-            string sql = "SELECT HKIDPassportNumber from Client";
-            DataTable table = myHKeInvestData.getData(sql);
-            if (table == null || table.Rows.Count == 0) return;
-            foreach(DataRow row in table.Rows)
-            {
-                if (row.Field<string>("HKIDPassportNumber") == hkid)
-                {
+                if ((HKIDUsed.Checked && HKIDUsed2.Checked && hkid==HKID2.Text.Trim()) ||
+                    (!HKIDUsed.Checked && !HKIDUsed2.Checked && hkid == HKID2.Text.Trim() && passportCountry.Text.Trim()==passportCountry2.Text.Trim())) {
                     args.IsValid = false;
-                    HKIDValidate.ErrorMessage = "Dumplicate HKID is not allowed";
-                    break;
+                    HKIDValidate.ErrorMessage = "The HKID of the primary holder cannot be the same as co account holder.";
+                    return;
+                }
+            }
+            if (HKIDUsed.Checked)
+            {
+                string sql = "SELECT HKIDPassportNumber from Client WHERE isHKIDUsed = 'Yes'";
+                DataTable table = myHKeInvestData.getData(sql);
+                if (table == null || table.Rows.Count == 0) return;
+                foreach (DataRow row in table.Rows)
+                {
+                    if (row.Field<string>("HKIDPassportNumber").Trim() == hkid)
+                    {
+                        args.IsValid = false;
+                        HKIDValidate.ErrorMessage = "Dumplicate HKID is not allowed";
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                string sql = "SELECT HKIDPassportNumber, passportCountryOfIssue from Client WHERE isHKIDUsed = 'No'";
+                DataTable table = myHKeInvestData.getData(sql);
+                foreach (DataRow row in table.Rows)
+                {
+                    if (row.Field<string>("HKIDPassportNumber").Trim() == hkid&&row.Field<string>("passportCountryOfIssue").Trim()==passportCountry.Text.Trim())
+                    {
+                        args.IsValid = false;
+                        HKIDValidate.ErrorMessage = "This passport has been used!";
+                        break;
+                    }
                 }
             }
         }
@@ -738,22 +758,43 @@ namespace HKeInvestWebApplication
         protected void HKID2Validate_ServerValidate(object source, ServerValidateEventArgs args)
         {
             string hkid2 = HKID2.Text.Trim().ToUpper();
-            if (AccountType.SelectedValue != "0" && AccountType.SelectedValue != "individual" && hkid2 == HKID.Text.Trim().ToUpper())
+            if (AccountType.SelectedValue != "0" && AccountType.SelectedValue != "individual")
             {
-                args.IsValid = false;
-                HKID2Validate.ErrorMessage = "The HKID of the primary holder cannot be the same as co account holder.";
-                return;
-            }
-            string sql = "SELECT HKIDPassportNumber from Client";
-            DataTable table = myHKeInvestData.getData(sql);
-            if (table == null || table.Rows.Count == 0) return;
-            foreach (DataRow row in table.Rows)
-            {
-                if (row.Field<string>("HKIDPassportNumber") == hkid2)
+                if ((HKIDUsed.Checked && HKIDUsed2.Checked && hkid2 == HKID.Text.Trim()) ||
+                    (!HKIDUsed.Checked && !HKIDUsed2.Checked && hkid2 == HKID.Text.Trim() && passportCountry.Text.Trim() == passportCountry2.Text.Trim()))
                 {
                     args.IsValid = false;
-                    HKIDValidate.ErrorMessage = "Dumplicate HKID is not allowed";
-                    break;
+                    HKIDValidate.ErrorMessage = "The HKID of the primary holder cannot be the same as co account holder.";
+                    return;
+                }
+            }
+            if (HKIDUsed2.Checked)
+            {
+                string sql = "SELECT HKIDPassportNumber from Client WHERE isHKIDUsed = 'Yes'";
+                DataTable table = myHKeInvestData.getData(sql);
+                if (table == null || table.Rows.Count == 0) return;
+                foreach (DataRow row in table.Rows)
+                {
+                    if (row.Field<string>("HKIDPassportNumber").Trim() == hkid2)
+                    {
+                        args.IsValid = false;
+                        HKID2Validate.ErrorMessage = "Dumplicate HKID is not allowed";
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                string sql = "SELECT HKIDPassportNumber, passportCountryOfIssue from Client WHERE isHKIDUsed = 'No'";
+                DataTable table = myHKeInvestData.getData(sql);
+                foreach (DataRow row in table.Rows)
+                {
+                    if (row.Field<string>("HKIDPassportNumber").Trim() == hkid2 && row.Field<string>("passportCountryOfIssue").Trim() == passportCountry2.Text.Trim())
+                    {
+                        args.IsValid = false;
+                        HKID2Validate.ErrorMessage = "This passport has been used!";
+                        break;
+                    }
                 }
             }
         }

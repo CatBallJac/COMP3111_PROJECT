@@ -15,6 +15,7 @@ namespace HKeInvestWebApplication.Account
     public partial class Register : Page
     {
         SQLStringHandleHelper mySQLStringHandleHelper = new SQLStringHandleHelper();
+        HKeInvestEmail emailManager = new HKeInvestEmail();
         protected void CreateUser_Click(object sender, EventArgs e)
         {
             if (!IsValid)
@@ -34,7 +35,7 @@ namespace HKeInvestWebApplication.Account
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 string code = manager.GenerateEmailConfirmationToken(user.Id);
                 string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
-                manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+                emailManager.sendEmail(user.Email, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
 
                 // associate username with accountnumber
                 HKeInvestData data_helper = new HKeInvestData();
