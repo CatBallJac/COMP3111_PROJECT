@@ -35,6 +35,7 @@ namespace HKeInvestWebApplication
 
         private void testThread()
         {
+            /*
             decimal i = 0;
             do
             {
@@ -72,6 +73,7 @@ namespace HKeInvestWebApplication
 
                 Thread.Sleep(10000);
             } while (true);
+            */
         }
 
         private void CheckOrder()
