@@ -11,7 +11,7 @@ using System.Web.UI.WebControls;
 using System.Data;
 using HKeInvestWebApplication.Code_File;
 using HKeInvestWebApplication.ExternalSystems.Code_File;
-
+using System.Windows.Forms;
 
 namespace HKeInvestWebApplication.ClientOnly
 {
@@ -27,8 +27,8 @@ namespace HKeInvestWebApplication.ClientOnly
         protected void Page_Load(object sender, EventArgs e)
         {
             string userName = Context.User.Identity.Name;
-
-            welcomeMsg.Text = "welcome " + userName + " account Number: " + getAccountNumber();
+            decimal balance = myHkeInvestFunctions.getBalance(getAccountNumber());
+            welcomeMsg.Text = "welcome " + userName + " account Number: " + getAccountNumber() + ", your balance: " + balance.ToString();
         }
 
         protected void rbSecurityType_SelectedIndexChanged(object sender, EventArgs e)
@@ -60,7 +60,7 @@ namespace HKeInvestWebApplication.ClientOnly
             string securityType = rbSecurityType.SelectedValue.ToString().Trim();
             string securityCode = ddlCode.SelectedValue.ToString().Trim();
             
-            msg.Text = securityType + securityCode + "selected";
+            // msg.Text = securityType + securityCode + "selected";
             // string sql = string.Format("select name from [{0}] where [code] = '{1}' ", securityType, securityCode);
             // string securityName = myExternalData.getData(sql).Rows[0].Field<string>("name");
             DataTable dtSecurities = myExternalFunctions.getSecuritiesByCode(securityType, securityCode);
@@ -247,7 +247,7 @@ namespace HKeInvestWebApplication.ClientOnly
             // decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
 
             decimal shares = checkMaxiSharesSell(accountNumber, securityType, securityCode);
-            msg.Text = "have shared " + shares.ToString();
+            //msg.Text = "have shared " + shares.ToString();
             LabelSellLimit.Visible = true;
             TextMaxiShares.Visible = true;
             LabelSellLimit.Text = "total amount to sell should be less than ";
@@ -321,19 +321,23 @@ namespace HKeInvestWebApplication.ClientOnly
             // Response.Write(allmsg);
             // msg.Text = allmsg; // securityType + isBuyOrSell + " button click ";
             string referenceNumber = "";
+            // Show("code is " + code + " input code " + codeInput);
             if (securityType == "stock")
             {
                 string shares_stock;
                 if (isBuyOrSell == "buy order")
                 {
                     shares_stock = shares_buyStock;
+                    referenceNumber = submitStockOrder(codeInput, shares_stock, orderType, expiryDay, allOrNone, limitPrice, stopPrice, accountNumber, isBuyOrSell);
+
                 }
                 else
                 {
                     shares_stock = shares_sellStock;
+                    referenceNumber = submitStockOrder(code, shares_stock, orderType, expiryDay, allOrNone, limitPrice, stopPrice, accountNumber, isBuyOrSell);
+
                 }
                 numShown = shares_stock;
-                referenceNumber = submitStockOrder(codeInput, shares_stock, orderType, expiryDay, allOrNone, limitPrice, stopPrice, accountNumber, isBuyOrSell);
 
             }
             else
@@ -342,13 +346,16 @@ namespace HKeInvestWebApplication.ClientOnly
                 if (isBuyOrSell == "buy order")
                 {
                     numShown = amount_buyBond;
+                    referenceNumber = submitBondOrder(codeInput, amount_buyBond, shares_sellBond, accountNumber, securityType, isBuyOrSell);
+
                 }
                 else
                 {
                     numShown = shares_sellBond;
+                    referenceNumber = submitBondOrder(code, amount_buyBond, shares_sellBond, accountNumber, securityType, isBuyOrSell);
+
                 }
-          
-                referenceNumber = submitBondOrder(codeInput, amount_buyBond, shares_sellBond, accountNumber, securityType, isBuyOrSell);
+
             }
 
 
@@ -358,7 +365,7 @@ namespace HKeInvestWebApplication.ClientOnly
             }else
             {
                 
-                LabelResult.Text = "account: " + accountNumber + ", order submitted failed";
+                LabelResult.Text = "account: " + accountNumber + ", order submitted failed" + ", code" + codeInput + code;
             }
 
         }
@@ -375,19 +382,24 @@ namespace HKeInvestWebApplication.ClientOnly
             decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
 
             string sqlInternal = string.Format("select * from [Order] where ([status]='pending' or [status]='partial')" +
-                " [accountNumber] = '{0}' and [securityType] = '{1}' and [securityCode] = '{2}' ",
+                " and [accountNumber] = '{0}' and [securityType] = '{1}' and [securityCode] = '{2}' ",
                 accountNumber, securityType, securityCode);
-            decimal numOrderBefore = myHKeInvestData.getAggregateValue(sqlInternal);
+            
+            DataTable dTPreviousOrder = myHKeInvestData.getData(sqlInternal);
+            if (dTPreviousOrder == null) return shares;
+            int numOrderBefore = dTPreviousOrder.Rows.Count;
             decimal sharedInOrdering = 0;
             if (numOrderBefore != 0)
             {
                 DataTable dtShareInOrder = myHKeInvestData.getData(sql);
                 if (myHKeInvestData.getData(sqlInternal).Rows == null) return -1;
-                for (int i = 0; i < (int)(numOrderBefore); i++)
+
+                for (int i = 0; i < numOrderBefore; i++)
                 {
-                    sharedInOrdering = sharedInOrdering + dtShareInOrder.Rows[i].Field<decimal>("shares");
+                    sharedInOrdering = sharedInOrdering + dTPreviousOrder.Rows[i].Field<decimal>("shares");
                 }
             }
+            Show("selling: previous :" + shares.ToString() + " pending order: " + sharedInOrdering.ToString());
             return shares - sharedInOrdering;
         }
 
@@ -414,6 +426,7 @@ namespace HKeInvestWebApplication.ClientOnly
             }
             else if (securityType == "bond" && buyOrSell == "buy order")
             {
+
                 referenceNumber = myExternalFunctions.submitBondBuyOrder(code, amount);
             }
             else if (securityType == "unit trust" && buyOrSell == "buy order")
@@ -449,9 +462,10 @@ namespace HKeInvestWebApplication.ClientOnly
                referenceNumber, buyOrSell, securityType, code, dateNow, accountNumber,
                shares.Trim(), amount.Trim()
              );
-            //System.Web.HttpContext.Current.Response.Write(sql);
-            submitOrder(sql);
 
+            //System.Web.HttpContext.Current.Response.Write(sql);
+
+            submitOrder(sql);
             return referenceNumber;
         }
 
@@ -511,6 +525,7 @@ namespace HKeInvestWebApplication.ClientOnly
                shares.Trim(), orderType, expiryDay, allOrNone.ToUpper(),
                limitPrice.Trim(), stopPrice.Trim()
                );
+            
             //System.Web.HttpContext.Current.Response.Write(sql);
             submitOrder(sql);
             return referenceNumber;
@@ -520,6 +535,7 @@ namespace HKeInvestWebApplication.ClientOnly
 
         private void submitOrder(string sql)
         {
+            Show(sql);
             // System.Web.HttpContext.Current.Response.Write(sql);
             // System.Diagnostics.Debug.WriteLine(sql);
             SqlTransaction trans = myHKeInvestData.beginTransaction();
@@ -544,7 +560,7 @@ namespace HKeInvestWebApplication.ClientOnly
             if (ddlCode.SelectedValue.ToString().Trim() == "-- choose code of available security --" || ddlCode.SelectedValue == null )
             {
                 cvCode.ErrorMessage = "please select code";
-                msg.Text = "please select code";
+                //msg.Text = "please select code";
                 args.IsValid = false;
             }
            
@@ -595,10 +611,17 @@ namespace HKeInvestWebApplication.ClientOnly
                 cvShares.ErrorMessage = "please input decimal number";
                 args.IsValid = false;
             }
+
+
             decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn);
             decimal.TryParse(shares_sellBonds, out number);
 
-            msg.Text = sharesOwn.ToString();
+            if (!(sharesOwn > 0))
+            {
+                msg.Text = "you have sell all the shares in previous order, no sell anymore";
+            }
+
+            // msg.Text = sharesOwn.ToString();
             if (number > sharesOwn)
             {
                 cvShares.ErrorMessage = "invalid! Buy shares: " + shares_sellBonds + " exceed maximum value: " + shares;
@@ -619,17 +642,28 @@ namespace HKeInvestWebApplication.ClientOnly
             decimal limitPrice = 0;
 
             if (rbOrderType.SelectedValue.ToString().Trim() != "stop limit") return;
-            if(stopPricestr == "" || stopPricestr == null || limitPricestr == "" || limitPricestr == null)
+
+            if (stopPricestr == "" || stopPricestr == null)
             {
                 cvLimitPrice.ErrorMessage = "price required";
                 args.IsValid = false;
-            }else if(rbIsBuyOrSell.SelectedValue.ToString().Trim() == "buy order" && stopPrice <= limitPrice)
+            }
+            else decimal.TryParse(stopPricestr, out stopPrice);
+
+            if(limitPricestr == "" || limitPricestr == null)
             {
-                cvLimitPrice.ErrorMessage = "invalid! for buy order, stop price: "+ stopPricestr +" should be larger than limit price " + limitPricestr;
+                cvLimitPrice.ErrorMessage = "price required";
                 args.IsValid = false;
-            }else if (rbIsBuyOrSell.SelectedValue.ToString().Trim() == "sell order" && stopPrice >= limitPrice)
+            }
+            else decimal.TryParse(limitPricestr, out limitPrice);
+
+            if (rbIsBuyOrSell.SelectedValue.ToString().Trim() == "buy order" && stopPrice >= limitPrice)
             {
-                cvLimitPrice.ErrorMessage = "invalid! for sell order, stop price should be smaller than limit price";
+                cvLimitPrice.ErrorMessage = "invalid! for buy order, stop price: ("+ stopPrice.ToString() + ") should be smaller than limit price (" + limitPrice.ToString() + ")";
+                args.IsValid = false;
+            }else if (rbIsBuyOrSell.SelectedValue.ToString().Trim() == "sell order" && stopPrice <= limitPrice)
+            {
+                cvLimitPrice.ErrorMessage = "invalid! for sell order, stop price should be larger than limit price";
                 args.IsValid = false;
             }
 
@@ -657,12 +691,44 @@ namespace HKeInvestWebApplication.ClientOnly
                 // showError();
                 cvCodeInput.ErrorMessage = "no security found for code " + securityCode;
                 args.IsValid = false;
+                return;
             }
 
             string securityName = dtSecurities.Rows[0].Field<string>("name");
             LabelSecurityNametxt.Text = securityName;
 
 
+        }
+
+        private void Show(string msg)
+        {
+            //MessageBox.Show(msg);
+        }
+
+        protected void cvAmount_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            decimal buyAmount = 0;
+            if(!decimal.TryParse(TextAmount.Text.ToString().Trim(), out buyAmount))
+            {
+                cvAmount.ErrorMessage = "amount should be decimal";
+                args.IsValid = false;
+                return;
+            }
+            string accountNumber = getAccountNumber();
+            string buyOrSell;
+            if (rbIsBuyOrSell.SelectedValue.ToString() == "buy order")
+            {
+                buyOrSell = "buy";
+            } else buyOrSell = "sell";
+
+            decimal fee = myHkeInvestFunctions.calculateBondUnitTrustFees(buyOrSell, accountNumber, buyAmount.ToString());
+            decimal balance = myHkeInvestFunctions.getBalance(getAccountNumber());
+            if (buyAmount + fee> balance)
+            {
+                cvAmount.ErrorMessage = "balance not enough! you have balance: " + balance.ToString() + " but need " + buyAmount.ToString() + " and fee :" + fee.ToString();
+                args.IsValid = false;
+                return;
+            }
         }
     }
 }

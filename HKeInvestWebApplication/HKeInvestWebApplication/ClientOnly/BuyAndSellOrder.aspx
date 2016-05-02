@@ -1,14 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="BuyAndSellOrder.aspx.cs" Inherits="HKeInvestWebApplication.ClientOnly.BuyAndSellOrder" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <div>
-        <asp:Label ID="msg" runat="server" Text="Label"></asp:Label>
-    </div>
+
 
     <h2>Place Order</h2>
     <hr />
     <asp:Label ID="welcomeMsg" runat="server" Font-Bold="False" Font-Strikeout="False" ForeColor="#000066"></asp:Label>
-    
+
     <h5>please choose the security type to buy or sell</h5>
     <div class="col-md-offset-1">
         <div class="form-group">
@@ -38,7 +36,7 @@
         <div class="col-md-offset-1">
             <div id="inputCode" runat="server" visible="false">
                 <div class="form-group">
-                    <asp:TextBox ID="TextCode" runat="server" ></asp:TextBox>
+                    <asp:TextBox ID="TextCode" runat="server"></asp:TextBox>
                     <asp:CustomValidator ID="cvCodeInput" runat="server" ErrorMessage="security code not found" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ControlToValidate="TextCode" OnServerValidate="cvCodeInput_ServerValidate"></asp:CustomValidator>
                     <asp:RequiredFieldValidator ID="rfCodeInput" runat="server" ErrorMessage="must input security code" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ControlToValidate="TextCode"></asp:RequiredFieldValidator>
                     <asp:RegularExpressionValidator ID="erCode" runat="server" ErrorMessage="code input invalid" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ValidationExpression="^\d{1,4}$" ControlToValidate="TextCode"></asp:RegularExpressionValidator>
@@ -50,8 +48,12 @@
                     <asp:DropDownList ID="ddlCode" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlCode_SelectedIndexChanged">
                         <asp:ListItem Selected="True">-- choose code of available security --</asp:ListItem>
                     </asp:DropDownList>
-                    <asp:CustomValidator ID="cvCode" runat="server" ErrorMessage="must input security code" OnServerValidate="cvCode_ServerValidate"  ControlToValidate="ddlCode" CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:CustomValidator>
+
+                    <asp:CustomValidator ID="cvCode" runat="server" ErrorMessage="must input security code" OnServerValidate="cvCode_ServerValidate" ControlToValidate="ddlCode" CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:CustomValidator>
                     <asp:RequiredFieldValidator ID="rfCodeSelect" runat="server" ErrorMessage="security code required" ControlToValidate="ddlCode" CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:RequiredFieldValidator>
+                    <div>
+                        <asp:Label ID="msg" runat="server" Text=""></asp:Label>
+                    </div>
                 </div>
                 <h5>name: </h5>
                 <div>
@@ -140,7 +142,7 @@
                     <asp:TextBox ID="TextLimitPrice" runat="server" MaxLength="9"></asp:TextBox>
                     <asp:CustomValidator ID="cvLimitPrice" runat="server" ControlToValidate="TextLimitPrice" OnServerValidate="cvLimitPrice_ServerValidate" CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:CustomValidator>
                     <asp:RequiredFieldValidator ID="rfLimitPrice" runat="server" ErrorMessage="limit price are required" ControlToValidate="TextLimitPrice" CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:RequiredFieldValidator>
-                    <asp:RegularExpressionValidator ID="rvLimitPrice" runat="server" ErrorMessage="price has wrong format" ControlToValidate="TextLimitPrice" ValidationExpression="^\$?([1-9]{1}[0-9]{0,3}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,3}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$"  CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:RegularExpressionValidator>
+                    <asp:RegularExpressionValidator ID="rvLimitPrice" runat="server" ErrorMessage="price has wrong format" ControlToValidate="TextLimitPrice" ValidationExpression="^\$?([1-9]{1}[0-9]{0,3}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,3}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:RegularExpressionValidator>
                 </div>
             </div>
         </div>
@@ -154,7 +156,7 @@
                     <asp:TextBox ID="TextBuyShares" runat="server" MaxLength="13"></asp:TextBox>
                     &nbsp;X 100
                 <asp:RequiredFieldValidator ID="rfBuyShares" runat="server" ErrorMessage="buy shares are required" ControlToValidate="TextBuyShares" CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:RequiredFieldValidator>
-                    <asp:RegularExpressionValidator ID="rvBuyShares" runat="server" ErrorMessage="share amount has wrong format" ControlToValidate="TextBuyShares"  ValidationExpression="^\$?([1-9]{1}[0-9]{0,9}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,9}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$"  CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:RegularExpressionValidator>
+                    <asp:RegularExpressionValidator ID="rvBuyShares" runat="server" ErrorMessage="share amount has wrong format" ControlToValidate="TextBuyShares" ValidationExpression="^\$?([1-9]{1}[0-9]{0,9}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,9}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:RegularExpressionValidator>
                 </div>
             </div>
         </div>
@@ -184,6 +186,7 @@
                 <div id="divBondOrderDetail_buy" runat="server" visible="false">
                     <asp:Label ID="labelAmount" runat="server" Text="dollar amount to buy (in HKD)"></asp:Label>
                     <asp:TextBox ID="TextAmount" runat="server" MaxLength="9"></asp:TextBox>
+                    <asp:CustomValidator ID="cvAmount" runat="server" ControlToValidate="TextAmount" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" OnServerValidate="cvAmount_ServerValidate"></asp:CustomValidator>
                     <asp:RequiredFieldValidator ID="rfAmount" runat="server" ErrorMessage="dollar amount required" ControlToValidate="TextAmount" CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:RequiredFieldValidator>
                     <asp:RegularExpressionValidator ID="rvAmount" runat="server" ErrorMessage="dollar has wrong format" ControlToValidate="TextAmount" ValidationExpression="^\$?([1-9]{1}[0-9]{0,9}(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,9}?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$" CssClass="text-danger" Display="Dynamic" EnableClientScript="False"></asp:RegularExpressionValidator>
                 </div>

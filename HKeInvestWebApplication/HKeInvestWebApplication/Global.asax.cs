@@ -81,7 +81,7 @@ namespace HKeInvestWebApplication
             
             do
             {
-                MessageBox.Show("point1");
+                MessageBox.Show("threading");
                 DataTable dTpendingOrder = myHKeInvestFunction.getPendingorPartialOrder();
 
                 if (dTpendingOrder != null)
@@ -106,27 +106,57 @@ namespace HKeInvestWebApplication
                             string amount = row["amount"].ToString().Trim();
                             if (currentstatus == "completed")
                             {
-                                MessageBox.Show("complete order found");
+                                //MessageBox.Show("complete order found");
                                 myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus);
-                                myHKeInvestFunction.completeBondUnitTrustOrder(referenceNumber, amount, securityCode, buyOrSell, accountNumber, securityType);
+                                myHKeInvestFunction.completeBondUnitTrustOrder(referenceNumber, amount,  securityCode, buyOrSell, accountNumber, securityType);
                             }
                             else continue;
                         }else if (securityType == "stock")
                         {
-                            
+                            string stockOrderType = row["stockOrderType"].ToString().Trim();
+                            if(currentstatus == "cancelled")
+                            {
+                                //MessageBox.Show("cancelled order found" + currentstatus);
+                                currentstatus = "cancelled";
+                                myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus);
+                            }else if(currentstatus == "completed")
+                            {
+                                myHKeInvestFunction.stockTransactionHandler(referenceNumber, allOrNone, buyOrSell, stockOrderType, accountNumber, securityCode);
+                                myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus);
+                            }else if(currentstatus == "partial")
+                            {
+                                if (myHKeInvestFunction.isExpired(referenceNumber))
+                                {
+                                    myHKeInvestFunction.stockTransactionHandler(referenceNumber, allOrNone, buyOrSell, stockOrderType, accountNumber, securityCode);
+                                    myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus);
+                                }
+                                else return;
+
+                            }else if(currentstatus == "pending" )
+                            {
+                                if (myHKeInvestFunction.isExpired(referenceNumber))
+                                {
+                                    currentstatus = "cancelled";
+                                    myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus);
+                                }
+                                else return;
+
+                            }
+
+
                             if (myHKeInvestFunction.isExpired(referenceNumber))
                             {
                                 // #TODO: fetch information of the stock order
-                                if (currentstatus == "cancelled" || myHKeInvestFunction.checkStockOrderTranscation(referenceNumber, allOrNone) == "cancelled")
+                                if (myHKeInvestFunction.checkStockOrderTranscation(referenceNumber, allOrNone) == "cancelled")
                                 {
-                                    MessageBox.Show("cancelled order found");
+                                    //MessageBox.Show("cancelled order found" + currentstatus);
                                     currentstatus = "cancelled";
                                     myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus);
                                 }else
                                 {
                                     // #TODO: not cancelled, fetch the information of transaction:
                                     currentstatus = myHKeInvestFunction.checkStockOrderTranscation(referenceNumber, allOrNone);
-                                    myHKeInvestFunction.stockTransactionHandler(referenceNumber, allOrNone);
+                                    myHKeInvestFunction.stockTransactionHandler(referenceNumber, allOrNone, buyOrSell, stockOrderType, accountNumber, securityCode);
                                     myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus);
                                 }
                             }

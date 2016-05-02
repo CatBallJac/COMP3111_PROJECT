@@ -77,13 +77,19 @@ namespace HKeInvestWebApplication.Code_File
             if (dtStatus == null || dtStatus.Rows.Count == 0) return false; // pending forever???
 
             //# TODO: CALCULATE IF EXPIRY DATE PASS
+            string expiryDayStr = dtStatus.Rows[0]["expiryDay"].ToString();
 
-            int expiryDay = (int)dtStatus.Rows[0].Field<int>("expiryDay");
+            int expiryDay  = 0;
+            int.TryParse(expiryDayStr, out expiryDay);
             DateTime dateSubmit = (DateTime)dtStatus.Rows[0].Field<DateTime>("dateSubmitted");
 
             DateTime dateNow = DateTime.Now;
             int dateDiff = dateNow.Subtract(dateSubmit).Days;
-            if (dateDiff >= expiryDay) return true;
+            if (dateDiff >= expiryDay)
+            {
+                Show("detect out of date order: " + dateDiff + " ecpiry : " + expiryDay);
+                return true;
+            }
             else return false;
         }
 
@@ -181,7 +187,7 @@ namespace HKeInvestWebApplication.Code_File
             `completeStockOrder`: fetch the complete stock order, update fee & securityHolding & balance & order status
         */
         // for completed order or partial order
-        public void stockTransactionHandler(string referenceNumber, string allOrNone)
+        public void stockTransactionHandler(string referenceNumber, string allOrNone, string buyOrSell, string orderType, string accountNumber, string securityCode)
         {
             DataTable dTstockTransaction = myExternalFunctions.getOrderTransaction(referenceNumber);
             if (dTstockTransaction == null || dTstockTransaction.Rows.Count == 0) return; // error state
@@ -189,7 +195,7 @@ namespace HKeInvestWebApplication.Code_File
             string executeDate;
             decimal executeShares = 0;
             decimal executePrice = 0;
-            decimal totalSpend = 0;
+            decimal totalAmount = 0;
             decimal totalShares = 0;
             foreach (DataRow row in dTstockTransaction.Rows)
             {
@@ -198,13 +204,46 @@ namespace HKeInvestWebApplication.Code_File
                 executeShares = row.Field<decimal>("executeShares");
                 executePrice = row.Field<decimal>("executePrice");
                 // acc the total spend on the shares
-                totalSpend += executeShares * executePrice;
+                totalAmount += executeShares * executePrice;
                 totalShares += executeShares;
                 // update insert all transaction
                 insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares.ToString(), executePrice.ToString());
+
+            }
+            decimal totalAmountAndFee = 0;
+            decimal updateSecurityHoldingReturn = 0;
+            decimal updateBalanceReturn = 0;
+            // #TODO: update security holdings & balance
+            if (buyOrSell == "buy")
+            {
+                decimal fee = calculateStockFees(orderType, accountNumber, totalAmount.ToString());
+                totalAmountAndFee = totalAmount + fee;
+
+                updateFee(Convert.ToString(fee), referenceNumber);
+                updateSecurityHoldingReturn = updateSecurityHolding(accountNumber, "stock", securityCode, totalShares, buyOrSell);
+                updateBalanceReturn = updateBalance(accountNumber, -totalAmountAndFee);
+                //updateOrderStatus(referenceNumber, "completed");
+                Show("stovk buy amount is " + totalAmount + " + fee " +
+                    fee.ToString() + " in total " + totalAmountAndFee.ToString() +
+                    " now holding " + updateSecurityHoldingReturn.ToString() +
+                    " balance " + updateBalanceReturn.ToString());
+            }
+            else
+            {
+                decimal fee = calculateStockFees(orderType, accountNumber, totalAmount.ToString());
+                totalAmountAndFee = totalAmount - fee;
+
+                updateFee(Convert.ToString(fee), referenceNumber);
+                updateSecurityHoldingReturn = updateSecurityHolding(accountNumber, "stock", securityCode, totalShares, buyOrSell);
+                updateBalanceReturn = updateBalance(accountNumber, totalAmountAndFee); // increase
+                Show("stock sell amount is " + totalAmount + " - fee " +
+                    fee.ToString() + " in total " + totalAmountAndFee.ToString() +
+                    " now holding " + updateSecurityHoldingReturn.ToString() +
+                    " balance " + updateBalanceReturn.ToString());
+
+                //updateOrderStatus(referenceNumber, "completed");
             }
 
-            // #TODO: update security holdings & balance
 
         }
 
@@ -217,32 +256,44 @@ namespace HKeInvestWebApplication.Code_File
             }
             string tansactionNumber = dTtransaction.Rows[0]["transactionNumber"].ToString().Trim();
             string executeDate = dTtransaction.Rows[0]["executeDate"].ToString().Trim();
-            string executeShares = dTtransaction.Rows[0]["executeShares"].ToString().Trim();
-            string executePrice = dTtransaction.Rows[0]["executePrice"].ToString().Trim();
+            decimal executeShares = dTtransaction.Rows[0].Field<decimal>("executeShares");
+            decimal executePrice = dTtransaction.Rows[0].Field<decimal>("executePrice");
 
-            insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares, executePrice);
+            insertTransaction(tansactionNumber, referenceNumber, executeDate, executeShares.ToString(), executePrice.ToString());
 
             decimal dAmount;
-            decimal.TryParse(executeShares, out dAmount);
+            decimal.TryParse(amount, out dAmount);
             if(buyOrSell == "buy")
             {
+
                 decimal fee = calculateBondUnitTrustFees("buy", accountNumber, amount);
+
                 decimal totalAmount = dAmount + fee;
 
                 updateFee(Convert.ToString(fee), referenceNumber);
-                updateSecurityHolding(accountNumber, type, securityCode, Convert.ToDecimal(executeShares), buyOrSell);
-                updateBalance(accountNumber, -totalAmount);
-                updateOrderStatus(referenceNumber, "completed");
+                decimal updateSecurityHoldingReturn = updateSecurityHolding(accountNumber, type, securityCode, Convert.ToDecimal(executeShares), buyOrSell);
+                decimal updateBalanceReturn = updateBalance(accountNumber, -totalAmount);
+                Show("buy amount is " + amount + " + fee " +
+                    fee.ToString() + " in total " + totalAmount.ToString() +
+                    " now holding " + updateSecurityHoldingReturn.ToString() +
+                    " balance " + updateBalanceReturn.ToString());
 
-            }else
+            }
+            else
             {
-                decimal fee = calculateBondUnitTrustFees("sell", accountNumber, amount);
-                decimal totalAmount = dAmount - fee; 
+                decimal spend = executeShares * executePrice;
+                decimal fee = calculateBondUnitTrustFees("sell", accountNumber, spend.ToString());
+                decimal totalAmount = spend - fee;
 
                 updateFee(Convert.ToString(fee), referenceNumber);
-                updateSecurityHolding(accountNumber, type, securityCode, Convert.ToDecimal(executeShares), buyOrSell);
-                updateBalance(accountNumber, totalAmount); // increase
-                updateOrderStatus(referenceNumber, "completed");
+                decimal updateSecurityHoldingReturn = updateSecurityHolding(accountNumber, type, securityCode, Convert.ToDecimal(executeShares), buyOrSell);
+                decimal updateBalanceReturn = updateBalance(accountNumber, totalAmount); // increase
+
+                Show("sell amount is " + spend + " - fee " +
+                    fee.ToString() + " in total " + totalAmount.ToString() +
+                    " now holding " + updateSecurityHoldingReturn.ToString() +
+                    " balance " + updateBalanceReturn.ToString());
+
             }
 
         }
@@ -250,6 +301,7 @@ namespace HKeInvestWebApplication.Code_File
         // updateOrderStatus
         public void updateOrderStatus(string referenceNumber, string status)
         {
+            Show("order status update" + status + " refer " + referenceNumber);
             SqlTransaction trans = myHKeInvestData.beginTransaction();
             myHKeInvestData.setData("update [Order] set [status]='" + status + "' where [referenceNumber]='" + referenceNumber + "'", trans);
             myHKeInvestData.commitTransaction(trans);
@@ -259,17 +311,22 @@ namespace HKeInvestWebApplication.Code_File
         public decimal getBalance(string accountNumber)
         {
             // Returns the balance of account number.
-            int number;
-            if (int.TryParse(accountNumber, out number))
-            {
-                DataTable dtBalance = myHKeInvestData.getData("select [balance] from [Account] where [referenceNumber]='" + accountNumber.Trim() + "'");
-                // Return null if no result is returned.
-                if (!(dtBalance == null || dtBalance.Rows.Count == 0))
+         
+            decimal balance = 0;
+
+           DataTable dtBalance = myHKeInvestData.getData("select [balance] from [Account] where [accountNumber]='" + accountNumber.Trim() + "'");
+            // Return null if no result is returned.
+
+            if (dtBalance == null || dtBalance.Rows.Count == 0) return 0;
+            else
                 {
-                    return Convert.ToDecimal(dtBalance.Rows[0].Field<string>("balance"));
+                    balance =  dtBalance.Rows[0].Field<decimal>("balance");
+                    return balance;
                 }
-            }
-            return 0;
+
+            
+
+         
         }
 
         // `getCurrentValueOfSecuries`: add up all the value of the current securityHoding: 
@@ -290,6 +347,9 @@ namespace HKeInvestWebApplication.Code_File
                 {
                     string securityType = row["type"].ToString().Trim();
                     decimal price = myExternalFunctions.getSecuritiesPrice(securityType, row["code"].ToString());
+                    decimal convesion = myExternalFunctions.getCurrencyRate(row["base"].ToString());
+                    Show("base " + row["base"].ToString() + convesion.ToString());
+                    price = price * convesion;
                     value += price * Convert.ToDecimal(row["shares"]);
                 }
             }
@@ -309,7 +369,7 @@ namespace HKeInvestWebApplication.Code_File
         }
 
         // `calculateBondFees`: return the service fee of bonds
-        private decimal calculateBondUnitTrustFees(string buyOrSell, string accountNumber, string amount)
+        public decimal calculateBondUnitTrustFees(string buyOrSell, string accountNumber, string amount)
         {
             decimal dAmount = Convert.ToDecimal(amount);
             decimal assets = getAssets(accountNumber);
@@ -338,35 +398,6 @@ namespace HKeInvestWebApplication.Code_File
             return 0;
         }
 
-        // calculateUnitTrustFees
-        private decimal calculateUnitTrustFees(string buyOrSell, string accountNumber, string amount)
-        {
-            decimal dAmount = Convert.ToDecimal(amount);
-            decimal assets = getAssets(accountNumber);
-            if (assets < (decimal)500000)
-            {
-                if (buyOrSell == "buy")
-                {
-                    return dAmount * (decimal)0.05;
-                }
-                else if (buyOrSell == "sell")
-                {
-                    return 100;
-                }
-            }
-            else if (assets >= (decimal)500000)
-            {
-                if (buyOrSell == "buy")
-                {
-                    return dAmount * (decimal)0.03;
-                }
-                else if (buyOrSell == "sell")
-                {
-                    return 50;
-                }
-            }
-            return 0;
-        }
 
         // `calculateStockFees`: return the service fee of stocks
         private decimal calculateStockFees(string stockOrderType, string accountNumber, string amount)
@@ -421,7 +452,7 @@ namespace HKeInvestWebApplication.Code_File
         // updateBalance
         private void insertTransaction(string transactionNumber, string referenceNumber, string executeDate, string executeShares, string executePrice)
         {
-            MessageBox.Show("transaction detected" + transactionNumber);
+            Show("transaction detected" + transactionNumber);
             SqlTransaction trans = myHKeInvestData.beginTransaction();
             myHKeInvestData.setData("insert into [Transaction]([transactionNumber], [referenceNumber], [executeDate], [executeShares], [executePrice]) values ('" +
                 transactionNumber + "', '" + referenceNumber + "', '" + executeDate + "', '" + executeShares + "', '" + executePrice + "')", trans);
@@ -436,16 +467,27 @@ namespace HKeInvestWebApplication.Code_File
             myHKeInvestData.commitTransaction(trans);
         }
 
-        private void updateSecurityHolding(string accountNumber, string type, string code, decimal shares, string buyOrSell)
+        private decimal updateSecurityHolding(string accountNumber, string type, string code, decimal shares, string buyOrSell)
         {
-            MessageBox.Show("update security holding");
+            Show("update security holding");
             decimal ownedShares = getSharesOfSecurityHolding(accountNumber, type, code);
+
+            if (buyOrSell == "sell") shares = -shares;
+
             decimal updatedShares = ownedShares + shares;
             DataTable dtSecurity = myExternalFunctions.getSecuritiesByCode(type, code);
-            if (dtSecurity == null) return;
+            if (dtSecurity == null || dtSecurity.Rows.Count == 0) return 0;
+            string bases;
+            if (type == "stock")
+            {
+                bases = "HKD";
+            }
+            else
+            {
+                bases = dtSecurity.Rows[0]["base"].ToString().Trim();
+            }
 
             string name = dtSecurity.Rows[0]["name"].ToString().Trim();
-            string bases = dtSecurity.Rows[0]["base"].ToString().Trim();
 
             if (ownedShares == 0)
             {
@@ -453,7 +495,7 @@ namespace HKeInvestWebApplication.Code_File
                 myHKeInvestData.setData("insert into [SecurityHolding] values('" + accountNumber + "','" + type + "', '" + code
             + "','" + name + "', '" + Convert.ToString(shares).Trim() + "', '" + bases + "')", trans);
                 myHKeInvestData.commitTransaction(trans);
-                return;
+                return updatedShares;
             }
             else if (ownedShares > 0)
             {
@@ -462,23 +504,28 @@ namespace HKeInvestWebApplication.Code_File
                 "' and [type] = '" + type + "' and [code] = '" + code + "'", trans);
                 myHKeInvestData.commitTransaction(trans);
             }
-            return;
+           
+            return updatedShares;
         }
 
-        private void updateBalance(string accountNumber, decimal amount)
+        private decimal updateBalance(string accountNumber, decimal amount)
         {
-            MessageBox.Show("update security balance");
+            Show("update security balance");
             decimal balance = getBalance(accountNumber);
             decimal updatedBalance = balance + amount;
 
             SqlTransaction trans = myHKeInvestData.beginTransaction();
             myHKeInvestData.setData("update [Account] set [balance]='" + Convert.ToString(updatedBalance).Trim() + "' where [accountNumber] = '" + accountNumber + "'", trans);
             myHKeInvestData.commitTransaction(trans);
+            return updatedBalance;
         }
     
 
 // -----------------------------------
-
+        private void Show(string msg)
+        {
+            //MessageBox.Show(msg);
+        }
 
     }
 }
