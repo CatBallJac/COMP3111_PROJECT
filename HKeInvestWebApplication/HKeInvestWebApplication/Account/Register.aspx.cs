@@ -167,5 +167,24 @@ namespace HKeInvestWebApplication.Account
                 cvAccountNumber.ErrorMessage = "The account number does not match last name";
             }
         }
+
+        protected void userNameValidate_ServerValidate(object source, System.Web.UI.WebControls.ServerValidateEventArgs args)
+        {
+            string sql = "SELECT DISTINCT userName from Account WHERE userName is not null";
+            HKeInvestData data = new HKeInvestData();
+            DataTable name = data.getData(sql);
+            if (name == null || name.Rows.Count == 0) return;
+            else
+            {
+                foreach(DataRow row in name.Rows)
+                {
+                    if (UserName.Text.Trim() == row.Field<string>("userName").Trim())
+                    {
+                        args.IsValid = false;
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

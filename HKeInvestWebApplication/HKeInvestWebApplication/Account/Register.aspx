@@ -61,6 +61,7 @@
         <asp:RequiredFieldValidator ControlToValidate="UserName" CssClass="text-danger" Display="Dynamic" EnableClientScript="false" Text="*"  runat="server" ErrorMessage="User Name is required."></asp:RequiredFieldValidator>
         <asp:RegularExpressionValidator ControlToValidate="UserName" CssClass="text-danger" Display="Dynamic" EnableClientScript="false" Text="*" ValidationExpression="^.{6,10}$" runat="server" ErrorMessage="User Name must be between 6 and 10 characters." ValidationGroup="Page"></asp:RegularExpressionValidator>
         <asp:RegularExpressionValidator ControlToValidate="UserName" CssClass="text-danger" EnableClientScript="false" ValidationExpression="^[a-zA-Z0-9]+$" Text="*" Display="Dynamic" runat="server" ErrorMessage="User Name must contain only letters and digits." ValidationGroup="Page"></asp:RegularExpressionValidator>
+            <asp:CustomValidator ID="userNameValidate" runat="server" CssClass="text-danger" Display="Dynamic" ErrorMessage="This user name has been used" ForeColor="Red" OnServerValidate="userNameValidate_ServerValidate">*</asp:CustomValidator>
     </div>
         </div>
 
