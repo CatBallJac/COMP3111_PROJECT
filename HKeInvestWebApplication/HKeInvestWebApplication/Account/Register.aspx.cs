@@ -25,6 +25,10 @@ namespace HKeInvestWebApplication.Account
             if(!InfoMatch()){
                 return;
             }
+            if (alreadyHolding()) {
+                ErrorMessage.Text = "This security account already holds a login account!";
+                return;
+            }
 
             var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
@@ -66,13 +70,24 @@ namespace HKeInvestWebApplication.Account
         {
 
         }
-
+        private bool alreadyHolding()
+        {
+            string sql = "SELECT userName FROM Account WHERE accountNumber = '"+AccountNumber.Text.Trim()+"'";
+            HKeInvestData data_helper = new HKeInvestData();
+            DataTable account_info = data_helper.getData(sql);
+            if (account_info == null || account_info.Rows.Count == 0) return false;
+            else
+            {
+                DataRow row = account_info.Rows[0];
+                return !row.IsNull("userName");
+            }
+        }
         private bool InfoMatch()
         {
             // get information entered
             string first_name = mySQLStringHandleHelper.handleString(FirstName.Text.Trim());
             string last_name = mySQLStringHandleHelper.handleString(LastName.Text.Trim());
-            string account = AccountNumber.Text.Trim();
+            string account = AccountNumber.Text.Trim().ToUpper();
             string hkid = HKID.Text.Trim();
             string birth = DateOfBirth.Text.Trim();
             string email = Email.Text.Trim();
@@ -89,19 +104,39 @@ namespace HKeInvestWebApplication.Account
             else
             {
                 DataRow row = client_info.Rows[0];
-                if (!row.IsNull("userName"))
-                {
-                    ErrorMessage.Text = "This security account has already registered a login account!";
-                    return false;
+                /*
+                if (!first_name.Equals(row.Field<string>("firstName").Trim())) {
+                    ErrorMessage.Text = "a";
                 }
-                if (!first_name.Equals(row.Field<string>("firstName").Trim()) ||
+                if (!last_name.Equals(row.Field<string>("lastName").Trim()))
+                {
+                    ErrorMessage.Text = "b";
+                }
+                if (!account.Equals(row.Field<string>("accountNumber").Trim()))
+                {
+                    ErrorMessage.Text = "c";
+                }
+                if (!hkid.Equals(row.Field<string>("HKIDPassportNumber").Trim()))
+                {
+                    ErrorMessage.Text = "d";
+                }
+                if (!birth.Equals(row.Field<DateTime>("dateOfBirth").ToString("dd/MM/yyyy").Trim()))
+                {
+                    ErrorMessage.Text = "e";
+                }
+                if (!email.Equals(row.Field<string>("email").Trim()))
+                {
+                    ErrorMessage.Text = "f";
+                }
+                */
+                if(!first_name.Equals(row.Field<string>("firstName").Trim()) ||
                     !last_name.Equals(row.Field<string>("lastName").Trim()) ||
                     !account.Equals(row.Field<string>("accountNumber").Trim()) ||
                     !hkid.Equals(row.Field<string>("HKIDPassportNumber").Trim()) ||
                     !birth.Equals(row.Field<DateTime>("dateOfBirth").ToString("dd/MM/yyyy").Trim()) ||
                     !email.Equals(row.Field<string>("email").Trim()))
                 {
-                    ErrorMessage.Text = "The information entered does not match!";
+                    //ErrorMessage.Text = "The information entered does not match!";
                     return false;
                 }
             }
@@ -126,7 +161,7 @@ namespace HKeInvestWebApplication.Account
             }
             if (temp.Length == 1) temp += temp;
             temp = temp.ToUpper();
-            if (accountNumber.Substring(0, 2) != temp)
+            if (accountNumber.Substring(0, 2).ToUpper() != temp)
             {
                 args.IsValid = false;
                 cvAccountNumber.ErrorMessage = "The account number does not match last name";

@@ -211,11 +211,13 @@
     <Content Include="App_Themes\ExternalSystemsTheme\bootstrap.min.css" />
     <Content Include="App_Themes\Theme1\bootstrap.min.css" />
     <Content Include="ClientOnly\ClientSecurityHoldingsDetails.aspx" />
+    <Content Include="ClientOnly\Web.config" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="EmployeeOnly\ManageAccountAndClientInfo.aspx" />
+    <Content Include="EmployeeOnly\SecurityHoldingDetails.aspx" />
     <Content Include="ExternalSystems\BondOrder.aspx" />
     <Content Include="ExternalSystems\ControlCenter.aspx" />
     <Content Include="ExternalSystems\ExternalSite.Master" />
@@ -230,9 +232,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Account\Web.config" />
-    <Content Include="ClientOnly\Web.config" />
-    <Content Include="EmployeeOnly\Web.config" />
     <Content Include="Code_File\Application Form.pdf" />
+    <Content Include="EmployeeOnly\Web.config" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -266,7 +267,6 @@
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="EmployeeOnly\SecurityHoldingDetails.aspx" />
     <Content Include="Site.Master" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config">
@@ -440,6 +440,13 @@
     <Compile Include="EmployeeOnly\ManageAccountAndClientInfo.aspx.designer.cs">
       <DependentUpon>ManageAccountAndClientInfo.aspx</DependentUpon>
     </Compile>
+    <Compile Include="EmployeeOnly\SecurityHoldingDetails.aspx.cs">
+      <DependentUpon>SecurityHoldingDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeOnly\SecurityHoldingDetails.aspx.designer.cs">
+      <DependentUpon>SecurityHoldingDetails.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ExternalSystems\BondOrder.aspx.cs">
       <DependentUpon>BondOrder.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -510,13 +517,6 @@
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EmployeeOnly\SecurityHoldingDetails.aspx.cs">
-      <DependentUpon>SecurityHoldingDetails.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="EmployeeOnly\SecurityHoldingDetails.aspx.designer.cs">
-      <DependentUpon>SecurityHoldingDetails.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

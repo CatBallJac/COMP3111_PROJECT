@@ -13,12 +13,12 @@
         <div class="form-group">
         <asp:Label runat="server" Text="First Name" AssociatedControlID="FirstName" ClientIDMode="Inherit" CssClass="label-control col-md-2"></asp:Label>
         <div class="col-md-4">
-        <asp:TextBox ID="FirstName" runat="server" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
+        <asp:TextBox ID="FirstName" runat="server" CssClass="form-control" ValidationGroup="Page" MaxLength="35"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="FirstName" CssClass="text-danger" Text="*" Display="Dynamic" EnableClientScript="false" runat="server" ErrorMessage="First Name is required." ValidationGroup="Page"></asp:RequiredFieldValidator>
         </div>
         <asp:Label runat="server" Text="Last Name" Font-Overline="False" AssociatedControlID="LastName" CssClass="label-control col-md-2"></asp:Label>
         <div class="col-md-4">
-        <asp:TextBox ID="LastName" runat="server" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
+        <asp:TextBox ID="LastName" runat="server" CssClass="form-control" ValidationGroup="Page" MaxLength="35"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="LastName" CssClass="text-danger" Text="*" EnableClientScript="false" Display="Dynamic" runat="server" ErrorMessage="Last Name is required." ValidationGroup="Page"></asp:RequiredFieldValidator>
             <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ControlToValidate="lastName" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The last name must contain at least one alpahbet" ForeColor="Red" ValidationExpression="^.*[a-zA-Z]+.*$">*</asp:RegularExpressionValidator>
 </div>
@@ -27,14 +27,14 @@
     <div class="form-group">
         <asp:Label runat="server" Text="Account#" AssociatedControlID="AccountNumber" CssClass="label-control col-md-2"></asp:Label>
         <div class="col-md-4">
-        <asp:TextBox ID="AccountNumber" runat="server" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
+        <asp:TextBox ID="AccountNumber" runat="server" CssClass="form-control" ValidationGroup="Page" MaxLength="10"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="AccountNumber" CssClass="text-danger" Display="Dynamic" Text="*" EnableClientScript="false" runat="server" ErrorMessage="Account Number is required." ValidationGroup="Page"></asp:RequiredFieldValidator>
             <asp:RegularExpressionValidator ID="RegularExpressionValidator3" runat="server" ControlToValidate="AccountNumber" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of the account number  is invalid" ForeColor="Red" ValidationExpression="^[A-Z]{2}[0-9]{8}$">*</asp:RegularExpressionValidator>
         <asp:CustomValidator ID="cvAccountNumber" ValidateEmptyText="true" ControlToValidate="AccountNumber" CssClass="text-danger" Display="Dynamic" Text="*" EnableClientScript="false" runat="server" ErrorMessage="The account number does not match the client's last name." OnServerValidate="cvAccountNumber_ServerValidate" ValidationGroup="Page"></asp:CustomValidator>
         </div>
         <asp:Label runat="server" Text="HKID/Passport#" AssociatedControlID="HKID" CssClass="label-control col-md-2"></asp:Label>
         <div class="col-md-4">
-        <asp:TextBox ID="HKID" runat="server" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
+        <asp:TextBox ID="HKID" runat="server" CssClass="form-control" ValidationGroup="Page" MaxLength="8"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="HKID" CssClass="text-danger" Text="*" Display="Dynamic" EnableClientScript="false" runat="server" ErrorMessage="A HKID or Passport number is required." ValidationGroup="Page"></asp:RequiredFieldValidator>
             <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="HKID" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of HKID is invalid" ForeColor="Red" ValidationExpression="^[0-9A-Z]{8}$">*</asp:RegularExpressionValidator>
     </div>
@@ -43,13 +43,13 @@
     <div class="form-group">
         <asp:Label  runat="server" Text="Date Of Birth" AssociatedControlID="DateOfBirth" CssClass="label-control col-md-2"></asp:Label>
         <div class="col-md-4">
-        <asp:TextBox ID="DateOfBirth" runat="server" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
+        <asp:TextBox ID="DateOfBirth" runat="server" CssClass="form-control" ValidationGroup="Page" MaxLength="10"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="DateOfBirth" CssClass="text-danger" Text="*" EnableClientScript="false" Dysplay="Dynamic" runat="server" ErrorMessage="Date of Birth is required." ValidationGroup="Page"></asp:RequiredFieldValidator>
-        <asp:RegularExpressionValidator ControlToValidate="DateOfBirth" CssClass="text-danger" ValidationExpression="^(((0|1)[1-9]|2[1-9]|3[0-1])\/(0[1-9]|1[0-2])\/((19|20)\d\d))$" Display="Dynamic" Text="*" EnableClientScript="false" runat="server" ErrorMessage="Date of Birth is not validate." ValidationGroup="Page"></asp:RegularExpressionValidator>
+        <asp:RegularExpressionValidator ControlToValidate="DateOfBirth" CssClass="text-danger" ValidationExpression="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$" Display="Dynamic" Text="*" EnableClientScript="false" runat="server" ErrorMessage="Date of Birth is not valid." ValidationGroup="Page"></asp:RegularExpressionValidator>
         </div>
         <asp:Label runat="server" Text="Email" AssociatedControlID="Email" CssClass="label-control col-md-2"></asp:Label >
         <div class="col-md-4">
-        <asp:TextBox ID="Email" runat="server" TextMode="Email" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
+        <asp:TextBox ID="Email" runat="server" TextMode="Email" CssClass="form-control" ValidationGroup="Page" MaxLength="30"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="Email" CssClass="text-danger" Display="Dynamic" EnableClientScript="false" runat="server" ErrorMessage="Email address is required." Text="*" ValidationGroup="Page"></asp:RequiredFieldValidator>
     </div>
         </div>
@@ -74,7 +74,7 @@
         </div>
         <asp:Label  runat="server" Text="Confirm Password" AssociatedControlID="ConfirmPassword" CssClass="label-control col-md-2"></asp:Label>
         <div class="col-md-4">
-        <asp:TextBox ID="ConfirmPassword" runat="server" TextMode="Password" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
+        <asp:TextBox ID="ConfirmPassword" runat="server" TextMode="Password" CssClass="form-control" ValidationGroup="Page" MaxLength="15"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="ConfirmPassword" Text="*" Display="Dynamic" EnableClientScript="false" CssClass="text-danger" runat="server" ErrorMessage="Confirm Password is required."  ValidationGroup="Page"></asp:RequiredFieldValidator>
         <asp:CompareValidator ControlToValidate="ConfirmPassword" ControlToCompare="Password" ValidateEmptyText="false" CssClass="text-danger" EnableClientScript="false" Text="*" Display="Dynamic" runat="server" ErrorMessage="Password and Confirm Password do not match." ValidationGroup="Page"></asp:CompareValidator>
     </div>
