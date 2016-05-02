@@ -7,117 +7,144 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HKeInvestWebApplication.Account {
+namespace HKeInvestWebApplication.ClientOnly {
     
     
-    public partial class Register {
+    public partial class ClientReport {
         
         /// <summary>
-        /// ErrorMessage control.
+        /// txtAccountNumber control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ErrorMessage;
+        protected global::System.Web.UI.WebControls.Label txtAccountNumber;
         
         /// <summary>
-        /// FirstName control.
+        /// ddlCurrency control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox FirstName;
+        protected global::System.Web.UI.WebControls.DropDownList ddlCurrency;
         
         /// <summary>
-        /// LastName control.
+        /// gvSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox LastName;
+        protected global::System.Web.UI.WebControls.GridView gvSummary;
         
         /// <summary>
-        /// AccountNumber control.
+        /// ddlSecurityType control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox AccountNumber;
+        protected global::System.Web.UI.WebControls.DropDownList ddlSecurityType;
         
         /// <summary>
-        /// cvAccountNumber control.
+        /// lblClientName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator cvAccountNumber;
+        protected global::System.Web.UI.WebControls.Label lblClientName;
         
         /// <summary>
-        /// HKID control.
+        /// lblResultMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox HKID;
+        protected global::System.Web.UI.WebControls.Label lblResultMessage;
         
         /// <summary>
-        /// RegularExpressionValidator1 control.
+        /// gvSecurityHolding control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator RegularExpressionValidator1;
+        protected global::System.Web.UI.WebControls.GridView gvSecurityHolding;
         
         /// <summary>
-        /// DateOfBirth control.
+        /// gvOrder control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox DateOfBirth;
+        protected global::System.Web.UI.WebControls.GridView gvOrder;
         
         /// <summary>
-        /// Email control.
+        /// cbCalendar control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox Email;
+        protected global::System.Web.UI.WebControls.CheckBox cbCalendar;
         
         /// <summary>
-        /// UserName control.
+        /// startDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox UserName;
+        protected global::System.Web.UI.WebControls.Calendar startDate;
         
         /// <summary>
-        /// Password control.
+        /// endDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox Password;
+        protected global::System.Web.UI.WebControls.Calendar endDate;
         
         /// <summary>
-        /// ConfirmPassword control.
+        /// cvDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox ConfirmPassword;
+        protected global::System.Web.UI.WebControls.CustomValidator cvDate;
+        
+        /// <summary>
+        /// searchHistory control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button searchHistory;
+        
+        /// <summary>
+        /// gvHistory control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvHistory;
+        
+        /// <summary>
+        /// gvTransaction control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvTransaction;
     }
 }

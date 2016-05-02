@@ -34,6 +34,7 @@
         <div class="col-md-4">
         <asp:TextBox ID="HKID" runat="server" CssClass="form-control" ValidationGroup="Page"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="HKID" CssClass="text-danger" Text="*" Display="Dynamic" EnableClientScript="false" runat="server" ErrorMessage="A HKID or Passport number is required." ValidationGroup="Page"></asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="HKID" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of HKID is invalid" ForeColor="Red">*</asp:RegularExpressionValidator>
     </div>
         </div>
 
@@ -78,7 +79,7 @@
     </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <asp:Button runat="server" OnClick="CreateUser_Click" Text="Register" CssClass="btn btn-default" ValidationGroup="Page"/>
+                <asp:Button Height="34px" runat="server" OnClick="CreateUser_Click" Text="Register" CssClass="btn btn-default" ValidationGroup="Page"/>
             </div>
         </div>
     </div>

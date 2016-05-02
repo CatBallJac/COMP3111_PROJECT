@@ -6,10 +6,12 @@ using System.Configuration;
 
 namespace HKeInvestWebApplication.ExternalSystems.Code_File
 {
-    //**********************************************************
-    //* THE CODE IN THIS CLASS CANNOT BE MODIFIED OR ADDED TO. *
-    //*        Report problems to 3111rep@cse.ust.hk.          *
-    //**********************************************************
+    //************************************************************************************
+    //*              THE CODE IN THIS CLASS CANNOT BE MODIFIED OR ADDED TO.              *
+    //* Methods in this class cannot be accessed directly in your code. Only the methods *
+    //* in the ExternalFunctions.cs class can be used to access external systems data.   *
+    //*                      Report problems to 3111rep@cse.ust.hk.                      *
+    //************************************************************************************
 
     public class ExternalData
     {
@@ -136,6 +138,24 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             catch (SqlException ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        public string getOrderReferenceNumber(string sql, SqlTransaction trans)
+        {
+            try
+            {
+                object aggregateValue;
+                SqlCommand SQLCmd = new SqlCommand(sql, ExternalDBConnection);
+                SQLCmd.CommandType = CommandType.Text;
+                SQLCmd.Transaction = trans;
+                aggregateValue = SQLCmd.ExecuteScalar();
+                return (DBNull.Value == aggregateValue ? 0 : Convert.ToInt32(aggregateValue)).ToString("00000000");
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
             }
         }
 

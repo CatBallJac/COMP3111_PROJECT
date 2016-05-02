@@ -27,7 +27,7 @@ namespace HKeInvestWebApplication.ExternalSystems
         {
             lblBuyMessage.Visible = false;
             // Get the stock buy orders.
-            string sql = "select [status], [referenceNumber], [securityCode], [dateSubmitted], [amount], [stockOrderType], [expiryDay], [allOrNone], [limitPrice], [stopPrice] from [Order] " +
+            string sql = "select [status], [referenceNumber], [securityCode], [dateSubmitted], [shares], [stockOrderType], [expiryDay], [allOrNone], [limitPrice], [stopPrice] from [Order] " +
                 "where [buyOrSell]='buy' and [securityType]='stock' and ([status]='pending' or [status]='partial') order by referenceNumber, securityCode";
             DataTable dtBuyStock = myExternalData.getData(sql);
 
@@ -77,9 +77,9 @@ namespace HKeInvestWebApplication.ExternalSystems
                 // Get required values from the order.
                 decimal limitPrice = 0;
                 decimal stopPrice = 0;
-                string price = ((System.Web.UI.WebControls.TextBox)row.FindControl("txtExecutePrice")).Text.Trim();
-                string buyAmount = ((System.Web.UI.WebControls.TextBox)row.FindControl("txtExecuteAmount")).Text.Trim();
-                decimal orderAmount = Convert.ToDecimal(row.Cells[9].Text);
+                string price = (((TextBox)row.FindControl("txtExecutePrice")).Text.Trim()).Replace(",", "");
+                string buyShares = (((TextBox)row.FindControl("txtExecuteShares")).Text.Trim()).Replace(",","");
+                decimal orderShares = Convert.ToDecimal(row.Cells[9].Text);
                 string orderType = row.Cells[10].Text.Trim();
                 if (orderType == "limit" || orderType == "stop limit")
                 {
@@ -91,13 +91,12 @@ namespace HKeInvestWebApplication.ExternalSystems
                 }
 
                 // Check if inputs are valid.
-                if (!executionIsValid("buy", orderType, price, buyAmount, orderAmount, limitPrice, stopPrice)) { return; }
+                if (!executionIsValid("buy", orderType, price, buyShares, orderShares, limitPrice, stopPrice)) { return; }
                 
-                // Calculate the number of shares to buy, the number of shares remaining to buy and set the status accordingly.                              
-                decimal buyShares = Convert.ToDecimal(buyAmount) / Convert.ToDecimal(price);
-                decimal remainingAmount = orderAmount - Convert.ToDecimal(buyAmount);
+                // Calculate the remaining shares to buy and set the status accordingly.                              
+                decimal remainingShares = orderShares - Convert.ToDecimal(buyShares);
                 string orderStatus = "partial";
-                if (remainingAmount == 0)
+                if (remainingShares == 0)
                 {
                     orderStatus = "completed";
                 }
@@ -106,7 +105,7 @@ namespace HKeInvestWebApplication.ExternalSystems
                 SqlTransaction trans = myExternalData.beginTransaction();
                 myExternalData.setData("insert into [Transaction]([referenceNumber], [executeDate], [executeShares], [executePrice]) values (" +
                     referenceNumber + ", '" + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt") + "', " + buyShares + ", '" + price + "')", trans);
-                myExternalData.setData("update [Order] set [status]='" + orderStatus + "', [amount]=" + remainingAmount + " where [referenceNumber]=" + referenceNumber, trans);
+                myExternalData.setData("update [Order] set [status]='" + orderStatus + "', [shares]=" + remainingShares + " where [referenceNumber]=" + referenceNumber, trans);
                 myExternalData.setData("update [Stock] set [close]='" + price + "' where [code]='" + stockCode + "'", trans);
                 myExternalData.commitTransaction(trans);
                 getStockBuyOrders();
@@ -129,13 +128,13 @@ namespace HKeInvestWebApplication.ExternalSystems
 
         protected void gvStockBuyOrder_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            // Disable input of $Amount textbox if order is all or none.
+            // Disable input of #Shares textbox if order is all or none.
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 if (e.Row.Cells[12].Text.Trim() == "Y")
                 {
-                    ((System.Web.UI.WebControls.TextBox)e.Row.FindControl("txtExecuteAmount")).Text = e.Row.Cells[9].Text;
-                    ((System.Web.UI.WebControls.TextBox)e.Row.FindControl("txtExecuteAmount")).ReadOnly = true;
+                    ((TextBox)e.Row.FindControl("txtExecuteShares")).Text = e.Row.Cells[9].Text;
+                    ((TextBox)e.Row.FindControl("txtExecuteShares")).ReadOnly = true;
                 }
             }
         }
@@ -154,9 +153,9 @@ namespace HKeInvestWebApplication.ExternalSystems
                 // Get required values from the order.
                 decimal limitPrice = 0;
                 decimal stopPrice = 0;
-                string price = ((System.Web.UI.WebControls.TextBox)row.FindControl("txtExecutePrice")).Text.Trim();
-                string amount = ((System.Web.UI.WebControls.TextBox)row.FindControl("txtExecuteShares")).Text.Trim();
-                decimal orderAmount = Convert.ToDecimal(row.Cells[9].Text);
+                string price = (((TextBox)row.FindControl("txtExecutePrice")).Text.Trim()).Replace(",", "");
+                string sellShares = (((TextBox)row.FindControl("txtExecuteShares")).Text.Trim()).Replace(",", "");
+                decimal orderShares = Convert.ToDecimal(row.Cells[9].Text);
                 string orderType = row.Cells[10].Text.Trim();
                 if (orderType == "limit" || orderType == "stop limit")
                 {
@@ -168,20 +167,20 @@ namespace HKeInvestWebApplication.ExternalSystems
                 }
 
                 // Check if inputs are valid.
-                if (!executionIsValid("sell", orderType, price, amount, orderAmount, limitPrice, stopPrice)) { return; }
+                if (!executionIsValid("sell", orderType, price, sellShares, orderShares, limitPrice, stopPrice)) { return; }
 
                 // Calculate the remaining shares to sell and set the order status accordingly.
                 string orderStatus = "partial";
-                decimal remainingShares = orderAmount - Convert.ToDecimal(amount);
+                decimal remainingShares = orderShares - Convert.ToDecimal(sellShares);
                 if (remainingShares == 0)
                 {
                     orderStatus = "completed";
-                }       
+                }
 
                 // Create a transaction for the sell order, set the sell order status, update the security price and refresh the sell orders.
                 SqlTransaction trans = myExternalData.beginTransaction();
                 myExternalData.setData("insert into [Transaction] ([referenceNumber], [executeDate], [executeShares], [executePrice]) values (" +
-                    referenceNumber + ", '" + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt") + "', '" + amount + "', '" + price + "')", trans);
+                    referenceNumber + ", '" + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt") + "', '" + sellShares + "', '" + price + "')", trans);
                 myExternalData.setData("update [Order] set [status]='" + orderStatus + "', [shares]=" + remainingShares + " where [referenceNumber]=" + referenceNumber, trans);
                 myExternalData.setData("update [Stock] set [close]='" + price + "' where [code]='" + stockCode + "'", trans);
                 myExternalData.commitTransaction(trans);
@@ -210,8 +209,8 @@ namespace HKeInvestWebApplication.ExternalSystems
             {
                 if (e.Row.Cells[12].Text.Trim() == "Y")
                 {
-                    ((System.Web.UI.WebControls.TextBox)e.Row.FindControl("txtExecuteShares")).Text = e.Row.Cells[9].Text;
-                    ((System.Web.UI.WebControls.TextBox)e.Row.FindControl("txtExecuteShares")).ReadOnly = true;
+                    ((TextBox)e.Row.FindControl("txtExecuteShares")).Text = e.Row.Cells[9].Text;
+                    ((TextBox)e.Row.FindControl("txtExecuteShares")).ReadOnly = true;
                 }
             }
         }
@@ -242,32 +241,25 @@ namespace HKeInvestWebApplication.ExternalSystems
                 return false;
             }
 
-            // The input dollar amount or number of shares must be a decimal greater than zero.
+            // The input number of shares must be a decimal greater than zero.
             decimal inputAmount;
             if (!decimal.TryParse(amount, out inputAmount) || inputAmount <= 0)
             {
-                if (buyOrSell == "buy")
-                {
-                   showMessage(buyOrSell, "Invalid or missing dollar amount to buy.", "danger");
-                }
-                else // Sell order
-                {
-                    showMessage(buyOrSell, "Invalid or missing number of shares to sell.", "danger");
-                }
+                showMessage(buyOrSell, "Invalid or missing number of shares to " + buyOrSell + ".", "danger");
+                return false;
+            }           
+
+            // The input number of shares must be less than or equal to the order amount of shares.
+            if (inputAmount > orderAmount)
+            {
+                showMessage(buyOrSell, "The quantity of shares to " + buyOrSell + " is larger than the quantity of the order.", "danger");
                 return false;
             }
 
-            //The input dollar amount or number of shares must be less than or equal to the order amount or shares.
-            if (inputAmount > orderAmount)
+            // The input number of shares to buy must be a multiple of 100.
+            if (buyOrSell == "buy" && (inputAmount % 100) != 0)
             {
-                if (buyOrSell == "buy")
-                {
-                    showMessage(buyOrSell, "The dollar amount to buy is larger than the dollar amount of the order.", "danger");
-                }
-                else // Sell order
-                {
-                    showMessage(buyOrSell, "The quantity of shares to sell is larger than the quantity of the order.", "danger");
-                }
+                showMessage(buyOrSell, "The quantity of shares to buy must be a multiple of 100.", "danger");
                 return false;
             }
 

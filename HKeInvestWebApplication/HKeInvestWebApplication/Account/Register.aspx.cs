@@ -14,6 +14,7 @@ namespace HKeInvestWebApplication.Account
 {
     public partial class Register : Page
     {
+        SQLStringHandleHelper mySQLStringHandleHelper = new SQLStringHandleHelper();
         protected void CreateUser_Click(object sender, EventArgs e)
         {
             if (!IsValid)
@@ -57,7 +58,7 @@ namespace HKeInvestWebApplication.Account
         private bool CheckClientRecord(string firstName, string lastName, string dateOfBirth, string email, string HKID, string accountNumber)
         {
             string isPrimary = "yes";
-            string sql = "select [firstName], [lastName], [dateOfBirth], [email], [HKIDPassportNumber] from [ClientTemp] where [accountNumber]='" + accountNumber + "' and [firstName]='"+ firstName+"' and [lastName]='"+lastName+ "' and [dateOfBirth]=CONVERT(date, '" + DateOfBirth.Text+ "', 103) and [email]='"+email+"' and [HKIDPassportNumber]='"+HKID+"' and [isPrimary]='"+isPrimary+"'";
+            string sql = "select [firstName], [lastName], [dateOfBirth], [email], [HKIDPassportNumber] from [Client] where [accountNumber]='" + accountNumber + "' and [firstName]='"+ firstName+"' and [lastName]='"+lastName+ "' and [dateOfBirth]=CONVERT(date, '" + DateOfBirth.Text+ "', 103) and [email]='"+email+"' and [HKIDPassportNumber]='"+HKID+"' and [isPrimary]='"+isPrimary+"'";
             HKeInvestData myInvestData = new HKeInvestData();
             DataTable dtClient = myInvestData.getData(sql);
             if(dtClient == null || dtClient.Rows.Count==0) { return false; }
@@ -72,7 +73,7 @@ namespace HKeInvestWebApplication.Account
         private void UpdateAccountUserName(string accountNumber, string userName)
         {
             HKeInvestData myInvestData = new HKeInvestData();
-            string sql = "update [AccountTemp] set [userName]='" + userName + "' where [accountNumber]='" + accountNumber + "'";
+            string sql = "update Account set userName ='" + userName + "' where [accountNumber]='" + accountNumber + "'";
             SqlTransaction trans = myInvestData.beginTransaction();
             myInvestData.setData(sql, trans);
             myInvestData.commitTransaction(trans);
@@ -91,43 +92,22 @@ namespace HKeInvestWebApplication.Account
         {
             string accountNumber = AccountNumber.Text.Trim();
             string lastName = LastName.Text.Trim();
-            if (lastName.Equals("")||accountNumber.Equals(""))
+            if (string.IsNullOrEmpty(accountNumber) || string.IsNullOrEmpty(lastName)) return;
+            string temp = "";
+            for(int i = 0; i < lastName.Length; ++i)
             {
-                return;
-            }
-            if (accountNumber.Substring(0, 1).Equals(lastName.Substring(0, 1)))
-            {
-                if (accountNumber.ToCharArray()[1] == Char.ToUpper(lastName.ToCharArray()[1]))
+                if (temp.Length == 2) break;
+                if (char.IsLetter(lastName[i]))
                 {
-                    if (accountNumber.Substring(2).All(c => Char.IsDigit(c)) && accountNumber.Length == 10)
-                    {
-                        args.IsValid = true;
-                    }
-                    else
-                    {
-                        args.IsValid = false;
-                        cvAccountNumber.ErrorMessage = "The account number is not in the correct format.";
-                    }
+                    temp += lastName[i];
                 }
-                else
-                {
-                    if (accountNumber.Substring(1).All(c => Char.IsDigit(c)) && accountNumber.Length == 9)
-                    {
-                        args.IsValid = true;
-                    }
-                    else
-                    {
-                        args.IsValid = false;
-                        cvAccountNumber.ErrorMessage = "The account number is not in the correct format.";
-                    }
-
-                }
-
             }
-            else
+            if (temp.Length == 1) temp += temp;
+            temp = temp.ToUpper();
+            if (accountNumber.Substring(0, 2) != temp)
             {
                 args.IsValid = false;
-                cvAccountNumber.ErrorMessage = "The account number does not match the client's last name.";
+                cvAccountNumber.ErrorMessage = "The account number does not match last name";
             }
         }
     }
