@@ -81,6 +81,7 @@ namespace HKeInvestWebApplication
             
             do
             {
+                myHKeInvestFunction.checkAlert();                
                 MessageBox.Show("threading");
                 DataTable dTpendingOrder = myHKeInvestFunction.getPendingorPartialOrder();
 
@@ -170,5 +171,17 @@ namespace HKeInvestWebApplication
             } while (true);
 
         }
+        private void CheckAlert()
+        {
+            do
+            {
+                Thread.Sleep(30000);
+                myHKeInvestFunction.checkAlert();
+                Thread.Sleep(30000);
+            } while (true);
+        }        
+        
+        
+        
     }
 }
