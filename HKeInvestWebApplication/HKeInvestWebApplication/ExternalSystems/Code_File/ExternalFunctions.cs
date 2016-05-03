@@ -14,6 +14,7 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
     public class ExternalFunctions
     {
         ExternalData myExternalData = new ExternalData();
+        bool displayMessage = true;
 
         // Returns the CurrencyRate table.
         public DataTable getCurrencyData()
@@ -82,6 +83,60 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             return dtSecurities;
         }
 
+        public DataTable getSecuritiesByName(string securityType, string securityName)
+        {
+            // Returns all the data for the specified security type and the specified name.
+            DataTable dtSecurities = new DataTable();
+            if (securityType == "bond")
+            {
+                dtSecurities = myExternalData.getData("select * from [Bond] where [name] like '%" + securityName.Trim() + "%'");
+            }
+            else if (securityType == "stock")
+            {
+                dtSecurities = myExternalData.getData("select * from [Stock] where [name] like '%" + securityName.Trim() + "%'");
+            }
+            else if (securityType == "unit trust")
+            {
+                dtSecurities = myExternalData.getData("select * from [UnitTrust] where [name] like '%" + securityName.Trim() + "%'");
+            }
+            // Unknown security type; return null.
+            else { return null; }
+
+            // Return null if no result is returned.
+            if (dtSecurities == null || dtSecurities.Rows.Count == 0)
+            {
+                return null;
+            }
+            return dtSecurities;
+        }
+
+        public DataTable getSecuritiesByCode(string securityType, string securityCode)
+        {
+            // Returns all the data for the specified security type and the specified name.
+            DataTable dtSecurities = new DataTable();
+            if (securityType == "bond")
+            {
+                dtSecurities = myExternalData.getData("select * from [Bond] where [code] = '" + securityCode.Trim() + "'");
+            }
+            else if (securityType == "stock")
+            {
+                dtSecurities = myExternalData.getData("select * from [Stock] where [code] = '" + securityCode.Trim() + "'");
+            }
+            else if (securityType == "unit trust")
+            {
+                dtSecurities = myExternalData.getData("select * from [UnitTrust] where [code] = '" + securityCode.Trim() + "'");
+            }
+            // Unknown security type; return null.
+            else { return null; }
+
+            // Return null if no result is returned.
+            if (dtSecurities == null || dtSecurities.Rows.Count == 0)
+            {
+                return null;
+            }
+            return dtSecurities;
+        }
+
         public decimal getSecuritiesPrice(string securityType, string securityCode)
         {
             // Returns the current price of the specified security type and security code.
@@ -112,51 +167,44 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             }
         }
 
-        public bool submitBondBuyOrder(string code, string amount)
+        public string submitBondBuyOrder(string code, string amount)
         {
             // Inserts a bond buy order into the Order table.
             // Check if input is valid.
-            if (!securityCodeIsValid("bond", code)) { return false; }
-            if (!amountIsValid("bond", amount)) { return false; }
+            if (!securityCodeIsValid("bond", code)) { return null; }
+            if (!amountIsValid("bond", amount)) { return null; }
             string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
-
-            // Execute the SQL statement.
-            SqlTransaction trans = myExternalData.beginTransaction();
-            myExternalData.setData("insert into [Order] values ('buy', 'bond', '" + code + "', '" + dateNow + "', 'pending', " +
-                "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL)", trans);
-            myExternalData.commitTransaction(trans);
-            return true;
+            // Submit the order.
+            return submitOrder("insert into [Order] values ('buy', 'bond', '" + code + "', '" + dateNow 
+                + "', 'pending', " + "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL)");
         }
 
-        public bool submitBondSellOrder(string code, string shares)
+        public string submitBondSellOrder(string code, string shares)
         {
             // Inserts a bond sell order into the Order table.
             // Check if input is valid.
-            if (!securityCodeIsValid("bond", code)) { return false; }
-            if (!sharesIsValid("bond", shares)) { return false; }
+            if (!securityCodeIsValid("bond", code)) { return null; }
+            if (!sharesIsValid("bond", shares)) { return null; }
             string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
-
-            // Execute the SQL statement.
-            SqlTransaction trans = myExternalData.beginTransaction();
-            myExternalData.setData("insert into [Order] values ('sell', 'bond', '" + code + "', '" + dateNow + "', 'pending', " +
-                shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL)", trans);
-            myExternalData.commitTransaction(trans);
-            return true;
+            // Submit the order.
+            return submitOrder("insert into [Order] values ('sell', 'bond', '" + code + "', '" + dateNow 
+                + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL)");
         }
 
-        public bool submitStockBuyOrder(string code, string amount, string orderType, string expiryDay, string allOrNone, string highPrice, string stopPrice)
+        public string submitStockBuyOrder(string code, string shares, string orderType, string expiryDay, string allOrNone, string highPrice, string stopPrice)
         {
             // Inserts a stock buy order into the Order table.
             // Check if input is valid.
             orderType = orderType.Trim().ToLower();
-            if (!securityCodeIsValid("stock", code)) { return false; }
-            if (!amountIsValid("stock", amount)) { return false; }
-            if (!orderTypeIsValid("buy", orderType, expiryDay, allOrNone, highPrice, stopPrice)) { return false; }
+            if (!securityCodeIsValid("stock", code)) { return null; }
+            if (!sharesIsValid("stock", shares)) { return null; }
+            if (!sharesAmountIsValid(shares)) { return null; }
+            if (!orderTypeIsValid("buy", orderType, expiryDay, allOrNone, highPrice, stopPrice)) { return null; }
             string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
 
             // Construct the basic SQL statement.
-            string sql = "insert into [Order] values ('buy', 'stock', '" + code + "', '" + dateNow + "', 'pending', NULL, " + 
-                amount.Trim() + ", '" + orderType.Trim() + "', " + expiryDay.Trim() + ", '" + allOrNone.Trim().ToUpper() + "', "; 
+            string sql = "insert into [Order] values ('buy', 'stock', '" + code + "', '" + dateNow + "', 'pending', " + 
+                shares.Trim() + ", NULL, '" + orderType.Trim() + "', " + expiryDay.Trim() + ", '" + allOrNone.Trim().ToUpper() + "', "; 
 
             // Check for order type and set SQL statement accordingly.
             if (orderType == "market")
@@ -175,22 +223,18 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             {
                 sql = sql + highPrice.Trim() + ", " + stopPrice.Trim() + ")"; 
             }
-
-            // Execute the SQL statement.
-            SqlTransaction trans = myExternalData.beginTransaction();
-            myExternalData.setData(sql, trans);
-            myExternalData.commitTransaction(trans);
-            return true;
+            // Submit the order.
+            return submitOrder(sql);
         }
 
-        public bool submitStockSellOrder (string code, string shares, string orderType, string expiryDay, string allOrNone, string lowPrice, string stopPrice)
+        public string submitStockSellOrder (string code, string shares, string orderType, string expiryDay, string allOrNone, string lowPrice, string stopPrice)
         {
             // Inserts a stock sell order into the Order table.
             // Check if input is valid.
             orderType = orderType.Trim();
-            if (!securityCodeIsValid("stock", code)) { return false; }
-            if (!sharesIsValid("stock", shares)) { return false; }
-            if (!orderTypeIsValid("sell",orderType, expiryDay.Trim(), allOrNone.Trim(), lowPrice.Trim(), stopPrice.Trim())) { return false; }
+            if (!securityCodeIsValid("stock", code)) { return null; }
+            if (!sharesIsValid("stock", shares)) { return null; }
+            if (!orderTypeIsValid("sell",orderType, expiryDay.Trim(), allOrNone.Trim(), lowPrice.Trim(), stopPrice.Trim())) { return null; }
             string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
 
             // Construct the basic SQL statement.
@@ -214,44 +258,32 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             {
                 sql = sql + lowPrice.Trim() + ", " + stopPrice.Trim() + ")";
             }
-
-            // Execute the SQL statement.
-            SqlTransaction trans = myExternalData.beginTransaction();
-            myExternalData.setData(sql, trans);
-            myExternalData.commitTransaction(trans);
-            return true;
+            // Submit the order.
+            return submitOrder(sql);
         }
 
-        public bool submitUnitTrustBuyOrder(string code, string amount)
+        public string submitUnitTrustBuyOrder(string code, string amount)
         {
             // Inserts a unit trust buy order into the Order table.
             // Check if input is valid.
-            if (!securityCodeIsValid("unit trust", code)) { return false; }
-            if (!amountIsValid("unit trust", amount)) { return false; }
+            if (!securityCodeIsValid("unit trust", code)) { return null; }
+            if (!amountIsValid("unit trust", amount)) { return null; }
             string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
-
-            // Execute the SQL statement.
-            SqlTransaction trans = myExternalData.beginTransaction();
-            myExternalData.setData("insert into [Order] values ('buy', 'unit trust', '" + code + "', '" + dateNow + "', 'pending', " +
-                "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL)", trans);
-            myExternalData.commitTransaction(trans);
-            return true;
+            // Submit the order.
+            return submitOrder("insert into [Order] values ('buy', 'unit trust', '" + code + "', '" + dateNow 
+                + "', 'pending', " + "NULL, " + amount.Trim() + ", NULL, NULL, NULL, NULL, NULL)");
         }
 
-        public bool submitUnitTrustSellOrder(string code, string shares)
+        public string submitUnitTrustSellOrder(string code, string shares)
         {
             // Inserts a unit trust sell order into the Order table.
             // Check if input is valid.
-            if (!securityCodeIsValid("unit trust", code)) { return false; }
-            if (!sharesIsValid("unit trust", shares)) { return false; }
+            if (!securityCodeIsValid("unit trust", code)) { return null; }
+            if (!sharesIsValid("unit trust", shares)) { return null; }
             string dateNow = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
-
-            // Execute the SQL statement.
-            SqlTransaction trans = myExternalData.beginTransaction();
-            myExternalData.setData("insert into [Order] values ('sell', 'unit trust', '" + code + "', '" + dateNow + "', 'pending', " +
-                shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL)", trans);
-            myExternalData.commitTransaction(trans);
-            return true;
+            // Submit the order.
+            return submitOrder("insert into [Order] values ('sell', 'unit trust', '" + code + "', '" + dateNow 
+                + "', 'pending', " + shares.Trim() + ", NULL, NULL, NULL, NULL, NULL, NULL)");
         }
 
         public string getOrderStatus(string referenceNumber)
@@ -286,13 +318,22 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             return null;
         }
 
-        private bool securityCodeIsValid( string securityType, string securityCode)
+        private string submitOrder(string sql)
+        {
+            SqlTransaction trans = myExternalData.beginTransaction();
+            myExternalData.setData(sql, trans);
+            string referenceNumber = myExternalData.getOrderReferenceNumber("select max([referenceNumber]) from [Order]", trans);
+            myExternalData.commitTransaction(trans);
+            return referenceNumber;
+        }
+
+        private bool securityCodeIsValid(string securityType, string securityCode)
         {
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             string dbTableName = textInfo.ToTitleCase(securityType).Replace(" ", string.Empty);
             if (myExternalData.getAggregateValue("select count(*) from [" + dbTableName + "] where [code]='" + securityCode + "'") == 0)
             {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or nonexistent " + securityType + " code.\nInput value is '" + securityCode + "'.");
+               showMessage("Invalid or nonexistent " + securityType + " code.\nValue is '" + securityCode + "'.");
                 return false;
             }
             return true;
@@ -303,7 +344,7 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             decimal number;
             if (!decimal.TryParse(amount, out number) || number <= 0)
             {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or missing dollar amount of " + securityType + " to buy.\nInput value is '" + amount + "'.");
+               showMessage("Invalid or missing dollar amount of " + securityType + " to buy.\nValue is '" + amount + "'.");
                 return false;
             }
             return true;
@@ -314,7 +355,18 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             decimal number;
             if (!decimal.TryParse(shares, out number) || number <= 0)
             {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or missing number of " + securityType + " shares to sell.\nInput value is '" + shares + "'.");
+               showMessage("Invalid or missing number of " + securityType + " shares to sell.\nValue is '" + shares + "'.");
+                return false;
+            }
+            return true;
+        }
+
+        private bool sharesAmountIsValid(string shares)
+        {
+            decimal number = Convert.ToDecimal(shares);
+            if ((number % 100) != 0)
+            {
+                showMessage("Shares to buy is not a multiple of 100.\nValue is '" + shares + "'.");
                 return false;
             }
             return true;
@@ -329,21 +381,21 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             // Check if order type is valid.
             if (!(orderType == "market" || orderType == "limit" || orderType == "stop" || orderType == "stop limit"))
             {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or missing stock order type.\nInput value is '" + orderType + "'.");
+                showMessage("Invalid or missing stock order type.\nValue is '" + orderType + "'.");
                 return false;
             }
 
             // Check if expiry day is valid.
             if (!int.TryParse(expiryDay, out intNumber) || intNumber < 1 || intNumber > 7)
             {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or missing expiry day.\nInput value is '" + expiryDay + "'.");
+                showMessage("Invalid or missing expiry day.\nValue is '" + expiryDay + "'.");
                 return false;
             }
 
             // Check if all or none is valid.
             if (!(allOrNone.ToUpper() == "Y" || allOrNone.ToUpper() == "N"))
             {
-                MessageBox.Show(new Form { TopMost = true }, "Invalid or missing all or none.\nInput value is '" + allOrNone + "'.");
+                showMessage("Invalid or missing all or none.\nValue is '" + allOrNone + "'.");
                 return false;
             }
 
@@ -352,7 +404,7 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             {
                 if (!decimal.TryParse(limitPrice, out decLimitPrice) || decLimitPrice <= 0)
                 {
-                    MessageBox.Show(new Form { TopMost = true }, "Invalid or missing limit price.\nInput value is '" + limitPrice + "'.");
+                    showMessage("Invalid or missing limit price.\nValue is '" + limitPrice + "'.");
                     return false;
                 }
             }
@@ -362,7 +414,7 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
             {
                 if (!decimal.TryParse(stopPrice, out decStopPrice) || decStopPrice <= 0)
                 {
-                    MessageBox.Show(new Form { TopMost = true }, "Invalid or missing stop price.\nInput value is '" + stopPrice + "'.");
+                    showMessage("Invalid or missing stop price.\nValue is '" + stopPrice + "'.");
                     return false;
                 }
                 
@@ -375,7 +427,7 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
                 {
                     if (decStopPrice > decLimitPrice)
                     {
-                        MessageBox.Show(new Form { TopMost = true }, "Stock buy order:\nstop price must be <= limit price.");
+                        showMessage("Stock buy order:\nstop price must be <= limit price.");
                         return false;
                     }
                 }
@@ -383,12 +435,20 @@ namespace HKeInvestWebApplication.ExternalSystems.Code_File
                 {
                     if (decStopPrice < decLimitPrice)
                     {
-                        MessageBox.Show(new Form { TopMost = true }, "Stock sell order:\n stop price must be >= limit price.");
+                        showMessage("Stock sell order:\n stop price must be >= limit price.");
                         return false;
                     }
                 }
             }            
             return true;
+        }
+
+        private void showMessage(string message)
+        {
+            if (displayMessage)
+            {
+                MessageBox.Show(new Form { TopMost = true }, message);
+            }
         }
     }
 }

@@ -403,7 +403,7 @@
 		            <div class="col-md-4">
 		                <asp:TextBox ID="employerPhone2" runat="server"  CssClass="form-control" MaxLength="8" TextMode="Phone" ValidationGroup="Page"></asp:TextBox>
 	                    <asp:CustomValidator ID="employerPhoneValidator2" runat="server" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="Employer phone is required" ForeColor="Red" OnServerValidate="employerPhoneValidator2_ServerValidate"></asp:CustomValidator>
-		                <asp:RegularExpressionValidator ID="RegularExpressionValidator15" runat="server" ControlToValidate="employerPhone2" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of the employer phone is invalid" ForeColor="Red" ValidationExpression="^[0-9]{1,2}$"></asp:RegularExpressionValidator>
+		                <asp:RegularExpressionValidator ID="RegularExpressionValidator15" runat="server" ControlToValidate="employerPhone2" CssClass="text-danger" Display="Dynamic" EnableClientScript="False" ErrorMessage="The format of the employer phone is invalid" ForeColor="Red" ValidationExpression="^[0-9]{8}$"></asp:RegularExpressionValidator>
 		            </div>
                 </div>
 

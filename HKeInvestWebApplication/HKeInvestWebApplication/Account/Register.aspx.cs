@@ -39,7 +39,7 @@ namespace HKeInvestWebApplication.Account
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 string code = manager.GenerateEmailConfirmationToken(user.Id);
                 string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
-                emailManager.sendEmail(user.Email, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+                emailManager.sendEmail(user.Email.Trim(), "Confirm your account", string.Format("Please confirm your account by clicking <a href=\"{0}\">here</a>.", callbackUrl));
 
                 // associate username with accountnumber
                 HKeInvestData data_helper = new HKeInvestData();
@@ -72,7 +72,7 @@ namespace HKeInvestWebApplication.Account
         }
         private bool alreadyHolding()
         {
-            string sql = "SELECT userName FROM Account WHERE accountNumber = '"+AccountNumber.Text.Trim()+"'";
+            string sql = "SELECT userName FROM Account WHERE accountNumber = '"+ mySQLStringHandleHelper.handleString(AccountNumber.Text.Trim())+"'";
             HKeInvestData data_helper = new HKeInvestData();
             DataTable account_info = data_helper.getData(sql);
             if (account_info == null || account_info.Rows.Count == 0) return false;
@@ -85,12 +85,12 @@ namespace HKeInvestWebApplication.Account
         private bool InfoMatch()
         {
             // get information entered
-            string first_name = mySQLStringHandleHelper.handleString(FirstName.Text.Trim());
-            string last_name = mySQLStringHandleHelper.handleString(LastName.Text.Trim());
-            string account = AccountNumber.Text.Trim().ToUpper();
-            string hkid = HKID.Text.Trim();
-            string birth = DateOfBirth.Text.Trim();
-            string email = Email.Text.Trim();
+            string first_name = (FirstName.Text.Trim());
+            string last_name = (LastName.Text.Trim());
+            string account = mySQLStringHandleHelper.handleString( AccountNumber.Text.Trim().ToUpper());
+            string hkid = (HKID.Text.Trim());
+            string birth = (DateOfBirth.Text.Trim());
+            string email = (Email.Text.Trim());
 
             // get Client information in the table
             string sql = "SELECT * from [Client] WHERE [Client].[accountNumber] = '" + account + "' AND [Client].[isPrimary]='Yes'";

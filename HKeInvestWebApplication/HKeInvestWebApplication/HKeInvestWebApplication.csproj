@@ -210,20 +210,26 @@
     </Content>
     <Content Include="App_Themes\ExternalSystemsTheme\bootstrap.min.css" />
     <Content Include="App_Themes\Theme1\bootstrap.min.css" />
+    <Content Include="ClientOnly\BuyAndSellOrder.aspx" />
     <Content Include="ClientOnly\ClientManageAccountAndClientInfo.aspx" />
+    <Content Include="ClientOnly\ClientReport.aspx" />
     <Content Include="ClientOnly\ClientSecurityHoldingsDetails.aspx" />
+    <Content Include="ClientOnly\SetAlert.aspx" />
+    <Content Include="ClientOnly\Track.aspx" />
     <Content Include="ClientOnly\Web.config" />
+    <Content Include="Code_File\Application Form.pdf" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="EmployeeOnly\EmployeeReport.aspx" />
     <Content Include="EmployeeOnly\ManageAccountAndClientInfo.aspx" />
     <Content Include="EmployeeOnly\SecurityHoldingDetails.aspx" />
+    <Content Include="EmployeeOnly\Web.config" />
     <Content Include="ExternalSystems\BondOrder.aspx" />
     <Content Include="ExternalSystems\ControlCenter.aspx" />
-    <Content Include="ExternalSystems\ExternalSite.Master" />
     <Content Include="ExternalSystems\ManageBond.aspx" />
-    <Content Include="ExternalSystems\ManageCurrencyConversion.aspx" />
+    <Content Include="ExternalSystems\ManageCurrencies.aspx" />
     <Content Include="ExternalSystems\ManageStock.aspx" />
     <Content Include="ExternalSystems\ManageUnitTrust.aspx" />
     <Content Include="ExternalSystems\StockOrder.aspx" />
@@ -233,9 +239,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Account\Web.config" />
-    <Content Include="Code_File\Application Form.pdf" />
-    <Content Include="EmployeeOnly\Web.config" />
+    <Content Include="ExternalSystems\ExternalSite.Master" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="HOME.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -409,12 +415,26 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="ClientOnly\BuyAndSellOrder.aspx.cs">
+      <DependentUpon>BuyAndSellOrder.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\BuyAndSellOrder.aspx.designer.cs">
+      <DependentUpon>BuyAndSellOrder.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ClientOnly\ClientManageAccountAndClientInfo.aspx.cs">
       <DependentUpon>ClientManageAccountAndClientInfo.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ClientOnly\ClientManageAccountAndClientInfo.aspx.designer.cs">
       <DependentUpon>ClientManageAccountAndClientInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ClientOnly\ClientReport.aspx.cs">
+      <DependentUpon>ClientReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\ClientReport.aspx.designer.cs">
+      <DependentUpon>ClientReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="ClientOnly\ClientSecurityHoldingsDetails.aspx.cs">
       <DependentUpon>ClientSecurityHoldingsDetails.aspx</DependentUpon>
@@ -423,9 +443,24 @@
     <Compile Include="ClientOnly\ClientSecurityHoldingsDetails.aspx.designer.cs">
       <DependentUpon>ClientSecurityHoldingsDetails.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ClientOnly\SetAlert.aspx.cs">
+      <DependentUpon>SetAlert.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\SetAlert.aspx.designer.cs">
+      <DependentUpon>SetAlert.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ClientOnly\Track.aspx.cs">
+      <DependentUpon>Track.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\Track.aspx.designer.cs">
+      <DependentUpon>Track.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Code_File\HKeInvestCode.cs" />
     <Compile Include="Code_File\HKeInvestData.cs" />
     <Compile Include="Code_File\HKeInvestEmail.cs" />
+    <Compile Include="Code_File\HKeInvestFunctions.cs" />
     <Compile Include="Code_File\SQLStringHandleHelper.cs" />
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
@@ -440,6 +475,13 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeOnly\EmployeeReport.aspx.cs">
+      <DependentUpon>EmployeeReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeOnly\EmployeeReport.aspx.designer.cs">
+      <DependentUpon>EmployeeReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="EmployeeOnly\ManageAccountAndClientInfo.aspx.cs">
       <DependentUpon>ManageAccountAndClientInfo.aspx</DependentUpon>
@@ -485,12 +527,12 @@
     <Compile Include="ExternalSystems\ManageBond.aspx.designer.cs">
       <DependentUpon>ManageBond.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ExternalSystems\ManageCurrencyConversion.aspx.cs">
-      <DependentUpon>ManageCurrencyConversion.aspx</DependentUpon>
+    <Compile Include="ExternalSystems\ManageCurrencies.aspx.cs">
+      <DependentUpon>ManageCurrencies.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ExternalSystems\ManageCurrencyConversion.aspx.designer.cs">
-      <DependentUpon>ManageCurrencyConversion.aspx</DependentUpon>
+    <Compile Include="ExternalSystems\ManageCurrencies.aspx.designer.cs">
+      <DependentUpon>ManageCurrencies.aspx</DependentUpon>
     </Compile>
     <Compile Include="ExternalSystems\ManageStock.aspx.cs">
       <DependentUpon>ManageStock.aspx</DependentUpon>
@@ -522,6 +564,13 @@
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="HOME.aspx.cs">
+      <DependentUpon>HOME.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HOME.aspx.designer.cs">
+      <DependentUpon>HOME.aspx</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

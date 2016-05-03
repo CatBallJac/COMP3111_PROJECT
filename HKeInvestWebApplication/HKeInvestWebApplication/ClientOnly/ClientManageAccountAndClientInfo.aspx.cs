@@ -113,13 +113,18 @@ namespace HKeInvestWebApplication.ClientOnly
             DateTime birth = row.Field<DateTime>("dateOfBirth");
             pDateOfBirth.Text = birth.ToString("dd/MM/yyyy");
             pEmail.Text = (row.Field<string>("email").Trim());
-            pBuilding.Text = (row.Field<string>("building").Trim());
+            if (row.Field<string>("building") != null)pBuilding.Text = (row.Field<string>("building").Trim());
+            else pBuilding.Text = "";
             pStreet.Text = (row.Field<string>("street").Trim());
             pDistrict.Text = (row.Field<string>("district").Trim());
-            pHomePhone.Text = row.Field<string>("homePhone").Trim();
-            pHomeFax.Text = row.Field<string>("homeFax").Trim();
-            pBusinessPhone.Text = row.Field<string>("businessPhone").Trim();
-            pMobilePhone.Text = row.Field<string>("mobilePhone").Trim();
+            if (row.Field<string>("homePhone") != null) pHomePhone.Text = row.Field<string>("homePhone").Trim();
+            else pHomePhone.Text = "";
+            if (row.Field<string>("homeFax") != null) pHomeFax.Text = row.Field<string>("homeFax").Trim();
+            else pHomeFax.Text = "";
+            if (row.Field<string>("businessPhone") != null) pBusinessPhone.Text = row.Field<string>("businessPhone").Trim();
+            else pBusinessPhone.Text = "";
+            if (row.Field<string>("mobilePhone") != null) pMobilePhone.Text = row.Field<string>("mobilePhone").Trim();
+            else pMobilePhone.Text = "";
             pCitizenship.Text = (row.Field<string>("countryOfCitizenship").Trim());
             pLegalResidence.Text = (row.Field<string>("countryOfLegalResidence").Trim());
             pHKID.Text = row.Field<string>("HKIDPassportNumber").Trim();
@@ -140,7 +145,7 @@ namespace HKeInvestWebApplication.ClientOnly
             if (pEmploymentStatus.SelectedValue == "Employed")
             {
                 pOccupation.Text = (row.Field<string>("occupation").Trim());
-                pYears.Text = row.Field<decimal>("yearsWithEmployer").ToString();
+                pYears.Text = row.Field<string>("yearsWithEmployer").Trim();
                 pEmployerName.Text = (row.Field<string>("employerName").Trim());
                 pEmployerPhone.Text = row.Field<string>("employerPhone").Trim();
                 pNatureOfBusiness.Text = (row.Field<string>("natureOfBusiness").Trim());
@@ -174,13 +179,18 @@ namespace HKeInvestWebApplication.ClientOnly
             DateTime birth = row.Field<DateTime>("dateOfBirth");
             cDateOfBirth.Text = birth.ToString("dd/MM/yyyy");
             cEmail.Text = (row.Field<string>("email").Trim());
-            cBuilding.Text = (row.Field<string>("building").Trim());
+            if (row.Field<string>("building") != null) cBuilding.Text = (row.Field<string>("building").Trim());
+            else cBuilding.Text = "";
             cStreet.Text = (row.Field<string>("street").Trim());
             cDistrict.Text = (row.Field<string>("district").Trim());
-            cHomePhone.Text = row.Field<string>("homePhone").Trim();
-            cHomeFax.Text = row.Field<string>("homeFax").Trim();
-            cBusinessPhone.Text = row.Field<string>("businessPhone").Trim();
-            cMobilePhone.Text = row.Field<string>("mobilePhone").Trim();
+            if (row.Field<string>("homePhone") != null) cHomePhone.Text = row.Field<string>("homePhone").Trim();
+            else cHomePhone.Text = "";
+            if (row.Field<string>("homeFax") != null) cHomeFax.Text = row.Field<string>("homeFax").Trim();
+            else cHomeFax.Text = "";
+            if (row.Field<string>("businessPhone") != null) cBusinessPhone.Text = row.Field<string>("businessPhone").Trim();
+            else cBusinessPhone.Text = "";
+            if (row.Field<string>("mobilePhone") != null) cMobilePhone.Text = row.Field<string>("mobilePhone").Trim();
+            else cMobilePhone.Text = "";
             cCitizenship.Text = (row.Field<string>("countryOfCitizenship").Trim());
             cLegalResidence.Text = (row.Field<string>("countryOfLegalResidence").Trim());
             cHKID.Text = row.Field<string>("HKIDPassportNumber").Trim();
@@ -201,7 +211,7 @@ namespace HKeInvestWebApplication.ClientOnly
             if (cEmploymentStatus.SelectedValue == "Employed")
             {
                 cOccupation.Text = (row.Field<string>("occupation").Trim());
-                cYears.Text = row.Field<decimal>("yearsWithEmployer").ToString();
+                cYears.Text = row.Field<string>("yearsWithEmployer").Trim();
                 cEmployerName.Text = (row.Field<string>("employerName").Trim());
                 cEmployerPhone.Text = row.Field<string>("employerPhone").Trim();
                 cNatureOfBusiness.Text = (row.Field<string>("natureOfBusiness").Trim());
