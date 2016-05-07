@@ -633,7 +633,7 @@ namespace HKeInvestWebApplication
                     if (ca.Length == 2 && ca[1].Length > 2)
                     {
                         args.IsValid = false;
-                        part7Validator.ErrorMessage = "The decimal points of the transfer amount should be less than 2";
+                        part7Validator.ErrorMessage = "The decimal points of the transfer amount should be less than or equal to 2";
                         return;
                     }
                     if (transferMoney.CompareTo(decimal.Zero) <= 0)

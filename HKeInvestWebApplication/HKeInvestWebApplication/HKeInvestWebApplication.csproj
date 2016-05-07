@@ -216,6 +216,7 @@
     <Content Include="ClientOnly\ClientSecurityHoldingsDetails.aspx" />
     <Content Include="ClientOnly\SetAlert.aspx" />
     <Content Include="ClientOnly\Track.aspx" />
+    <Content Include="ClientOnly\Transfer.aspx" />
     <Content Include="ClientOnly\Web.config" />
     <Content Include="Code_File\Application Form.pdf" />
     <Content Include="Contact.aspx" />
@@ -456,6 +457,13 @@
     </Compile>
     <Compile Include="ClientOnly\Track.aspx.designer.cs">
       <DependentUpon>Track.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ClientOnly\Transfer.aspx.cs">
+      <DependentUpon>Transfer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\Transfer.aspx.designer.cs">
+      <DependentUpon>Transfer.aspx</DependentUpon>
     </Compile>
     <Compile Include="Code_File\HKeInvestCode.cs" />
     <Compile Include="Code_File\HKeInvestData.cs" />
