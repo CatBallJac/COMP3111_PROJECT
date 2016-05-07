@@ -53,7 +53,7 @@ namespace HKeInvestWebApplication.Code_File
         {
             // Returns all pending or partial orders
             DataTable dTpendingOrder = new DataTable();
-            string sql = "select * from [Order] where ([status]='pending' or [status]='partial')";
+            string sql = "select * from [Order] where ([status]='pending')";
             dTpendingOrder = myHKeInvestData.getData(sql);
 
             // Return null if no result is returned.
@@ -338,10 +338,9 @@ namespace HKeInvestWebApplication.Code_File
         // TODO: need currency conversion?
         public decimal getCurrentValueOfSecuries(string accountNumber)
         {
-            int number;
+            
             decimal value = 0;
-            if (int.TryParse(accountNumber, out number))
-            {
+
                 DataTable dtSecurities = myHKeInvestData.getData("select * from [SecurityHolding] where [accountNumber] = '" + accountNumber.Trim() + "' ");
                 // Return 0 if no result is returned.
                 if (dtSecurities == null || dtSecurities.Rows.Count == 0)
@@ -357,7 +356,7 @@ namespace HKeInvestWebApplication.Code_File
                     price = price * convesion;
                     value += price * Convert.ToDecimal(row["shares"]);
                 }
-            }
+            
             return value;
         }
 
@@ -365,12 +364,9 @@ namespace HKeInvestWebApplication.Code_File
         // `getAssets`: return all valuesOfSecurityHolds + balance
         public decimal getAssets(string accountNumber)
         {
-            int number;
-            if (int.TryParse(accountNumber, out number))
-            {
-                return getBalance(accountNumber) + getCurrentValueOfSecuries(accountNumber);
-            }
-            return 0;
+
+           return getBalance(accountNumber) + getCurrentValueOfSecuries(accountNumber);            
+          
         }
 
         // `calculateBondFees`: return the service fee of bonds
