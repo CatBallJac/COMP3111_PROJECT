@@ -107,7 +107,7 @@ namespace HKeInvestWebApplication.ClientOnly
         }
         protected void displayPrimaryClient(DataRow row)
         {
-            pTitle.SelectedValue = row.Field<string>("title");
+            pTitle.SelectedValue = row.Field<string>("title").Trim();
             pLastName.Text = (row.Field<string>("lastName").Trim());
             pFirstName.Text = (row.Field<string>("firstName").Trim());
             DateTime birth = row.Field<DateTime>("dateOfBirth");
@@ -132,9 +132,10 @@ namespace HKeInvestWebApplication.ClientOnly
             {
                 pHKIDUsed.Checked = true;
                 pPassportCountry.Text = "";
-                pHKID.ReadOnly = true;
-                pHKIDUsed.Enabled = false;
+                //pHKID.ReadOnly = true;
+                //pHKIDUsed.Enabled = false;
                 pPassportCountry.ReadOnly = true;
+                pPassportCountry.BackColor = System.Drawing.Color.Gray;
             }
             else
             {
@@ -173,7 +174,7 @@ namespace HKeInvestWebApplication.ClientOnly
         }
         protected void displayCoClient(DataRow row)
         {
-            cTitle.SelectedValue = row.Field<string>("title");
+            cTitle.SelectedValue = row.Field<string>("title").Trim();
             cLastName.Text = (row.Field<string>("lastName").Trim());
             cFirstName.Text = (row.Field<string>("firstName").Trim());
             DateTime birth = row.Field<DateTime>("dateOfBirth");
@@ -198,9 +199,10 @@ namespace HKeInvestWebApplication.ClientOnly
             {
                 cHKIDUsed.Checked = true;
                 cPassportCountry.Text = "";
-                cHKID.ReadOnly = true;
-                cHKIDUsed.Enabled = false;
-                cPassportCountry.ReadOnly = true;
+                //cHKID.ReadOnly = true;
+                //cHKIDUsed.Enabled = false;
+                pPassportCountry.ReadOnly = true;
+                pPassportCountry.BackColor = System.Drawing.Color.Gray;
             }
             else
             {
