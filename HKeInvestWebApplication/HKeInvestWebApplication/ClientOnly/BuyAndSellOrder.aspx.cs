@@ -744,7 +744,7 @@ namespace HKeInvestWebApplication.ClientOnly
 
             if (buyAmount <= (decimal)0.01 * price)
             {
-                cvAmount.ErrorMessage = "you have to buy at least 0.01 shares!";
+                cvAmount.ErrorMessage = "you have to buy at least 0.01 shares based on current price!";
                 args.IsValid = false;
                 return;
             }
