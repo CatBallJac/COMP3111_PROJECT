@@ -447,6 +447,7 @@ namespace HKeInvestWebApplication
             gvUnitTrust.DataBind();
         }
 
+        /*
         protected void Report_Click(object sender, EventArgs e)
         {
             Server.Transfer("ClientOnly/ClientReport.aspx", true);
@@ -471,5 +472,6 @@ namespace HKeInvestWebApplication
         {
             Server.Transfer("EmployeeOnly/EmployeeReport.aspx", true);
         }
+        */
     }
 }

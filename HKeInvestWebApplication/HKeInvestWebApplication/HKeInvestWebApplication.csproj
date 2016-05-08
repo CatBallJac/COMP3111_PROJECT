@@ -184,7 +184,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About.aspx" />
-    <Content Include="Account Application.aspx" />
     <Content Include="Account\AddPhoneNumber.aspx" />
     <Content Include="Account\Confirm.aspx" />
     <Content Include="Account\Forgot.aspx" />
@@ -214,6 +213,7 @@
     <Content Include="ClientOnly\ClientManageAccountAndClientInfo.aspx" />
     <Content Include="ClientOnly\ClientReport.aspx" />
     <Content Include="ClientOnly\ClientSecurityHoldingsDetails.aspx" />
+    <Content Include="ClientOnly\ClientTransferReport.aspx" />
     <Content Include="ClientOnly\SetAlert.aspx" />
     <Content Include="ClientOnly\Track.aspx" />
     <Content Include="ClientOnly\Transfer.aspx" />
@@ -223,6 +223,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="EmployeeOnly\AccountApplication.aspx" />
     <Content Include="EmployeeOnly\EmployeeReport.aspx" />
     <Content Include="EmployeeOnly\ManageAccountAndClientInfo.aspx" />
     <Content Include="EmployeeOnly\SecurityHoldingDetails.aspx" />
@@ -293,13 +294,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account Application.aspx.cs">
-      <DependentUpon>Account Application.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Account Application.aspx.designer.cs">
-      <DependentUpon>Account Application.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Account\AddPhoneNumber.aspx.cs">
       <DependentUpon>AddPhoneNumber.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -444,6 +438,13 @@
     <Compile Include="ClientOnly\ClientSecurityHoldingsDetails.aspx.designer.cs">
       <DependentUpon>ClientSecurityHoldingsDetails.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ClientOnly\ClientTransferReport.aspx.cs">
+      <DependentUpon>ClientTransferReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\ClientTransferReport.aspx.designer.cs">
+      <DependentUpon>ClientTransferReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ClientOnly\SetAlert.aspx.cs">
       <DependentUpon>SetAlert.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -483,6 +484,13 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeOnly\AccountApplication.aspx.cs">
+      <DependentUpon>AccountApplication.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeOnly\AccountApplication.aspx.designer.cs">
+      <DependentUpon>AccountApplication.aspx</DependentUpon>
     </Compile>
     <Compile Include="EmployeeOnly\EmployeeReport.aspx.cs">
       <DependentUpon>EmployeeReport.aspx</DependentUpon>

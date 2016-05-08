@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HKeInvestWebApplication {
+namespace HKeInvestWebApplication.EmployeeOnly {
     
     
-    public partial class Account_Application {
+    public partial class AccountApplication {
         
         /// <summary>
         /// applyResult control.

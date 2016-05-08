@@ -4,15 +4,14 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using HKeInvestWebApplication.Models;
 using HKeInvestWebApplication.Code_File;
 using System.Data.SqlClient;
 using System.Data;
 using System.Globalization;
 
-namespace HKeInvestWebApplication
+namespace HKeInvestWebApplication.EmployeeOnly
 {
-    public partial class Account_Application : System.Web.UI.Page
+    public partial class AccountApplication : System.Web.UI.Page
     {
         HKeInvestData myHKeInvestData = new HKeInvestData();
         SQLStringHandleHelper myStringHandleHelper = new SQLStringHandleHelper();
@@ -28,14 +27,14 @@ namespace HKeInvestWebApplication
             /*============get data for account and primary client==============*/
             string account_type = AccountType.SelectedValue;
             string p_title = title.SelectedValue;
-            string p_first_name = myStringHandleHelper.handleString( firstName.Text.Trim());
-            string p_last_name = myStringHandleHelper.handleString( lastName.Text.Trim());
+            string p_first_name = myStringHandleHelper.handleString(firstName.Text.Trim());
+            string p_last_name = myStringHandleHelper.handleString(lastName.Text.Trim());
             string p_date_of_birth = dateOfBirth.Text.Trim();
-            string p_email = myStringHandleHelper.handleString( email.Text.Trim());
+            string p_email = myStringHandleHelper.handleString(email.Text.Trim());
             string p_street = myStringHandleHelper.handleString(street.Text.Trim());
-            string p_district = myStringHandleHelper.handleString( district.Text.Trim());
-            string p_country_of_citizenship = myStringHandleHelper.handleString( citizenship.Text.Trim());
-            string p_country_of_legal_residence = myStringHandleHelper.handleString( legalResidence.Text.Trim());
+            string p_district = myStringHandleHelper.handleString(district.Text.Trim());
+            string p_country_of_citizenship = myStringHandleHelper.handleString(citizenship.Text.Trim());
+            string p_country_of_legal_residence = myStringHandleHelper.handleString(legalResidence.Text.Trim());
             string p_hkid_used = HKIDUsed.Checked ? "Yes" : "No";
             string p_hkid = myStringHandleHelper.handleString(HKID.Text.Trim()).ToUpper();
             string p_employment_status = employmentStatus.SelectedValue;
@@ -49,17 +48,17 @@ namespace HKeInvestWebApplication
             string annual_income = annualIncome.SelectedValue;
             string liquid_net_worth = liquidNetWorth.SelectedValue;
             string account_feature = part6.SelectedValue;
-            decimal deposit = decimal.Zero;decimal money = decimal.Zero;
+            decimal deposit = decimal.Zero; decimal money = decimal.Zero;
             if (cheque.Checked)
             {
-                if(decimal.TryParse(chequeAmount.Text.Trim(), out money))
+                if (decimal.TryParse(chequeAmount.Text.Trim(), out money))
                 {
                     deposit += money;
                 }
             }
             if (transfer.Checked)
             {
-                if(decimal.TryParse(transferAmount.Text.Trim(),out money))
+                if (decimal.TryParse(transferAmount.Text.Trim(), out money))
                 {
                     deposit += money;
                 }
@@ -68,31 +67,31 @@ namespace HKeInvestWebApplication
             /*============insert primary client data and account data==========*/
             SqlTransaction trans = myHKeInvestData.beginTransaction();
             string sql = string.Format(
-                "INSERT INTO Account "+
-                "(accountNumber, accountType, balance, primarySource, investmentObjectives,"+
-                " investmentKnowledge, investmentExperience, annualIncome, approximateLiquidNetWorth,"+
-                " accountFeature) "+
-                "VALUES "+
+                "INSERT INTO Account " +
+                "(accountNumber, accountType, balance, primarySource, investmentObjectives," +
+                " investmentKnowledge, investmentExperience, annualIncome, approximateLiquidNetWorth," +
+                " accountFeature) " +
+                "VALUES " +
                 "('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}')",
                 account_number, account_type, deposit.ToString(), primary_source, investment_objective,
                 investment_knowledge, investment_experience, annual_income, liquid_net_worth,
                 account_feature
                 );
             myHKeInvestData.setData(sql, trans);
-            
+
             sql = string.Format(
-                "INSERT INTO Client "+
-                "(accountNumber,isPrimary,title,firstName,lastName,dateOfBirth,email,street,"+
+                "INSERT INTO Client " +
+                "(accountNumber,isPrimary,title,firstName,lastName,dateOfBirth,email,street," +
                 "district,countryOfCitizenship,countryOfLegalResidence,HKIDPassportNumber," +
                 "employmentStatus," +
                 "employedByFinancialInstitution,isADirector,isHKIDUsed) " +
                 "VALUES ('{0}','Yes','{1}','{2}','{3}',CONVERT(date,'{4}',103),'{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}'," +
                 "'{13}','{14}')",
-                account_number,p_title,p_first_name,p_last_name,p_date_of_birth,p_email,
-                p_street,p_district,
-                p_country_of_citizenship,p_country_of_legal_residence,p_hkid,
+                account_number, p_title, p_first_name, p_last_name, p_date_of_birth, p_email,
+                p_street, p_district,
+                p_country_of_citizenship, p_country_of_legal_residence, p_hkid,
                 p_employment_status,
-                p_part4_q1,p_part4_q2,p_hkid_used
+                p_part4_q1, p_part4_q2, p_hkid_used
                 );
             myHKeInvestData.setData(sql, trans);
 
@@ -181,7 +180,7 @@ namespace HKeInvestWebApplication
                     c_street, c_district,
                     c_country_of_citizenship, c_country_of_legal_residence, c_hkid,
                     c_employment_status,
-                    c_part4_q1, c_part4_q2,c_hkid_used
+                    c_part4_q1, c_part4_q2, c_hkid_used
                     );
                 myHKeInvestData.setData(sql, trans);
                 if (!string.IsNullOrEmpty(building2.Text.Trim()))
@@ -241,7 +240,7 @@ namespace HKeInvestWebApplication
                 }
             }
             myHKeInvestData.commitTransaction(trans);
-            
+
             // notify the applicant that the security account has been successfully created
             applyResult.Text = "Congratulation! Your security account number: " + account_number;
         }
@@ -274,20 +273,20 @@ namespace HKeInvestWebApplication
                 num++;
                 accountNumber += num.ToString("D8");
             }
-            
+
             return accountNumber;
         }
 
-        protected string updateClientSql(string column,string data, bool isPrimary,string account)
+        protected string updateClientSql(string column, string data, bool isPrimary, string account)
         {
-            data = myStringHandleHelper.handleString(data);string type;
+            data = myStringHandleHelper.handleString(data); string type;
             if (isPrimary) type = "Yes";
             else type = "No";
-            string sql = "UPDATE Client SET " + column + " = '" + data + "' "+
-                "WHERE accountNumber = '" + account +"' AND isPrimary = '"+type+"'";
+            string sql = "UPDATE Client SET " + column + " = '" + data + "' " +
+                "WHERE accountNumber = '" + account + "' AND isPrimary = '" + type + "'";
             return sql;
         }
-/*================================================================================================*/
+        /*================================================================================================*/
         protected void AccountType_SelectedIndexChanged(object sender, EventArgs e)
         {
             string accountType = AccountType.SelectedValue;
@@ -311,12 +310,13 @@ namespace HKeInvestWebApplication
         {
             DateTime birth;
             bool result = DateTime.TryParseExact(dateOfBirth.Text.Trim(), "dd/MM/yyyy",
-                System.Globalization.CultureInfo.InvariantCulture,DateTimeStyles.None, out birth);
+                System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out birth);
             if (!result)
             {
                 args.IsValid = false;
                 dateOfBirthValidate.ErrorMessage = "The date of birth is invalid.";
-            }else
+            }
+            else
             {
                 if (birth.CompareTo(DateTime.Today) > 0)
                 {
@@ -374,7 +374,8 @@ namespace HKeInvestWebApplication
                 passportCountry.Text = "";
                 passportCountry.ReadOnly = true;
                 passportCountry.BackColor = System.Drawing.Color.Gray;
-            }else
+            }
+            else
             {
                 passportCountry.ReadOnly = false;
                 passportCountry.BackColor = System.Drawing.Color.White;
@@ -424,7 +425,8 @@ namespace HKeInvestWebApplication
                 employerName.BackColor = System.Drawing.Color.White;
                 employerPhone.BackColor = System.Drawing.Color.White;
                 natureOfBusiness.BackColor = System.Drawing.Color.White;
-            }else
+            }
+            else
             {
                 occupation.Text = "";
                 years.Text = "";
@@ -446,7 +448,7 @@ namespace HKeInvestWebApplication
 
         protected void occupationValidator_ServerValidate(object source, ServerValidateEventArgs args)
         {
-            if (employmentStatus.SelectedValue == "Employed"&&string.IsNullOrEmpty(occupation.Text.Trim()))
+            if (employmentStatus.SelectedValue == "Employed" && string.IsNullOrEmpty(occupation.Text.Trim()))
             {
                 args.IsValid = false;
             }
@@ -528,7 +530,8 @@ namespace HKeInvestWebApplication
                     Part4Other.ReadOnly = false;
                     Part4Other.BackColor = System.Drawing.Color.White;
                 }
-            }else
+            }
+            else
             {
                 if (!Part4Other.ReadOnly)
                 {
@@ -541,8 +544,8 @@ namespace HKeInvestWebApplication
 
         protected void part4Validate_ServerValidate(object source, ServerValidateEventArgs args)
         {
-            if(part4PrimaryQ1.SelectedIndex==-1 ||
-                part4PrimaryQ2.SelectedIndex==-1 ||
+            if (part4PrimaryQ1.SelectedIndex == -1 ||
+                part4PrimaryQ2.SelectedIndex == -1 ||
                 primarySource.SelectedIndex == -1)
             {
                 args.IsValid = false;
@@ -550,7 +553,7 @@ namespace HKeInvestWebApplication
             }
             else if (AccountType.SelectedValue != "0" && AccountType.SelectedValue != "individual")
             {
-                if(part4CoQ1.SelectedIndex==-1 || part4CoQ2.SelectedIndex == -1)
+                if (part4CoQ1.SelectedIndex == -1 || part4CoQ2.SelectedIndex == -1)
                 {
                     args.IsValid = false;
                     part4Validate.ErrorMessage = "Please select one option for every question in part 4";
@@ -568,10 +571,10 @@ namespace HKeInvestWebApplication
 
         protected void part5Validator_ServerValidate(object source, ServerValidateEventArgs args)
         {
-            if(investmentObjective.SelectedIndex==-1||
-                investmentKnowledge.SelectedIndex==-1||
-                investmentExperience.SelectedIndex==-1||
-                annualIncome.SelectedIndex==-1||
+            if (investmentObjective.SelectedIndex == -1 ||
+                investmentKnowledge.SelectedIndex == -1 ||
+                investmentExperience.SelectedIndex == -1 ||
+                annualIncome.SelectedIndex == -1 ||
                 liquidNetWorth.SelectedIndex == -1)
             {
                 args.IsValid = false;
@@ -581,13 +584,13 @@ namespace HKeInvestWebApplication
 
         protected void part7Validator_ServerValidate(object source, ServerValidateEventArgs args)
         {
-            if(!cheque.Checked && !transfer.Checked)
+            if (!cheque.Checked && !transfer.Checked)
             {
                 args.IsValid = false;
                 part7Validator.ErrorMessage = "Please select a checkbox and fill in the amount in the corresponding textbox";
                 return;
             }
-            if (cheque.Checked&&string.IsNullOrEmpty(chequeAmount.Text.Trim()))
+            if (cheque.Checked && string.IsNullOrEmpty(chequeAmount.Text.Trim()))
             {
                 args.IsValid = false;
                 part7Validator.ErrorMessage = "Please fill in the cheque amount";
@@ -602,7 +605,7 @@ namespace HKeInvestWebApplication
             decimal chequeMoney = decimal.Zero;
             if (cheque.Checked)
             {
-                if(decimal.TryParse(chequeAmount.Text.Trim(), out chequeMoney))
+                if (decimal.TryParse(chequeAmount.Text.Trim(), out chequeMoney))
                 {
                     string[] ca = chequeAmount.Text.Trim().Split('.');
                     if (ca.Length == 2 && ca[1].Length > 2)
@@ -617,7 +620,8 @@ namespace HKeInvestWebApplication
                         part7Validator.ErrorMessage = "The cheque amount cannot be negative";
                         return;
                     }
-                }else
+                }
+                else
                 {
                     args.IsValid = false;
                     part7Validator.ErrorMessage = "The cheque amount is an invalid number";
@@ -656,7 +660,7 @@ namespace HKeInvestWebApplication
                 args.IsValid = false;
                 part7Validator.ErrorMessage = "At least HK$20,000 is needed to create a security account";
             }
-            if (sum.ToString("F2").Length >13)
+            if (sum.ToString("F2").Length > 13)
             {
                 args.IsValid = false;
                 part7Validator.ErrorMessage = "The total value of initial account deposit is too large for the database";
@@ -665,7 +669,7 @@ namespace HKeInvestWebApplication
 
         protected void passportCountryOfIssue2_ServerValidate(object source, ServerValidateEventArgs args)
         {
-            if(!HKIDUsed2.Checked && string.IsNullOrEmpty(passportCountry2.Text.Trim()))
+            if (!HKIDUsed2.Checked && string.IsNullOrEmpty(passportCountry2.Text.Trim()))
             {
                 args.IsValid = false;
                 passportCountryOfIssue2.ErrorMessage = "Passport country of issue is required";
@@ -717,8 +721,9 @@ namespace HKeInvestWebApplication
             string hkid = HKID.Text.Trim().ToUpper();
             if (AccountType.SelectedValue != "0" && AccountType.SelectedValue != "individual")
             {
-                if ((HKIDUsed.Checked && HKIDUsed2.Checked && hkid==HKID2.Text.Trim()) ||
-                    (!HKIDUsed.Checked && !HKIDUsed2.Checked && hkid == HKID2.Text.Trim() && passportCountry.Text.Trim()==passportCountry2.Text.Trim())) {
+                if ((HKIDUsed.Checked && HKIDUsed2.Checked && hkid == HKID2.Text.Trim()) ||
+                    (!HKIDUsed.Checked && !HKIDUsed2.Checked && hkid == HKID2.Text.Trim() && passportCountry.Text.Trim() == passportCountry2.Text.Trim()))
+                {
                     args.IsValid = false;
                     HKIDValidate.ErrorMessage = "The HKID of the primary holder cannot be the same as co account holder.";
                     return;
@@ -745,7 +750,7 @@ namespace HKeInvestWebApplication
                 DataTable table = myHKeInvestData.getData(sql);
                 foreach (DataRow row in table.Rows)
                 {
-                    if (row.Field<string>("HKIDPassportNumber").Trim() == hkid&&row.Field<string>("passportCountryOfIssue").Trim()==passportCountry.Text.Trim())
+                    if (row.Field<string>("HKIDPassportNumber").Trim() == hkid && row.Field<string>("passportCountryOfIssue").Trim() == passportCountry.Text.Trim())
                     {
                         args.IsValid = false;
                         HKIDValidate.ErrorMessage = "This passport has been used!";

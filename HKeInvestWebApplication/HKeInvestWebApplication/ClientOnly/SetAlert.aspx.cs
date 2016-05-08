@@ -42,22 +42,61 @@ namespace HKeInvestWebApplication.ClientOnly
             ddlCode.Items.Clear();
             ListItem i = new ListItem("-- choose code of available security --", "0", true);
             ddlCode.Items.Add(i);
-          
-           string accountNumber = getAccountNumber();
+            int avaAmount = 0;
+            string accountNumber = getAccountNumber();
             string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}'", accountNumber, securityType);
             DataTable dtToSell = myHKeInvestData.getData(sql);
-            msg.Text = "there are " + dtToSell.Rows.Count.ToString() + " securities available";
             // TODO: UPDATE THE CODE DATE BASED ON THE DATEBASE
             // msg.Text = "there are " + dtToSell.Rows.Count.ToString() + " securities available";
             if (dtToSell != null && dtToSell.Rows.Count != 0)
             {
                 foreach (DataRow row in dtToSell.Rows)
                 {
-                    ddlCode.Items.Add(row["code"].ToString().Trim());
+                    string securityCode = row["code"].ToString().Trim();
+
+                    if (checkMaxiSharesSell(accountNumber, securityType, securityCode) > 0)
+                    {
+                        ddlCode.Items.Add(securityCode);
+                        avaAmount += 1;
+                    }
+
                 }
             }
-        }
+            msg.Text = "there are " + avaAmount.ToString() + " securities available";
 
+        }
+        public decimal checkMaxiSharesSell(string accountNumber, string securityType, string securityCode)
+        {
+            string sql = string.Format("select * from [SecurityHolding]" +
+                " where [accountNumber] = '{0}' and [type] = '{1}' and [code] = '{2}'",
+                accountNumber, securityType, securityCode);
+            // shares
+            DataTable dtShareOwn = myHKeInvestData.getData(sql);
+            if (dtShareOwn == null || dtShareOwn.Rows.Count == 0) return -1;
+
+            decimal shares = myHKeInvestData.getData(sql).Rows[0].Field<decimal>("shares");
+
+            string sqlInternal = string.Format("select * from [Order] where ([status]='pending' or [status]='partial')" +
+                " and [accountNumber] = '{0}' and [securityType] = '{1}' and [securityCode] = '{2}' and [buyOrSell] = '{3}' ",
+                accountNumber, securityType, securityCode, "sell");
+
+            DataTable dTPreviousOrder = myHKeInvestData.getData(sqlInternal);
+            if (dTPreviousOrder == null || dTPreviousOrder.Rows.Count == 0) return shares;
+            int numOrderBefore = dTPreviousOrder.Rows.Count;
+            decimal sharedInOrdering = 0;
+            if (numOrderBefore != 0)
+            {
+                DataTable dtShareInOrder = myHKeInvestData.getData(sql);
+                if (myHKeInvestData.getData(sqlInternal).Rows == null) return -1;
+
+                for (int i = 0; i < numOrderBefore; i++)
+                {
+                    sharedInOrdering = sharedInOrdering + dTPreviousOrder.Rows[i].Field<decimal>("shares");
+                }
+            }
+            // Show("selling: previous :" + shares.ToString() + " pending order: " + sharedInOrdering.ToString());
+            return shares - sharedInOrdering;
+        }
         protected void ddlCode_SelectedIndexChanged(object sender, EventArgs e)
         {
             string securityType = rbSecurityType.SelectedValue.ToString().Trim();
@@ -235,6 +274,20 @@ namespace HKeInvestWebApplication.ClientOnly
                     args.IsValid = false;
                     AlertValidator.ErrorMessage = "The high alert value is an invalid number";
                     return;
+                }
+            }
+            if (lowalert.Checked && highalert.Checked)
+            {
+                decimal low = decimal.Zero;
+                decimal high = decimal.Zero;
+                if(decimal.TryParse(lowvalue.Text.Trim(), out low) && decimal.TryParse(highvalue.Text.Trim(), out high))
+                {
+                    if (low.CompareTo(high) >= 0)
+                    {
+                        args.IsValid = false;
+                        AlertValidator.ErrorMessage = "The low alter value has to be smaller than high value";
+                        return;
+                    }
                 }
             }
         }

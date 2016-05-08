@@ -3,11 +3,6 @@
    
     <h2>Home Page</h2>
     
-    <asp:Button ID="Report" runat="server" Text="Generate Client Report" OnClick="Report_Click" />
-    <asp:Button ID="EmployeeReport" runat="server" Text="Generate Client Report (Employee)" OnClick="EmployeeReport_Click" />
-    <asp:Button ID="Track" runat="server" Text="Profit/loss Tracking" OnClick="Track_Click" />
-    <asp:Button ID="BuyAndSell" runat="server" Text="Buy and sell" OnClick="BuyAndSell_Click" />
-    <asp:Button ID="Alert" runat="server" Text="Set Alert" OnClick="Alert_Click" />
     <div class="form-group">
         <div class="col-md-4">
             <asp:Label ID="type" runat="server" Text="Type"></asp:Label>

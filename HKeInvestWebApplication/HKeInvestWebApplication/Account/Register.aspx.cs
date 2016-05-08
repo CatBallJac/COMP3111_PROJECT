@@ -136,7 +136,7 @@ namespace HKeInvestWebApplication.Account
                     !birth.Equals(row.Field<DateTime>("dateOfBirth").ToString("dd/MM/yyyy").Trim()) ||
                     !email.Equals(row.Field<string>("email").Trim()))
                 {
-                    //ErrorMessage.Text = "The information entered does not match!";
+                    ErrorMessage.Text = "The information entered does not match!";
                     return false;
                 }
             }

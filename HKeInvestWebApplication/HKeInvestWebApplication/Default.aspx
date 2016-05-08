@@ -56,7 +56,9 @@
                         <div>
                 <asp:LinkButton ID="LinkButton12" runat="server" PostBackUrl="~/EmployeeOnly/SecurityHoldingDetails.aspx">security holding details</asp:LinkButton>
             </div>
-
+                                    <div>
+                <asp:LinkButton ID="LinkButton7" runat="server" PostBackUrl="~/EmployeeOnly/AccountApplication.aspx">account application</asp:LinkButton>
+            </div>
 
 
         </div>

@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SetAlert.aspx.cs" Inherits="HKeInvestWebApplication.ClientOnly.SetAlert" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div>
-        <asp:Label ID="msg" runat="server" Text="Label"></asp:Label>
+        <asp:Label ID="msg" runat="server" Visible="false" Text="Label"></asp:Label>
     </div>
 
     <h2>Set Alert</h2>

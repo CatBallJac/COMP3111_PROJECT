@@ -1,6 +1,6 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Account Application.aspx.cs" Inherits="HKeInvestWebApplication.Account_Application" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AccountApplication.aspx.cs" Inherits="HKeInvestWebApplication.EmployeeOnly.AccountApplication" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2><strong>Account Application Form</strong></h2>
+        <h2><strong>Account Application Form</strong></h2>
     <a href="Code_File/Application Form.pdf" target="_blank"><span class="auto-style2">Click here to get a pdf of the application form</span></a>
     <style>a:visited{color: gray}a:before{color: blue}</style>
     <hr /><asp:Label ID="applyResult" runat="server" />
