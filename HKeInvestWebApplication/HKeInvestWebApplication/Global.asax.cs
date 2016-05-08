@@ -150,24 +150,7 @@ namespace HKeInvestWebApplication
                             }
 
 
-                            if (myHKeInvestFunction.isExpired(referenceNumber))
-                            {
-                                // #TODO: fetch information of the stock order
-                                if (myHKeInvestFunction.checkStockOrderTranscation(referenceNumber, allOrNone) == "cancelled")
-                                {
-                                    //MessageBox.Show("cancelled order found" + currentstatus);
-                                    currentstatus = "cancelled";
-                                    myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus, securityType, securityCode, accountNumber);
-                                }
-                                else
-                                {
-                                    // #TODO: not cancelled, fetch the information of transaction:
-                                    currentstatus = myHKeInvestFunction.checkStockOrderTranscation(referenceNumber, allOrNone);
-                                    myHKeInvestFunction.stockTransactionHandler(referenceNumber, allOrNone, buyOrSell, stockOrderType, accountNumber, securityCode);
-                                    myHKeInvestFunction.updateOrderStatus(referenceNumber, currentstatus, securityType, securityCode, accountNumber);
-                                }
-                            }
-                            else continue;
+                     
 
                         }
                     }
