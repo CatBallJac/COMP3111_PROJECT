@@ -206,16 +206,24 @@ namespace HKeInvestWebApplication.ClientOnly
             string accountNumber = getAccountNumber();
             string sql = string.Format("select * from [SecurityHolding] where [accountNumber] = '{0}' and [type] = '{1}'", accountNumber, securityType);
             DataTable dtToSell = myHKeInvestData.getData(sql);
-            msg.Text = "there are " + dtToSell.Rows.Count.ToString() + " securities available";
+            int avaAmount = 0;
             // TODO: UPDATE THE CODE DATE BASED ON THE DATEBASE
             // msg.Text = "there are " + dtToSell.Rows.Count.ToString() + " securities available";
             if (updated == false && dtToSell != null && dtToSell.Rows.Count != 0)
             {
                 foreach (DataRow row in dtToSell.Rows)
                 {
-                    ddlCode.Items.Add(row["code"].ToString().Trim());
+                    string securityCode = row["code"].ToString().Trim();
+
+                    if (checkMaxiSharesSell(accountNumber, securityType, securityCode) > 0)
+                    {
+                        ddlCode.Items.Add(securityCode);
+                        avaAmount += 1;
+                    }
                 }
             }
+            msg.Text = "there are " + avaAmount.ToString() + " securities available";
+
             updated = true; // after update
 
         }
@@ -566,10 +574,15 @@ namespace HKeInvestWebApplication.ClientOnly
         {
             decimal numberSell = 0;
             string shares_sellStock = TextSellShares.Text.ToString().Trim();
+            string shares = showSecuritySharesOwn();
+            string accountNumber = getAccountNumber();
+            string securityType = rbSecurityType.SelectedValue.ToString().Trim();
+            string securityCode = ddlCode.SelectedValue.ToString().Trim();
+            decimal sharesOwn = checkMaxiSharesSell(accountNumber, securityType, securityCode);
 
-            decimal sharesOwn = 0;
-            if (!decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn) ||
-                !decimal.TryParse(shares_sellStock, out numberSell))
+
+
+            if (!decimal.TryParse(shares_sellStock, out numberSell))
             {
                 cvShares.ErrorMessage = "please input decimal number";
                 args.IsValid = false;
@@ -598,17 +611,17 @@ namespace HKeInvestWebApplication.ClientOnly
             decimal number;
 
             string shares = showSecuritySharesOwn();
-            decimal sharesOwn;
+            string accountNumber = getAccountNumber();
+            string securityType = rbSecurityType.SelectedValue.ToString().Trim();
+            string securityCode = ddlCode.SelectedValue.ToString().Trim();
+            decimal sharesOwn = checkMaxiSharesSell(accountNumber, securityType, securityCode);
 
-            if (!decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn) ||
-                !decimal.TryParse(shares_sellBonds, out number))
+            if (!decimal.TryParse(shares_sellBonds, out number))
             {
                 cvShares.ErrorMessage = "please input decimal number";
                 args.IsValid = false;
             }
 
-
-            decimal.TryParse(TextMaxiShares.Text.ToString().Trim(), out sharesOwn);
             decimal.TryParse(shares_sellBonds, out number);
 
             if (!(sharesOwn > 0))
@@ -684,11 +697,12 @@ namespace HKeInvestWebApplication.ClientOnly
             if (dtSecurities == null || dtSecurities.Rows.Count == 0)
             {
                 // showError();
-                cvCodeInput.ErrorMessage = "no security found for code " + securityCode;
+                cvCodeInput.ErrorMessage = "no security found for code ";
+                LabelSellLimit.Visible = false;
                 args.IsValid = false;
                 return;
             }
-
+            LabelSellLimit.Visible = true;
             string securityName = dtSecurities.Rows[0].Field<string>("name");
             LabelSecurityNametxt.Text = securityName;
 
