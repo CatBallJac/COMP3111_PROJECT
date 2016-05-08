@@ -32,9 +32,6 @@
             </div>
 
                         <div>
-                <asp:LinkButton ID="LinkButton7" runat="server" PostBackUrl="~/ClientOnly/ClientManageAccountAndClientInfo.aspx">manage Account</asp:LinkButton>
-            </div>
-                        <div>
                 <asp:LinkButton ID="LinkButton8" runat="server" PostBackUrl="~/ClientOnly/SetAlert.aspx">set alert</asp:LinkButton>
             </div>
                         <div>
