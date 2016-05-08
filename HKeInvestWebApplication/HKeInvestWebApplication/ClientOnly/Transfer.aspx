@@ -31,5 +31,8 @@
         <div class="form-group">
             <asp:Label runat="server" ID="result" Font-Size="Medium" ForeColor="Red" />
         </div>
+        <div class="form-group">
+            <a href="ClientTransferReport.aspx" style="color: #FFFF00; font-size: medium">Click to view you transfer history</a>
+        </div>
     </div>
 </asp:Content>
