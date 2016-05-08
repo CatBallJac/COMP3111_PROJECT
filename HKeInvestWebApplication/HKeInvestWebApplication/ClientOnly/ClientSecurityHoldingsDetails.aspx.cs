@@ -22,7 +22,7 @@ namespace HKeInvestWebApplication.ClientOnly
             // Get the available currencies to populate the DropDownList.
             //ddlCurrency.Items.Clear();
             string userName = Context.User.Identity.GetUserName();
-            string AccountSql = "select [accountNumber] from [AccountTemp] where [userName]='" + userName + "'";
+            string AccountSql = "select [accountNumber] from [Account] where [userName]='" + userName + "'";
             DataTable dTaccountNumberOfClient = myHKeInvestData.getData(AccountSql);
             if (dTaccountNumberOfClient == null) { return; } // If the DataSet is null, a SQL error occurred.
 
@@ -105,7 +105,7 @@ namespace HKeInvestWebApplication.ClientOnly
             // *****************************************************************************************
             // TODO: Construct the SQL statement to retrieve the first and last name of the client(s). *
             // *****************************************************************************************
-            sql = "select [firstName], [lastName] from [ClientTemp] where [accountNumber]='" + accountNumber + "'"; // Complete the SQL statement.
+            sql = "select [firstName], [lastName] from [Client] where [accountNumber]='" + accountNumber + "'"; // Complete the SQL statement.
             //Explanation for this task:
             //1. An account can be held by many clients.
             //2. An account can invest in multiple ways.

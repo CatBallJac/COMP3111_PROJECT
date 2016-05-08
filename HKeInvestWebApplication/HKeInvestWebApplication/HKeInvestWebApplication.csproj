@@ -112,10 +112,6 @@
     <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
-    <Reference Include="WebGrease">
-      <Private>True</Private>
-      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
-    </Reference>
     <Reference Include="Antlr3.Runtime">
       <Private>True</Private>
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
@@ -130,6 +126,10 @@
     </Reference>
     <Reference Include="Microsoft.AspNet.FriendlyUrls">
       <HintPath>..\packages\Microsoft.AspNet.FriendlyUrls.Core.1.0.2\lib\net45\Microsoft.AspNet.FriendlyUrls.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -184,7 +184,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About.aspx" />
-    <Content Include="Account Application.aspx" />
     <Content Include="Account\AddPhoneNumber.aspx" />
     <Content Include="Account\Confirm.aspx" />
     <Content Include="Account\Forgot.aspx" />
@@ -200,6 +199,10 @@
     <Content Include="Account\ResetPasswordConfirmation.aspx" />
     <Content Include="Account\TwoFactorAuthenticationSignIn.aspx" />
     <Content Include="Account\VerifyPhoneNumber.aspx" />
+    <Content Include="App_Data\aspnet-HKeInvestWebApplication-20160213050250.mdf" />
+    <Content Include="App_Data\aspnet-HKeInvestWebApplication-20160213050250_log.ldf">
+      <DependentUpon>aspnet-HKeInvestWebApplication-20160213050250.mdf</DependentUpon>
+    </Content>
     <Content Include="App_Data\ExternalDatabases.mdf" />
     <Content Include="App_Data\ExternalDatabases_log.ldf">
       <DependentUpon>ExternalDatabases.mdf</DependentUpon>
@@ -210,17 +213,107 @@
     </Content>
     <Content Include="App_Themes\ExternalSystemsTheme\bootstrap.min.css" />
     <Content Include="App_Themes\Theme1\bootstrap.min.css" />
+    <Content Include="bin\Antlr3.Runtime.dll" />
+    <Content Include="bin\Antlr3.Runtime.pdb" />
+    <Content Include="bin\AspNet.ScriptManager.bootstrap.dll" />
+    <Content Include="bin\AspNet.ScriptManager.jQuery.dll" />
+    <Content Include="bin\EntityFramework.dll" />
+    <Content Include="bin\EntityFramework.SqlServer.dll" />
+    <Content Include="bin\EntityFramework.SqlServer.xml" />
+    <Content Include="bin\EntityFramework.xml" />
+    <Content Include="bin\HKeInvestWebApplication.dll" />
+    <Content Include="bin\HKeInvestWebApplication.pdb" />
+    <Content Include="bin\IdentityManager.AspNetIdentity.dll" />
+    <Content Include="bin\IdentityManager.AspNetIdentity.pdb" />
+    <Content Include="bin\IdentityManager.dll" />
+    <Content Include="bin\IdentityManager.pdb" />
+    <Content Include="bin\Microsoft.AspNet.FriendlyUrls.dll" />
+    <Content Include="bin\Microsoft.AspNet.FriendlyUrls.xml" />
+    <Content Include="bin\Microsoft.AspNet.Identity.Core.dll" />
+    <Content Include="bin\Microsoft.AspNet.Identity.Core.xml" />
+    <Content Include="bin\Microsoft.AspNet.Identity.EntityFramework.dll" />
+    <Content Include="bin\Microsoft.AspNet.Identity.EntityFramework.xml" />
+    <Content Include="bin\Microsoft.AspNet.Identity.Owin.dll" />
+    <Content Include="bin\Microsoft.AspNet.Identity.Owin.xml" />
+    <Content Include="bin\Microsoft.AspNet.Web.Optimization.WebForms.dll" />
+    <Content Include="bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll" />
+    <Content Include="bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml" />
+    <Content Include="bin\Microsoft.Owin.dll" />
+    <Content Include="bin\Microsoft.Owin.Host.SystemWeb.dll" />
+    <Content Include="bin\Microsoft.Owin.Host.SystemWeb.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.Cookies.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Cookies.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Facebook.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Facebook.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.Google.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Google.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.MicrosoftAccount.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.MicrosoftAccount.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.OAuth.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.OAuth.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.Twitter.dll" />
+    <Content Include="bin\Microsoft.Owin.Security.Twitter.xml" />
+    <Content Include="bin\Microsoft.Owin.Security.xml" />
+    <Content Include="bin\Microsoft.Owin.xml" />
+    <Content Include="bin\Microsoft.ScriptManager.MSAjax.dll" />
+    <Content Include="bin\Microsoft.ScriptManager.WebForms.dll" />
+    <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\Newtonsoft.Json.dll" />
+    <Content Include="bin\Newtonsoft.Json.xml" />
+    <Content Include="bin\nunit.core.dll" />
+    <Content Include="bin\nunit.core.interfaces.dll" />
+    <Content Include="bin\nunit.framework.dll" />
+    <Content Include="bin\nunit.framework.xml" />
+    <Content Include="bin\nunit.util.dll" />
+    <Content Include="bin\NUnit.VisualStudio.TestAdapter.dll" />
+    <Content Include="bin\Owin.dll" />
+    <Content Include="bin\roslyn\._csc.exe" />
+    <Content Include="bin\roslyn\._Microsoft.Build.Tasks.CodeAnalysis.dll" />
+    <Content Include="bin\roslyn\._Microsoft.CodeAnalysis.CSharp.dll" />
+    <Content Include="bin\roslyn\._Microsoft.CodeAnalysis.dll" />
+    <Content Include="bin\roslyn\._Microsoft.CodeAnalysis.VisualBasic.dll" />
+    <Content Include="bin\roslyn\._System.Collections.Immutable.dll" />
+    <Content Include="bin\roslyn\._System.Reflection.Metadata.dll" />
+    <Content Include="bin\roslyn\._vbc.exe" />
+    <Content Include="bin\roslyn\._VBCSCompiler.exe" />
+    <Content Include="bin\roslyn\csc.exe" />
+    <Content Include="bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll" />
+    <Content Include="bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll" />
+    <Content Include="bin\roslyn\Microsoft.CodeAnalysis.dll" />
+    <Content Include="bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll" />
+    <Content Include="bin\roslyn\System.Collections.Immutable.dll" />
+    <Content Include="bin\roslyn\System.Reflection.Metadata.dll" />
+    <Content Include="bin\roslyn\vbc.exe" />
+    <Content Include="bin\roslyn\VBCSCompiler.exe" />
+    <Content Include="bin\System.Web.Optimization.dll" />
+    <Content Include="bin\System.Web.Optimization.xml" />
+    <Content Include="bin\System.Web.Providers.dll" />
+    <Content Include="bin\System.Web.Providers.xml" />
+    <Content Include="bin\WebGrease.dll" />
+    <Content Include="ClientOnly\BuyAndSellOrder.aspx" />
+    <Content Include="ClientOnly\ClientManageAccountAndClientInfo.aspx" />
+    <Content Include="ClientOnly\ClientReport.aspx" />
     <Content Include="ClientOnly\ClientSecurityHoldingsDetails.aspx" />
-    <Content Include="CoClient.aspx" />
+    <Content Include="ClientOnly\ClientTransferReport.aspx" />
+    <Content Include="ClientOnly\SetAlert.aspx" />
+    <Content Include="ClientOnly\Track.aspx" />
+    <Content Include="ClientOnly\Transfer.aspx" />
+    <Content Include="ClientOnly\Web.config" />
+    <Content Include="Code_File\Application Form.pdf" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="EmployeeOnly\AccountApplication.aspx" />
+    <Content Include="EmployeeOnly\EmployeeReport.aspx" />
+    <Content Include="EmployeeOnly\ManageAccountAndClientInfo.aspx" />
+    <Content Include="EmployeeOnly\SecurityHoldingDetails.aspx" />
+    <Content Include="EmployeeOnly\Web.config" />
     <Content Include="ExternalSystems\BondOrder.aspx" />
     <Content Include="ExternalSystems\ControlCenter.aspx" />
-    <Content Include="ExternalSystems\ExternalSite.Master" />
     <Content Include="ExternalSystems\ManageBond.aspx" />
-    <Content Include="ExternalSystems\ManageCurrencyConversion.aspx" />
+    <Content Include="ExternalSystems\ManageCurrencies.aspx" />
     <Content Include="ExternalSystems\ManageStock.aspx" />
     <Content Include="ExternalSystems\ManageUnitTrust.aspx" />
     <Content Include="ExternalSystems\StockOrder.aspx" />
@@ -230,10 +323,16 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Account\Web.config" />
-    <Content Include="ClientOnly\Web.config" />
-    <Content Include="EmployeeOnly\Web.config" />
+    <Content Include="ExternalSystems\ExternalSite.Master" />
+    <Content Include="bin\HKeInvestWebApplication.dll.config" />
+    <Content Include="bin\roslyn\._Microsoft.CSharp.Core.targets" />
+    <Content Include="bin\roslyn\._Microsoft.VisualBasic.Core.targets" />
+    <Content Include="bin\roslyn\._VBCSCompiler.exe.config" />
+    <Content Include="bin\roslyn\Microsoft.CSharp.Core.targets" />
+    <Content Include="bin\roslyn\Microsoft.VisualBasic.Core.targets" />
+    <Content Include="bin\roslyn\VBCSCompiler.exe.config" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="RegistrationPage.aspx" />
+    <Content Include="HOME.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -266,7 +365,6 @@
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="EmployeeOnly\SecurityHoldingDetails.aspx" />
     <Content Include="Site.Master" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config">
@@ -285,13 +383,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account Application.aspx.cs">
-      <DependentUpon>Account Application.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Account Application.aspx.designer.cs">
-      <DependentUpon>Account Application.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Account\AddPhoneNumber.aspx.cs">
       <DependentUpon>AddPhoneNumber.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -408,6 +499,27 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="ClientOnly\BuyAndSellOrder.aspx.cs">
+      <DependentUpon>BuyAndSellOrder.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\BuyAndSellOrder.aspx.designer.cs">
+      <DependentUpon>BuyAndSellOrder.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ClientOnly\ClientManageAccountAndClientInfo.aspx.cs">
+      <DependentUpon>ClientManageAccountAndClientInfo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\ClientManageAccountAndClientInfo.aspx.designer.cs">
+      <DependentUpon>ClientManageAccountAndClientInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ClientOnly\ClientReport.aspx.cs">
+      <DependentUpon>ClientReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\ClientReport.aspx.designer.cs">
+      <DependentUpon>ClientReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ClientOnly\ClientSecurityHoldingsDetails.aspx.cs">
       <DependentUpon>ClientSecurityHoldingsDetails.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -415,15 +527,39 @@
     <Compile Include="ClientOnly\ClientSecurityHoldingsDetails.aspx.designer.cs">
       <DependentUpon>ClientSecurityHoldingsDetails.aspx</DependentUpon>
     </Compile>
-    <Compile Include="CoClient.aspx.cs">
-      <DependentUpon>CoClient.aspx</DependentUpon>
+    <Compile Include="ClientOnly\ClientTransferReport.aspx.cs">
+      <DependentUpon>ClientTransferReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CoClient.aspx.designer.cs">
-      <DependentUpon>CoClient.aspx</DependentUpon>
+    <Compile Include="ClientOnly\ClientTransferReport.aspx.designer.cs">
+      <DependentUpon>ClientTransferReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ClientOnly\SetAlert.aspx.cs">
+      <DependentUpon>SetAlert.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\SetAlert.aspx.designer.cs">
+      <DependentUpon>SetAlert.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ClientOnly\Track.aspx.cs">
+      <DependentUpon>Track.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\Track.aspx.designer.cs">
+      <DependentUpon>Track.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ClientOnly\Transfer.aspx.cs">
+      <DependentUpon>Transfer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientOnly\Transfer.aspx.designer.cs">
+      <DependentUpon>Transfer.aspx</DependentUpon>
     </Compile>
     <Compile Include="Code_File\HKeInvestCode.cs" />
     <Compile Include="Code_File\HKeInvestData.cs" />
+    <Compile Include="Code_File\HKeInvestEmail.cs" />
+    <Compile Include="Code_File\HKeInvestFunctions.cs" />
+    <Compile Include="Code_File\SQLStringHandleHelper.cs" />
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -437,6 +573,34 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeOnly\AccountApplication.aspx.cs">
+      <DependentUpon>AccountApplication.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeOnly\AccountApplication.aspx.designer.cs">
+      <DependentUpon>AccountApplication.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeOnly\EmployeeReport.aspx.cs">
+      <DependentUpon>EmployeeReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeOnly\EmployeeReport.aspx.designer.cs">
+      <DependentUpon>EmployeeReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeOnly\ManageAccountAndClientInfo.aspx.cs">
+      <DependentUpon>ManageAccountAndClientInfo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeOnly\ManageAccountAndClientInfo.aspx.designer.cs">
+      <DependentUpon>ManageAccountAndClientInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeOnly\SecurityHoldingDetails.aspx.cs">
+      <DependentUpon>SecurityHoldingDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmployeeOnly\SecurityHoldingDetails.aspx.designer.cs">
+      <DependentUpon>SecurityHoldingDetails.aspx</DependentUpon>
     </Compile>
     <Compile Include="ExternalSystems\BondOrder.aspx.cs">
       <DependentUpon>BondOrder.aspx</DependentUpon>
@@ -468,12 +632,12 @@
     <Compile Include="ExternalSystems\ManageBond.aspx.designer.cs">
       <DependentUpon>ManageBond.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ExternalSystems\ManageCurrencyConversion.aspx.cs">
-      <DependentUpon>ManageCurrencyConversion.aspx</DependentUpon>
+    <Compile Include="ExternalSystems\ManageCurrencies.aspx.cs">
+      <DependentUpon>ManageCurrencies.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ExternalSystems\ManageCurrencyConversion.aspx.designer.cs">
-      <DependentUpon>ManageCurrencyConversion.aspx</DependentUpon>
+    <Compile Include="ExternalSystems\ManageCurrencies.aspx.designer.cs">
+      <DependentUpon>ManageCurrencies.aspx</DependentUpon>
     </Compile>
     <Compile Include="ExternalSystems\ManageStock.aspx.cs">
       <DependentUpon>ManageStock.aspx</DependentUpon>
@@ -506,22 +670,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HOME.aspx.cs">
+      <DependentUpon>HOME.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HOME.aspx.designer.cs">
+      <DependentUpon>HOME.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegistrationPage.aspx.cs">
-      <DependentUpon>RegistrationPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="RegistrationPage.aspx.designer.cs">
-      <DependentUpon>RegistrationPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="EmployeeOnly\SecurityHoldingDetails.aspx.cs">
-      <DependentUpon>SecurityHoldingDetails.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="EmployeeOnly\SecurityHoldingDetails.aspx.designer.cs">
-      <DependentUpon>SecurityHoldingDetails.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

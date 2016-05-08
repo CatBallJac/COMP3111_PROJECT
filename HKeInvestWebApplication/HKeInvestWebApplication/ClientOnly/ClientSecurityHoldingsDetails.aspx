@@ -16,7 +16,7 @@
             </asp:DropDownList>
             <asp:DropDownList ID="ddlCurrency" runat="server" AutoPostBack="true" Visible="false" OnSelectedIndexChanged="ddlCurrency_SelectedIndexChanged">
                 <asp:ListItem Value="0">Currency</asp:ListItem>
-                <asp:ListItem></asp:ListItem>
+              
             </asp:DropDownList>
         </div>
         <div>
